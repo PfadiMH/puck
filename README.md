@@ -69,7 +69,3 @@ MIT © [Measured Co.](https://github.com/measuredco)
 ```
 
 ```
-
-```
-
-```
