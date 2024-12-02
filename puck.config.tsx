@@ -30,6 +30,28 @@ export const config: Config<Props> = {
         </div>
       ),
     },
+    HeadingComponent:{
+      fields:{
+        text: {type: "text"},
+        textAlign: {
+          type: "radio",
+          options: [
+            { label: "Left", value: "left" },
+            { label: "Center", value: "center" },
+            { label: "Right", value: "right" },
+          ],
+        },
+      },
+      defaultProps: {
+        text: "HeadingComponent",
+        textAlign: "center",
+      },
+      render: ({ text, textAlign }) => (
+        <div style={{ padding: 64 }}>
+          <h1 style={{ textAlign }}>{text}</h1>
+        </div>
+      ),
+    },
   },
 };
 
