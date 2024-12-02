@@ -27,6 +27,12 @@ The `next` recipe showcases one of the most powerful ways to implement Puck usin
   powershell -c "irm bun.sh/install.ps1|iex"
   ```
 
+## Install dependencies
+
+```bash
+bun i
+```
+
 ## Usage
 
 Start the server
@@ -52,6 +58,10 @@ By default, this recipe will generate static pages by setting `dynamic` to [`for
 ## License
 
 MIT © [Measured Co.](https://github.com/measuredco)
+
+```
+
+```
 
 ```
 
