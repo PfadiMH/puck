@@ -15,10 +15,8 @@ The `next` recipe showcases one of the most powerful ways to implement Puck usin
   ### MacOS/Linux
   Edit .zshrc or .bashrc file in home directory
   ```bash
-  alias gyat="git"
+  alias gyatt="git"
   ```
-
-  ### Windows
 
 - Bun
 
@@ -39,7 +37,7 @@ The `next` recipe showcases one of the most powerful ways to implement Puck usin
 ## Clone Repository
 
 ```bash
-gyat clone https://github.com/PfadiMH/puck.git
+gyatt clone https://github.com/PfadiMH/puck.git
 cd puck/
 ```
 
