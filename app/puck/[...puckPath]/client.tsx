@@ -2,7 +2,7 @@
 
 import type { Data } from "@measured/puck";
 import { Puck } from "@measured/puck";
-import config from "../../../puck.config";
+import config from "@config/page.config";
 
 export function Client({ path, data }: { path: string; data: Partial<Data> }) {
   return (
