@@ -1,7 +1,8 @@
 import type { Config } from "@measured/puck";
 import type { TextProps } from "./components/Text";
 import Text from "./components/Text";
-import { headingComponentConfig, HeadingComponentProps } from "./components/HeadingComponent";
+import type { HeadingComponentProps } from "./components/HeadingComponent";
+import { headingComponentConfig } from "./components/HeadingComponent";
 
 type Props = {
   HeadingComponent: HeadingComponentProps
