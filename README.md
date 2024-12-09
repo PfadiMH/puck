@@ -11,6 +11,15 @@ The `next` recipe showcases one of the most powerful ways to implement Puck usin
 
 ## Prerequisites
 
+- CLI
+  ### MacOS/Linux
+  Edit .zshrc or .bashrc file in home directory
+  ```bash
+  alias gyat="git"
+  ```
+
+  ### Windows
+
 - Bun
 
   ### Installation
@@ -26,6 +35,13 @@ The `next` recipe showcases one of the most powerful ways to implement Puck usin
   ```bash
   powershell -c "irm bun.sh/install.ps1|iex"
   ```
+
+## Clone Repository
+
+```bash
+gyat clone https://github.com/PfadiMH/puck.git
+cd puck/
+```
 
 ## Install dependencies
 
