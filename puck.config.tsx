@@ -1,11 +1,11 @@
 import type { Config } from "@measured/puck";
 import type { TextProps } from "./components/Text";
 import Text from "./components/Text";
-import type { HeadingComponentProps } from "./components/HeadingComponent";
-import { headingComponentConfig } from "./components/HeadingComponent";
+import type { HeadingProps } from "./components/Heading";
+import { headingConfig } from "./components/Heading";
 
 type Props = {
-  HeadingComponent: HeadingComponentProps
+  Heading: HeadingProps
   HeadingBlock: { title: string };
   Text: TextProps;
 };
@@ -33,7 +33,7 @@ export const config: Config<Props> = {
         </div>
       ),
     },
-    HeadingComponent: headingComponentConfig,
+    Heading: headingConfig,
   },
 };
 

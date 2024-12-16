@@ -1,21 +1,21 @@
 import {ComponentConfig} from "@measured/puck";
 import React from "react";
 
-export type HeadingComponentProps = {
+export type HeadingProps = {
     text: string,
     textAlign: any,
 };
 
-function HeadingComponent({text, textAlign}: HeadingComponentProps) {
+function Heading({text, textAlign}: HeadingProps) {
     return (
         <div style={{padding: 64}}>
             <h1 style={{textAlign}}>{text}</h1>
         </div>
     )
-};
+}
 
-export const headingComponentConfig: ComponentConfig<HeadingComponentProps> = {
-    render: HeadingComponent,
+export const headingConfig: ComponentConfig<HeadingProps> = {
+    render: Heading,
     fields: {
         text: {type: "text"},
         textAlign: {
@@ -28,7 +28,7 @@ export const headingComponentConfig: ComponentConfig<HeadingComponentProps> = {
         },
     },
     defaultProps: {
-        text: "HeadingComponent",
+        text: "Heading",
         textAlign: "center",
     }
 }
