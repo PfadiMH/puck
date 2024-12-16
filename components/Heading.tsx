@@ -4,12 +4,14 @@ import React from "react";
 export type HeadingProps = {
     text: string,
     textAlign: any,
+    marginTop: number,
+    marginBottom: number,
 };
 
-function Heading({text, textAlign}: HeadingProps) {
+function Heading({text, textAlign, marginTop, marginBottom}: HeadingProps) {
     return (
-        <div style={{padding: 64}}>
-            <h1 style={{textAlign}}>{text}</h1>
+        <div>
+            <h1 style={{textAlign,marginTop,marginBottom}}>{text}</h1>
         </div>
     )
 }
@@ -26,9 +28,19 @@ export const headingConfig: ComponentConfig<HeadingProps> = {
                 {label: "Right", value: "right"},
             ],
         },
+        marginTop: {
+            type: "number",
+            min: 0
+        },
+        marginBottom: {
+            type: "number",
+            min: 0
+        }
     },
     defaultProps: {
         text: "Heading",
         textAlign: "center",
+        marginTop: 64,
+        marginBottom: 64,
     }
 }
