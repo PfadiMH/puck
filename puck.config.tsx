@@ -6,7 +6,6 @@ import { headingConfig } from "./components/Heading";
 
 type Props = {
   Heading: HeadingProps
-  HeadingBlock: { title: string };
   Text: TextProps;
 };
 
@@ -19,19 +18,6 @@ export const config: Config<Props> = {
           type: "textarea",
         },
       },
-    },
-    HeadingBlock: {
-      fields: {
-        title: { type: "text" },
-      },
-      defaultProps: {
-        title: "Heading",
-      },
-      render: ({ title }) => (
-        <div style={{ padding: 64 }}>
-          <h1>{title}</h1>
-        </div>
-      ),
     },
     Heading: headingConfig,
   },
