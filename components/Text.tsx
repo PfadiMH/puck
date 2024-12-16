@@ -6,7 +6,7 @@ export type TextProps = {
 };
 
 function Text({ text }: TextProps) {
-  return <p className="font-sans">{text}</p>;
+  return <p className="font-sans text-wrap py-3">{text}</p>;
 }
 
 export const textConfig: ComponentConfig<TextProps> = {
@@ -15,5 +15,8 @@ export const textConfig: ComponentConfig<TextProps> = {
     text: {
       type: "textarea",
     },
+  },
+  defaultProps: {
+    text: "Mir sind Voll Däbii!",
   },
 };
