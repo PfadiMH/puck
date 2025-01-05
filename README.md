@@ -9,18 +9,36 @@ The `next` recipe showcases one of the most powerful ways to implement Puck usin
 - Catch-all routes to use puck for any route on the platform
 - Incremental static regeneration (ISR) for all Puck pages
 
+## Prerequisites
+
+- Bun
+
+  ### Installation
+
+  #### MacOS/Linux
+
+  ```bash
+  curl -fsSL https://bun.sh/install | bash
+  ```
+
+  #### Windows
+
+  ```bash
+  powershell -c "irm bun.sh/install.ps1|iex"
+  ```
+
+## Install dependencies
+
+```bash
+bun i
+```
+
 ## Usage
-
-Run the generator and enter `next` when prompted
-
-```
-npx create-puck-app my-app
-```
 
 Start the server
 
 ```
-yarn dev
+bun dev
 ```
 
 Navigate to the homepage at https://localhost:3000. To edit the homepage, access the Puck editor at https://localhost:3000/edit.
@@ -40,3 +58,11 @@ By default, this recipe will generate static pages by setting `dynamic` to [`for
 ## License
 
 MIT © [Measured Co.](https://github.com/measuredco)
+
+```
+
+```
+
+```
+
+```
