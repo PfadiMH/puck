@@ -5,13 +5,13 @@ export type HeadingProps = {
     text: string,
     textAlign: any,
     marginTop: number,
-    marginBottom: number,
+    marginBottom: number
 };
 
 function Heading({text, textAlign, marginTop, marginBottom}: HeadingProps) {
     return (
         <div>
-            <h1 style={{textAlign,marginTop,marginBottom}}>{text}</h1>
+            <h1 style={{textAlign, marginTop, marginBottom}}>{text}</h1>
         </div>
     )
 }
@@ -35,7 +35,7 @@ export const headingConfig: ComponentConfig<HeadingProps> = {
         marginBottom: {
             type: "number",
             min: 0
-        }
+        },
     },
     defaultProps: {
         text: "Heading",
