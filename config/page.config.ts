@@ -3,7 +3,7 @@ import { textConfig } from "@components/Text";
 import type { TextProps } from "@components/Text";
 import { heroConfig } from "@components/Hero";
 import type { HeroProps } from "@components/Hero";
-import { VerticalSpace } from "@components/VerticalSpace";
+import { verticalSpaceConfig } from "@components/VerticalSpace";
 import type { VerticalSpaceProps } from "@components/VerticalSpace";
 
 
@@ -17,7 +17,7 @@ export const config: Config<Props> = {
     components: {
         Text: textConfig,
         Hero: heroConfig,
-        VerticalSpace: VerticalSpace,
+        VerticalSpace: verticalSpaceConfig,
     },
 };
 

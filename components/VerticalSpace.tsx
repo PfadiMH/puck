@@ -27,7 +27,7 @@ const spacingOptions = [
     { label: "160px", value: "160px" },
 ];
 
-export const VerticalSpace: ComponentConfig<VerticalSpaceProps> = {
+export const verticalSpaceConfig: ComponentConfig<VerticalSpaceProps> = {
     label: "Vertical Space",
     fields: {
         size: {
