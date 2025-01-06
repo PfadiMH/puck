@@ -9,7 +9,7 @@ export type FlexProps = {
   minItemWidth: number;
 };
 
-export const Flex: ComponentConfig<FlexProps> = {
+export const flexConfig: ComponentConfig<FlexProps> = {
   fields: {
     items: {
       type: "array",
