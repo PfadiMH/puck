@@ -11,7 +11,7 @@ export type HeadingProps = {
 function Heading({text, textAlign, marginTop, marginBottom}: HeadingProps) {
     return (
         <div>
-            <h1 style={{textAlign, marginTop, marginBottom}}>{text}</h1>
+            <h1 style={{textAlign, marginTop, marginBottom,minHeight:"12px"}}>{text}</h1>
         </div>
     )
 }
