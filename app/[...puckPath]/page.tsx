@@ -10,10 +10,13 @@
  * will invalidate the cache as the page is written in /api/puck/route.ts
  */
 
-import { Client } from "./client";
 import { notFound } from "next/navigation";
 import { Metadata } from "next";
-import { getPage } from "@lib/database";
+import PuckPage from "@components/PageRender";
+import { getFooter, getNavbar, getPage } from "@lib/database";
+import navbarConfig from "@config/navbar.config";
+import pageConfig from "@config/page.config";
+import footerConfig from "@config/footer.config";
 
 export async function generateMetadata({
   params: { puckPath = [] },
@@ -34,13 +37,27 @@ export default async function Page({
   params: { puckPath: string[] };
 }) {
   const path = `/${puckPath.join("/")}`;
-  const data = await getPage(path);
+  const pageData = await getPage(path);
 
-  if (!data) {
+  if (!pageData) {
     return notFound();
   }
 
-  return <Client data={data} />;
+  const navbarData = await getNavbar();
+  const footerData = await getFooter();
+
+  return (
+    <PuckPage
+      {...{
+        navbarData,
+        pageData,
+        footerData,
+        navbarConfig,
+        pageConfig,
+        footerConfig,
+      }}
+    />
+  );
 }
 
 // Force Next.js to produce static pages: https://nextjs.org/docs/app/api-reference/file-conventions/route-segment-config#dynamic
