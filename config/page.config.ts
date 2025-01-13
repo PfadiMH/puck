@@ -10,8 +10,8 @@ import { flexConfig, FlexProps } from "@components/Flex";
 
 type Props = {
   FormGroup: FormGroupProps;
-  Hero: HeroProps;
   Text: TextProps;
+  Hero: HeroProps;
   VerticalSpace: VerticalSpaceProps;
   Flex: FlexProps;
 };
