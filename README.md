@@ -12,10 +12,13 @@ The `next` recipe showcases one of the most powerful ways to implement Puck usin
 ## Prerequisites
 
 - CLI
+
   ### MacOS/Linux
+
   Edit .zshrc or .bashrc file in home directory
+
   ```bash
-  alias gyatt="git"
+  sudo ln -s /bin/git /bin/gyatt
   ```
 
 - Bun
