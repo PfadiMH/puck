@@ -5,15 +5,15 @@ import { heroConfig } from "@components/Hero";
 import type { HeroProps } from "@components/Hero";
 
 type Props = {
-    Text: TextProps;
-    Hero: HeroProps;
+  Text: TextProps;
+  Hero: HeroProps;
 };
 
-export const config: Config<Props> = {
-    components: {
-        Text: textConfig,
-        Hero: heroConfig,
-    },
+const config: Config<Props> = {
+  components: {
+    Text: textConfig,
+    Hero: heroConfig,
+  },
 };
 
 export default config;
