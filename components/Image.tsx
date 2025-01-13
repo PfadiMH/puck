@@ -11,7 +11,7 @@ export interface ImageComponentProps {
 const ImageComponent = ({
     src,
     alt,
-    fallbackSrc = 'image',
+    fallbackSrc,
 } : ImageComponentProps) => {
     const [currentSrc, setCurrentSrc] = useState<string>(src);
 
@@ -47,7 +47,7 @@ export const imageConfig: ComponentConfig<ImageComponentProps> = {
       },
     },
     defaultProps: {
-      src: "https://placehold.co/600x400",
+      src: "",
       alt: "Default Image",
       fallbackSrc: "https://placehold.co/600x400?text=Fallback",
     },
