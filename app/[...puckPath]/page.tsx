@@ -13,7 +13,7 @@
 import { Client } from "./client";
 import { notFound } from "next/navigation";
 import { Metadata } from "next";
-import { getPage } from "@lib/get-page";
+import { getPage } from "@lib/database";
 
 export async function generateMetadata({
   params: { puckPath = [] },
@@ -21,9 +21,10 @@ export async function generateMetadata({
   params: { puckPath: string[] };
 }): Promise<Metadata> {
   const path = `/${puckPath.join("/")}`;
+  const page = await getPage(path);
 
   return {
-    title: getPage(path)?.root.props?.title,
+    title: page.root.props?.title,
   };
 }
 
@@ -33,7 +34,7 @@ export default async function Page({
   params: { puckPath: string[] };
 }) {
   const path = `/${puckPath.join("/")}`;
-  const data = getPage(path);
+  const data = await getPage(path);
 
   if (!data) {
     return notFound();
