@@ -3,7 +3,8 @@ import type { TextProps } from "@components/Text";
 import { textConfig } from "@components/Text";
 import { heroConfig } from "@components/Hero";
 import type { HeroProps } from "@components/Hero";
-import { flexConfig, FlexProps } from "@components/Flex";
+import { flexConfig } from "@components/Flex";
+import { FlexProps } from "@components/Flex"
 
 type Props = {
     Text: TextProps;
