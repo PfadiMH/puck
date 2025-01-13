@@ -1,5 +1,4 @@
 import { ComponentConfig } from '@measured/puck';
-import { S } from '@measured/puck/dist/resolve-all-data-BoWgijLi';
 import React, { CSSProperties, useState } from 'react';
 
 export interface ImageComponentProps {
@@ -26,6 +25,13 @@ const ImageComponent = ({
         src={currentSrc}
         alt={alt}
         onError={handleError}
+        style={{  
+          display: "block",
+          margin: "0 auto",
+          width: "100%",
+          height: "auto",
+          maxWidth: "100%",
+        }}
         />
     );
 };
@@ -47,7 +53,7 @@ export const imageConfig: ComponentConfig<ImageComponentProps> = {
       },
     },
     defaultProps: {
-      src: "",
+      src: "https://placehold.co/600x400",
       alt: "Default Image",
       fallbackSrc: "https://placehold.co/600x400?text=Fallback",
     },
