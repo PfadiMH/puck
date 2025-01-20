@@ -12,8 +12,8 @@ export type IFrameProps = {
 
 function IFrame({ source, height, title }: IFrameProps) {
   return <>
-  <div className='w-full flex flex-col justify-center overflow-hidden items-center'>
-    <iframe src={source} width='100%' height={height} title={title}></iframe>
+  <div className='w-full overflow-hidden'>
+    <iframe src={source} width='100%' height={height} title={title}/>
   </div>
   </>
 }
@@ -25,7 +25,7 @@ export const iframeConfig: ComponentConfig<IFrameProps> = {
             type: "textarea",
         },
         height: {
-            type: "textarea",
+            type: "number",
         },
         title: {
             type: "textarea",
