@@ -1,30 +1,22 @@
 import { ComponentConfig } from '@measured/puck';
-import React, { CSSProperties, useState } from 'react';
+import Image from 'next/image'
+import { useState } from 'react';
 
 export interface ImageComponentProps {
   src: string;
   alt: string;
-  fallbackSrc: string;
 }
 
 const ImageComponent = ({
     src,
     alt,
-    fallbackSrc,
 } : ImageComponentProps) => {
-    const [currentSrc, setCurrentSrc] = useState<string>(src);
-
-    const handleError = () => {
-        if (fallbackSrc){
-            setCurrentSrc(fallbackSrc)
-        }
-    };
+    
 
     return (
-        <img
-        src={currentSrc}
+        <Image
+        src={src}
         alt={alt}
-        onError={handleError}
         style={{  
           display: "block",
           margin: "0 auto",
@@ -46,16 +38,11 @@ export const imageConfig: ComponentConfig<ImageComponentProps> = {
       alt: {
         type: "text",
         label: "Alt Text",
-      },
-      fallbackSrc: {
-        type: "text",
-        label: "Fallback Source",
-      },
+      }
     },
     defaultProps: {
       src: "https://placehold.co/600x400",
-      alt: "Default Image",
-      fallbackSrc: "https://placehold.co/600x400?text=Fallback",
+      alt: "Default Image"
     },
   };
   
