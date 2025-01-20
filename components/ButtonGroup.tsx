@@ -1,5 +1,4 @@
 import { ComponentConfig } from "@measured/puck";
-import { redirect } from "next/navigation";
 import React from "react";
 
 export type ButtonGroup = {
@@ -14,23 +13,14 @@ export type ButtonGroupProps = {
 function Button({ label, link }: ButtonGroup) {
   return (
     <button
-      onClick={() => {
-        window.open(link, "_self");
+      onClick={(e) => {
+        if(e.ctrlKey)
+          window.open(link, "_blank")
+        else{
+          window.open(link, "_self");
+        }
       }}
-      style={{
-        margin: "5px",
-        padding: "10px 20px",
-        backgroundColor: "#007BFF",
-        color: "#FFF",
-        border: "none",
-        borderRadius: "5px",
-        cursor: "pointer",
-        transition: "all 0.3s ease",
-      }}
-      onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#0056b3")}
-      onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "#007BFF")}
-      onMouseDown={(e) => (e.currentTarget.style.transform = "scale(0.95)")}
-      onMouseUp={(e) => (e.currentTarget.style.transform = "scale(1)")}
+      className="m-1 px-5 py-2 bg-blue-500 text-white rounded-md transition-transform duration-300 ease-in-out hover:bg-blue-700 active:scale-95"
     >
       {label}
     </button>
@@ -40,14 +30,8 @@ function Button({ label, link }: ButtonGroup) {
 function ButtonGroup({ buttons }: ButtonGroupProps) {
   return (
     <div
-      style={{
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        flexWrap: "wrap",
-        gap: "10px",
-      }}
-    >
+      className="flex justify-center items-center flex-wrap gap-2"
+      >
       {buttons.map((button, index) => (
         <Button key={index} {...button} />
       ))}

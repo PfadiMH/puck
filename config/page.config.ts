@@ -3,7 +3,9 @@ import type { TextProps } from "@components/Text";
 import { textConfig } from "@components/Text";
 import { heroConfig } from "@components/Hero";
 import type { HeroProps } from "@components/Hero";
-import { ButtonGroupProps, buttonGroupConfig } from "@components/ButtonGroup";
+import type { ButtonGroupProps } from "@components/ButtonGroup";
+import { buttonGroupConfig } from "@components/ButtonGroup";
+
 
 type Props = {
     Text: TextProps;
