@@ -1,3 +1,5 @@
+import clsx from "clsx";
+import { poppins, rockingsodaPlus } from "@lib/fonts";
 import "./styles.css";
 
 export default function RootLayout({
@@ -7,7 +9,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body className={clsx(rockingsodaPlus.variable, poppins.variable)}>
+        {children}
+      </body>
     </html>
   );
 }
