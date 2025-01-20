@@ -1,6 +1,4 @@
 import { ComponentConfig } from '@measured/puck';
-import { match } from 'assert';
-import { kMaxLength } from 'buffer';
 import React from 'react';
 
 export type IFrameProps = {
