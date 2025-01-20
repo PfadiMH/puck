@@ -1,5 +1,6 @@
 import { ComponentConfig } from "@measured/puck";
 import React from "react";
+import { Style } from "util";
 
 export type TextProps = {
   text: string;
