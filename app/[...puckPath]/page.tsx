@@ -26,6 +26,10 @@ export async function generateMetadata({
   const path = `/${puckPath.join("/")}`;
   const page = await getPage(path);
 
+  if (!page) {
+    return {};
+  }
+
   return {
     title: page.root.props?.title,
   };
