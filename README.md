@@ -9,6 +9,31 @@ The `next` recipe showcases one of the most powerful ways to implement Puck usin
 - Catch-all routes to use puck for any route on the platform
 - Incremental static regeneration (ISR) for all Puck pages
 
+## Prerequisites
+
+- Bun
+
+  ### Installation
+
+  #### MacOS/Linux
+
+  ```bash
+  curl -fsSL https://bun.sh/install | bash
+  ```
+
+  #### Windows
+
+  ```bash
+  powershell -c "irm bun.sh/install.ps1|iex"
+  ```
+
+## Clone Repository
+
+```bash
+git clone https://github.com/PfadiMH/puck.git
+cd puck/
+```
+
 ## Install dependencies
 
 ```bash
