@@ -3,6 +3,7 @@
 import type { Data } from "@measured/puck";
 import { Puck } from "@measured/puck";
 import config from "@config/page.config";
+import { savePage } from "@lib/database";
 
 export function Client({ path, data }: { path: string; data: Partial<Data> }) {
   return (
@@ -10,10 +11,7 @@ export function Client({ path, data }: { path: string; data: Partial<Data> }) {
       config={config}
       data={data}
       onPublish={async (data) => {
-        await fetch("/puck/api", {
-          method: "post",
-          body: JSON.stringify({ data, path }),
-        });
+        await savePage(path, data);
       }}
     />
   );
