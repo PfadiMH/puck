@@ -1,14 +1,15 @@
 import type { Config } from "@measured/puck";
-import { textConfig } from "@components/Text";
-import type { TextProps } from "@components/Text";
-import { heroConfig } from "@components/Hero";
-import type { HeroProps } from "@components/Hero";
-import { verticalSpaceConfig } from "@components/VerticalSpace";
-import type { VerticalSpaceProps } from "@components/VerticalSpace";
-import { flexConfig } from "@components/Flex";
-import { FlexProps } from "@components/Flex";
+import { textConfig, TextProps } from "@components/Text";
+import { formGroupConfig, FormGroupProps } from "@components/FormGroup";
+import { heroConfig, HeroProps } from "@components/Hero";
+import {
+  verticalSpaceConfig,
+  VerticalSpaceProps,
+} from "@components/VerticalSpace";
+import { flexConfig, FlexProps } from "@components/Flex";
 
 type Props = {
+  FormGroup: FormGroupProps;
   Text: TextProps;
   Hero: HeroProps;
   VerticalSpace: VerticalSpaceProps;
@@ -17,6 +18,7 @@ type Props = {
 
 export const config: Config<Props> = {
   components: {
+    FormGroup: formGroupConfig,
     Text: textConfig,
     Hero: heroConfig,
     VerticalSpace: verticalSpaceConfig,
