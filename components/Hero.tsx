@@ -2,7 +2,7 @@ import { ComponentConfig } from "@measured/puck";
 import Image from "next/image";
 import React from "react";
 import { SectionDivider } from "../Assets/SectionDivider";
-
+import { uploadFile } from "@components/customFields/uploadFile";
 
 export type HeroProps = {
   title: string;
@@ -17,20 +17,21 @@ function Hero({ title, url }: HeroProps) {
           fill
           src={url}
           alt="Hero Image"
-          objectFit="cover"
+          style={{ objectFit: "cover" }}
         />
       )}
       {title && (
         <>
-          <h1 className="text-4xl font-bold text-center z-10 text-white">{title}</h1>
+          <h1 className="text-4xl font-bold text-center z-10 text-white">
+            {title}
+          </h1>
           <div className="bg-black opacity-15 absolute z-5 w-full h-full" />
         </>
       )}
       <SectionDivider fill={"#210002"} className="z-20 absolute bottom-0" />
     </div>
-  )
+  );
 }
-
 
 export const heroConfig: ComponentConfig<HeroProps> = {
   render: Hero,
@@ -39,9 +40,6 @@ export const heroConfig: ComponentConfig<HeroProps> = {
       type: "text",
       label: "Title (Optional)",
     },
-    url: {
-      type: "text",
-      label: "Image URL",
-    },
+    url: uploadFile,
   },
 };
