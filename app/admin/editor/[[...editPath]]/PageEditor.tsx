@@ -5,6 +5,7 @@ import { Puck } from "@measured/puck";
 import pageConfig from "@config/page.config";
 import { deletePage, savePage } from "@lib/database";
 import { ReactNode } from "react";
+import { sectionThemedConfig } from "@lib/sectionTheming";
 
 function HeaderActions({
   path,

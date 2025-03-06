@@ -1,5 +1,6 @@
 import React from "react";
-import { Data, Render } from "@measured/puck";
+import { Render } from "@measured/puck/rsc";
+import type { Data } from "@measured/puck";
 import type navbarConfig from "@config/navbar.config";
 import type pageConfig from "@config/page.config";
 import type footerConfig from "@config/footer.config";

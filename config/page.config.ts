@@ -11,17 +11,25 @@ import { iframeConfig } from "@components/IFrame";
 import type { IFrameProps } from "@components/IFrame";
 import { flexConfig } from "@components/Flex";
 import { FlexProps } from "@components/Flex";
+import {
+  sectionDividerConfig,
+  SectionDividerProps,
+} from "@components/SectionDivider";
+import { sectionThemedConfig } from "@lib/sectionTheming";
 
-type Props = {
+export type PageProps = {
   Heading: HeadingProps;
   Text: TextProps;
   Hero: HeroProps;
   VerticalSpace: VerticalSpaceProps;
   Flex: FlexProps;
   IFrame: IFrameProps;
+  SectionDivider: SectionDividerProps;
 };
 
-export const config: Config<Props> = {
+export type PageConfig = Config<PageProps, {}>;
+
+export const config: PageConfig = sectionThemedConfig({
   components: {
     Heading: headingConfig,
     Text: textConfig,
@@ -29,7 +37,8 @@ export const config: Config<Props> = {
     VerticalSpace: verticalSpaceConfig,
     Flex: flexConfig,
     IFrame: iframeConfig,
-  },
-};
+    SectionDivider: sectionDividerConfig,
+  }
+});
 
 export default config;

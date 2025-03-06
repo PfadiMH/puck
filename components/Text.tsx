@@ -1,12 +1,15 @@
 import { ComponentConfig } from "@measured/puck";
 import React from "react";
+import { getSectionTheme } from "./contexts/ServerSectionThemeContext";
 
 export type TextProps = {
   text: string;
 };
 
 function Text({ text }: TextProps) {
-  return <p className="font-sans text-wrap my-3">{text}</p>;
+  const theme = getSectionTheme();
+  
+  return <p className="font-sans text-wrap my-3">{text} theme: {theme}</p>;
 }
 
 export const textConfig: ComponentConfig<TextProps> = {
