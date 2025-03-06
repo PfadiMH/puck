@@ -3,8 +3,8 @@ import { ComponentConfig, Data, WithId, WithPuckProps } from "@measured/puck";
 import { PropsWithChildren } from "react";
 import { mapObjectEntries } from "./util";
 import PuckSectionThemeUpdater from "@components/PuckSectionThemeUpdater";
-import { ClientSectionThemeProvider } from "@components/contexts/ClientSectionThemeContext";
-import { ServerSectionThemeProvider } from "@components/contexts/ServerSectionThemeContext";
+import { SectionThemeProvider } from "@components/contexts/SectionThemeContext";
+import SectionThemedComponent from "@components/SectionThemedComponent";
 
 type PageData = Data<PageProps>;
 
@@ -15,7 +15,7 @@ export function applySectionTheming(data: PageData): {
   didChange: boolean;
 } {
   // Alternate between sun and mud themes for each section, divided by the SectionDivider component
-  let theme = "sun";
+  let theme = "mud";
   const newContent = [];
   let didChange = false;
 
@@ -46,31 +46,20 @@ function RootRender<Props extends PropsWithChildren>({
 function sectionThemedComponentConfig(
   config: ComponentConfig
 ): ComponentConfig {
-  const SectionThemedComponent = <Props extends { theme?: Theme }>({
+  const SectionThemedRender = <Props extends { theme?: Theme }>({
     theme,
     ...props
   }: WithId<WithPuckProps<Props>>) => {
-    const isEditing = props.puck.isEditing;
-    const SectionThemeProvider = isEditing ? ClientSectionThemeProvider : ServerSectionThemeProvider
     return (
-      <fieldset
-        style={{
-          border: "1px solid purple",
-          margin: "1rem",
-          padding: "1rem",
-        }}
-      >
-        <legend>SectionThemedComponent, theme: {theme}</legend>
-        <SectionThemeProvider theme={theme}>
-          <config.render {...props} />
-        </SectionThemeProvider>
-      </fieldset>
+      <SectionThemedComponent theme={theme}>
+        <config.render {...props} />
+      </SectionThemedComponent>
     );
   };
 
   return {
     ...config,
-    render: SectionThemedComponent,
+    render: SectionThemedRender,
   };
 }
 
@@ -83,7 +72,7 @@ export function sectionThemedConfig(config: PageConfig): PageConfig {
     },
     components: mapObjectEntries(config.components, <T,>([key, value]) => [
       key,
-      key === "SectionDivider" ? value : sectionThemedComponentConfig(value),
+      sectionThemedComponentConfig(value),
     ]),
   };
 }

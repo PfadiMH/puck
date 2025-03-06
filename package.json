@@ -10,7 +10,6 @@
   },
   "dependencies": {
     "@measured/puck": "^0.18.2",
-    "@nimpl/context": "^1.0.0",
     "classnames": "^2.3.2",
     "clsx": "^2.1.1",
     "next": "^14.2.11",

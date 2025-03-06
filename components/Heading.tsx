@@ -11,7 +11,7 @@ export type HeadingProps = {
 function Heading({ text, textAlign, level }: HeadingProps) {
   let heading = createElement(
     level,
-    { style: { textAlign }, className: "text-wrap my-3" },
+    { style: { textAlign }, className: "text-wrap" },
     text
   );
   return heading;

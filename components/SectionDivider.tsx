@@ -1,10 +1,11 @@
 import { ComponentConfig } from "@measured/puck";
 import React from "react";
+import { ThemeBreak } from "./SectionBreakSvgs";
 
 export type SectionDividerProps = {};
 
 function SectionDivider({}: SectionDividerProps) {
-  return <div>SectionDivider</div>;
+  return <ThemeBreak />;
 }
 
 export const sectionDividerConfig: ComponentConfig<SectionDividerProps> = {
