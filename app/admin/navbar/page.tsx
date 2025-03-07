@@ -1,8 +1,7 @@
-import React from "react";
+import { getNavbar } from "@lib/database";
 import "@measured/puck/puck.css";
-import { NavbarEditor } from "./NavbarEditor";
-import { getNavbar, getPage } from "@lib/database";
 import { Metadata } from "next";
+import { NavbarEditor } from "./NavbarEditor";
 
 export async function generateMetadata(): Promise<Metadata> {
   return {

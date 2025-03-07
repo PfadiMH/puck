@@ -32,7 +32,10 @@ export const uploadFile: CustomField = {
             }
           }}
         />
-        <label htmlFor={props.id} className="flex flex-col items-center justify-center w-full h-full">
+        <label
+          htmlFor={props.id}
+          className="flex flex-col items-center justify-center w-full h-full"
+        >
           <svg
             className="w-12 h-12 text-gray-400"
             fill="none"
@@ -47,11 +50,17 @@ export const uploadFile: CustomField = {
               d="M3 7l6 6m0 0l6-6m-6 6V3"
             ></path>
           </svg>
-          <span className="mt-2 text-sm text-gray-600">Drag & drop or click to upload</span>
+          <span className="mt-2 text-sm text-gray-600">
+            Drag & drop or click to upload
+          </span>
         </label>
         {props.value && (
           <div className="mt-4">
-            <img src={props.value} alt="Uploaded file" className="max-w-full h-auto rounded-lg" />
+            <img
+              src={props.value}
+              alt="Uploaded file"
+              className="max-w-full h-auto rounded-lg"
+            />
           </div>
         )}
       </div>

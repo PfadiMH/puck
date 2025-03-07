@@ -1,9 +1,9 @@
+import PuckSectionThemeUpdater from "@components/PuckSectionThemeUpdater";
+import SectionThemedComponent from "@components/SectionThemedComponent";
 import { PageConfig, PageProps } from "@config/page.config";
 import { ComponentConfig, Data, WithId, WithPuckProps } from "@measured/puck";
 import { PropsWithChildren } from "react";
 import { mapObjectEntries } from "./util";
-import PuckSectionThemeUpdater from "@components/PuckSectionThemeUpdater";
-import SectionThemedComponent from "@components/SectionThemedComponent";
 
 type PageData = Data<PageProps>;
 

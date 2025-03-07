@@ -1,8 +1,7 @@
-import React from "react";
+import { getFooter } from "@lib/database";
 import "@measured/puck/puck.css";
-import { FooterEditor } from "./FooterEditor";
-import { getFooter, getNavbar, getPage } from "@lib/database";
 import { Metadata } from "next";
+import { FooterEditor } from "./FooterEditor";
 
 export async function generateMetadata(): Promise<Metadata> {
   return {

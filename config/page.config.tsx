@@ -1,21 +1,20 @@
-import { resolveAllData, type Config } from "@measured/puck";
-import { textConfig } from "@components/Text";
-import type { TextProps } from "@components/Text";
-import { heroConfig } from "@components/Hero";
-import type { HeroProps } from "@components/Hero";
+import { flexConfig, FlexProps } from "@components/Flex";
 import type { HeadingProps } from "@components/Heading";
 import { headingConfig } from "@components/Heading";
-import { verticalSpaceConfig } from "@components/VerticalSpace";
-import type { VerticalSpaceProps } from "@components/VerticalSpace";
-import { iframeConfig } from "@components/IFrame";
+import type { HeroProps } from "@components/Hero";
+import { heroConfig } from "@components/Hero";
 import type { IFrameProps } from "@components/IFrame";
-import { flexConfig } from "@components/Flex";
-import { FlexProps } from "@components/Flex";
+import { iframeConfig } from "@components/IFrame";
 import {
   sectionDividerConfig,
   SectionDividerProps,
 } from "@components/SectionDivider";
+import type { TextProps } from "@components/Text";
+import { textConfig } from "@components/Text";
+import type { VerticalSpaceProps } from "@components/VerticalSpace";
+import { verticalSpaceConfig } from "@components/VerticalSpace";
 import { sectionThemedConfig } from "@lib/sectionTheming";
+import { type Config } from "@measured/puck";
 
 export type PageProps = {
   Heading: HeadingProps;
@@ -38,7 +37,7 @@ export const config: PageConfig = sectionThemedConfig({
     Flex: flexConfig,
     IFrame: iframeConfig,
     SectionDivider: sectionDividerConfig,
-  }
+  },
 });
 
 export default config;

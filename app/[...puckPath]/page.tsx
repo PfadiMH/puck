@@ -10,12 +10,12 @@
  * will invalidate the cache as the page is written in /api/puck/route.ts
  */
 
-import { notFound } from "next/navigation";
-import { Metadata } from "next";
 import PuckPage from "@components/PageRender";
-import { getFooter, getNavbar, getPage } from "@lib/database";
-import pageConfig from "@config/page.config";
 import footerConfig from "@config/footer.config";
+import pageConfig from "@config/page.config";
+import { getFooter, getNavbar, getPage } from "@lib/database";
+import { Metadata } from "next";
+import { notFound } from "next/navigation";
 
 export async function generateMetadata({
   params: { puckPath = [] },
