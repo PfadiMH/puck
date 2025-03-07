@@ -1,15 +1,34 @@
-import type { Config } from "@measured/puck";
-import type { TextProps } from "@components/Text";
-import { textConfig } from "@components/Text";
+import {
+  navbarDropdownConfig,
+  NavbarDropdownProps,
+} from "@components/Navbar/NavbarDropdown";
+import {
+  navbarItemConfig,
+  NavbarItemProps,
+} from "@components/Navbar/NavbarItem";
+import { uploadFile } from "@components/customFields/uploadFile";
+import type { Config, Data } from "@measured/puck";
 
 type NavbarProps = {
-  Text: TextProps;
+  NavbarItem: NavbarItemProps;
+  NavbarDropdown: NavbarDropdownProps;
 };
 
-const navbarConfig: Config<NavbarProps> = {
+type RootProps = {
+  logo?: string;
+};
+
+const navbarConfig: Config<NavbarProps, RootProps> = {
+  root: {
+    fields: {
+      logo: uploadFile,
+    },
+  },
   components: {
-    Text: textConfig,
+    NavbarItem: navbarItemConfig,
+    NavbarDropdown: navbarDropdownConfig,
   },
 };
 
+export type NavbarData = Data<NavbarProps, RootProps>;
 export default navbarConfig;

@@ -1,10 +1,10 @@
 "use client";
 
+import footerConfig from "@config/footer.config";
+import { saveFooter } from "@lib/database";
 import type { Data } from "@measured/puck";
 import { Puck } from "@measured/puck";
-import { saveFooter, saveNavbar } from "@lib/database";
 import { ReactNode } from "react";
-import footerConfig from "@config/footer.config";
 
 function HeaderActions({ children }: { children: ReactNode }) {
   return (

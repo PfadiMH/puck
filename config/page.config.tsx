@@ -1,4 +1,4 @@
-import type { Config } from "@measured/puck";
+import { resolveAllData, type Config } from "@measured/puck";
 import { textConfig } from "@components/Text";
 import type { TextProps } from "@components/Text";
 import { heroConfig } from "@components/Hero";
