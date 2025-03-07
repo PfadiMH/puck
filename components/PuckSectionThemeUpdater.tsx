@@ -3,8 +3,12 @@
 import { PageConfig } from "@config/page.config";
 import { applySectionTheming } from "@lib/sectionTheming";
 import { usePuck } from "@measured/puck";
-import React, { PropsWithChildren, useEffect, useMemo } from "react";
+import { PropsWithChildren, useEffect, useMemo } from "react";
 
+/**
+ * In the editor, updates Puck state with section themes, alternating based on
+ * `SectionDivider` components, dispatching only when a change is required.
+ */
 function PuckSectionThemeUpdater({ children }: PropsWithChildren<{}>) {
   const {
     appState: { data },

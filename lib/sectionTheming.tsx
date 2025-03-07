@@ -3,13 +3,17 @@ import { ComponentConfig, Data, WithId, WithPuckProps } from "@measured/puck";
 import { PropsWithChildren } from "react";
 import { mapObjectEntries } from "./util";
 import PuckSectionThemeUpdater from "@components/PuckSectionThemeUpdater";
-import { SectionThemeProvider } from "@components/contexts/SectionThemeContext";
 import SectionThemedComponent from "@components/SectionThemedComponent";
 
 type PageData = Data<PageProps>;
 
 export type Theme = "sun" | "mud";
 
+/**
+ * This function takes a page data object and applies section theming to it. It
+ * alternates between sun and mud themes for each section, divided by the
+ * `SectionDivider` component.
+ */
 export function applySectionTheming(data: PageData): {
   data: PageData;
   didChange: boolean;
@@ -43,6 +47,10 @@ function RootRender<Props extends PropsWithChildren>({
   return <>{children}</>;
 }
 
+/**
+ * This function wraps a component render function in a `SectionThemedComponent`
+ * that applies and provides the theme context.
+ */
 function sectionThemedComponentConfig(
   config: ComponentConfig
 ): ComponentConfig {
@@ -63,6 +71,11 @@ function sectionThemedComponentConfig(
   };
 }
 
+/**
+ * This function takes a page config and returns a new page config with
+ * modifications to add a root render function and wrap each component render
+ * function in a `SectionThemedComponent`.
+ */
 export function sectionThemedConfig(config: PageConfig): PageConfig {
   return {
     ...config,

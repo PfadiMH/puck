@@ -9,6 +9,10 @@ export const SectionThemeContext = createContext<{
   theme: "mud",
 });
 
+/**
+ * Hook to access the current section theme. Note that this can only be used in
+ * client components with the `"use client"` pragma.
+ */
 export const useSectionTheme = () => useContext(SectionThemeContext).theme;
 
 export const SectionThemeProvider = ({
