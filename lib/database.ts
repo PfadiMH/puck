@@ -1,11 +1,12 @@
 "use server";
 
+import { NavbarData } from "@config/navbar.config";
 import { Data } from "@measured/puck";
 import fs from "fs/promises";
 import { revalidatePath } from "next/cache";
 
 interface DatabaseData {
-  navbar: Data;
+  navbar: NavbarData;
   page: Record<string, Data>;
   footer: Data;
 }
@@ -34,14 +35,14 @@ export async function getPage(path: string): Promise<Data | undefined> {
   return db.page[path];
 }
 
-export async function saveNavbar(data: Data) {
+export async function saveNavbar(data: NavbarData) {
   const db = await getDatabase();
   db.navbar = data;
   await fs.writeFile("database.json", JSON.stringify(db));
   revalidatePath("/", "layout");
 }
 
-export async function getNavbar(): Promise<Data | undefined> {
+export async function getNavbar(): Promise<NavbarData | undefined> {
   const db = await getDatabase();
   return db.navbar;
 }

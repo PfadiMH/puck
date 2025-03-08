@@ -1,6 +1,6 @@
-import React, { PropsWithChildren } from "react";
-import { SectionThemeProvider } from "./contexts/SectionThemeContext";
 import { Theme } from "@lib/sectionTheming";
+import { PropsWithChildren } from "react";
+import { SectionThemeProvider } from "./contexts/SectionThemeContext";
 
 function SectionThemedComponent({
   children,

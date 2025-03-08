@@ -1,7 +1,7 @@
 "use client";
 import { deletePage, getAllPaths } from "@lib/database";
-import React, { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
+import { useCallback, useEffect, useState } from "react";
 
 export default function Page() {
   const [pages, setPages] = useState<string[]>([]);

@@ -1,5 +1,5 @@
-import clsx from "clsx";
 import { poppins, rockingsodaPlus } from "@lib/fonts";
+import clsx from "clsx";
 import "./styles.css";
 
 export default function RootLayout({

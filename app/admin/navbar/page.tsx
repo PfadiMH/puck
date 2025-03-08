@@ -1,8 +1,7 @@
-import React from "react";
+import { getNavbar } from "@lib/database";
 import "@measured/puck/puck.css";
-import { NavbarEditor } from "./NavbarEditor";
-import { getNavbar, getPage } from "@lib/database";
 import { Metadata } from "next";
+import { NavbarEditor } from "./NavbarEditor";
 
 export async function generateMetadata(): Promise<Metadata> {
   return {
@@ -11,7 +10,9 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function Page() {
-  const data = await getNavbar();
-
+  const data = (await getNavbar()) ?? {
+    root: { props: { logo: undefined } },
+    content: [],
+  };
   return <NavbarEditor data={data} />;
 }
