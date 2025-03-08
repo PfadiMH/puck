@@ -7,6 +7,19 @@ export type NavbarComponentsProps = {
 };
 
 function splitData(data: NavbarData) {
+  if (!data || !data.content || !Array.isArray(data.content)) {
+    return {
+      leftItems: {
+        ...data,
+        content: [],
+      },
+      rightItems: {
+        ...data,
+        content: [],
+      },
+    };
+  }
+
   const halfLength = Math.ceil(data.content.length / 2);
   return {
     leftItems: {

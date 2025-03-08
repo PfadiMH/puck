@@ -10,7 +10,9 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function Page() {
-  const data = await getNavbar();
-
+  const data = (await getNavbar()) ?? {
+    root: { props: { logo: undefined } },
+    content: [],
+  };
   return <NavbarEditor data={data} />;
 }

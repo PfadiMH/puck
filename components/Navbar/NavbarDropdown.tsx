@@ -75,7 +75,7 @@ export const navbarDropdownConfig: ComponentConfig<NavbarDropdownProps> = {
     },
     items: {
       type: "array",
-      getItemSummary: (item) => item.title,
+      getItemSummary: (item) => item.title || "Empty Item",
       arrayFields: {
         title: {
           type: "text",

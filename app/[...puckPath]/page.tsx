@@ -30,7 +30,7 @@ export async function generateMetadata({
   }
 
   return {
-    title: page.root.props?.title,
+    title: page.root.props?.title || "Default Title",
   };
 }
 
@@ -46,8 +46,14 @@ export default async function Page({
     return notFound();
   }
 
-  const navbarData = await getNavbar();
-  const footerData = await getFooter();
+  const navbarData = (await getNavbar()) ?? {
+    root: { props: { logo: undefined } },
+    content: [],
+  };
+  const footerData = (await getFooter()) ?? {
+    root: { props: {} },
+    content: [],
+  };
 
   return (
     <PuckPage

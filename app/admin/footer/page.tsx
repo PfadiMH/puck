@@ -10,7 +10,7 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function Page() {
-  const data = await getFooter();
+  const data = (await getFooter()) ?? { root: { props: {} }, content: [] };
 
   return <FooterEditor data={data} />;
 }
