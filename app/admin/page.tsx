@@ -131,6 +131,9 @@ export default function Page() {
             </div>
           ))}
         </div>
+        {pages.length === 0 && (
+          <p>No pages found. Create a new page to get started.</p>
+        )}
       </div>
     </div>
   );
