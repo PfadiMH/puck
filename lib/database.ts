@@ -1,64 +1,68 @@
-"use server";
-
 import { Data } from "@measured/puck";
-import fs from "fs/promises";
-import { revalidatePath } from "next/cache";
+import { JsonService } from "./json";
+import { MongoService } from "./mongo";
 
-interface DatabaseData {
-  navbar: Data;
-  page: Record<string, Data>;
-  footer: Data;
+export interface DatabaseService {
+  savePage(path: string, data: Data): Promise<void>;
+  deletePage(path: string): Promise<void>;
+  getPage(path: string): Promise<Data | undefined>;
+  saveNavbar(data: Data): Promise<void>;
+  getNavbar(): Promise<Data | undefined>;
+  saveFooter(data: Data): Promise<void>;
+  getFooter(): Promise<Data | undefined>;
+  getAllPaths(): Promise<string[]>;
 }
 
-async function getDatabase(): Promise<DatabaseData> {
-  const dbFile = await fs.readFile("database.json", "utf-8");
-  return JSON.parse(dbFile);
+export function getDatabaseService(): DatabaseService {
+  const databaseType = process.env.DATABASE_TYPE;
+
+  if (databaseType === "mongodb") {
+    const connectionString = process.env.MONGODB_CONNECTION_STRING;
+    const dbName = process.env.MONGODB_DB_NAME;
+
+    if (!connectionString || !dbName) {
+      console.warn(
+        "MONGODB_CONNECTION_STRING or MONGODB_DB_NAME environment variables not set. Defaulting to JSON storage."
+      );
+    } else {
+      return new MongoService(connectionString, dbName);
+    }
+  }
+
+  // Default to JSON storage
+  return new JsonService("database.json");
 }
+
+const dbService = getDatabaseService();
 
 export async function savePage(path: string, data: Data) {
-  const db = await getDatabase();
-  db.page[path] = data;
-  await fs.writeFile("database.json", JSON.stringify(db));
-  revalidatePath(path);
+  return dbService.savePage(path, data);
 }
 
 export async function deletePage(path: string) {
-  const db = await getDatabase();
-  delete db.page[path];
-  await fs.writeFile("database.json", JSON.stringify(db));
-  revalidatePath(path);
+  return dbService.deletePage(path);
 }
 
 export async function getPage(path: string): Promise<Data | undefined> {
-  const db = await getDatabase();
-  return db.page[path];
+  return dbService.getPage(path);
 }
 
 export async function saveNavbar(data: Data) {
-  const db = await getDatabase();
-  db.navbar = data;
-  await fs.writeFile("database.json", JSON.stringify(db));
-  revalidatePath("/", "layout");
+  return dbService.saveNavbar(data);
 }
 
 export async function getNavbar(): Promise<Data | undefined> {
-  const db = await getDatabase();
-  return db.navbar;
+  return dbService.getNavbar();
 }
 
 export async function saveFooter(data: Data) {
-  const db = await getDatabase();
-  db.footer = data;
-  await fs.writeFile("database.json", JSON.stringify(db));
-  revalidatePath("/", "layout");
+  return dbService.saveFooter(data);
 }
 
 export async function getFooter(): Promise<Data | undefined> {
-  const db = await getDatabase();
-  return db.footer;
+  return dbService.getFooter();
 }
 
 export async function getAllPaths() {
-  const db = await getDatabase();
-  return Object.keys(db.page);
+  return dbService.getAllPaths();
 }

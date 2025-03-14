@@ -10,23 +10,20 @@ export default function Page() {
   const router = useRouter();
 
   const loadPages = useCallback(async () => {
-    const fetchedPages = await getAllPaths();
-    setPages(fetchedPages);
-  }, []);
-
-  useEffect(() => {
-    loadPages();
-  }, [loadPages]);
-
-  const onDeleteClick = useCallback(
-    async (page: string) => {
-      if (confirm(`Are you sure you want to delete the page "${page}"?`)) {
-        await deletePage(page);
-        loadPages();
-      }
-    },
-    [loadPages]
-  );
++    const fetchedPages = await getAllPaths();
++    setPages(fetchedPages);
++  }, []);
++
++  useEffect(() => {
++    loadPages();
++  }, [loadPages]);
++
++  const onDeleteClick = useCallback(async (page: string) => {
++    if (confirm(`Are you sure you want to delete the page "${page}"?`)) {
++      await deletePage(page);
++      loadPages();
++    }
++  }, [loadPages]);
 
   const handleAddPageClick = () => {
     setIsModalOpen(true);

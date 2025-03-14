@@ -22,9 +22,9 @@ export default async function Page({
   params: { editPath: string[] };
 }) {
   const path = `/${editPath.join("/")}`;
-  const data = await getPage(path);
-
-  return <PageEditor path={path} data={data || {}} />;
-}
++  const data = await getPage(path);
++
+   return <PageEditor path={path} data={data || {}} />;
+ }
 
 export const dynamic = "force-dynamic";
