@@ -26,5 +26,3 @@ export default async function Page({ params }: { params: Params }) {
 
   return <PageEditor path={path} data={data} />;
 }
-
-export const dynamic = "force-dynamic";
