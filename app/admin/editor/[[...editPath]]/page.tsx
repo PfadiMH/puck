@@ -1,8 +1,9 @@
 import React from "react";
 import "@measured/puck/puck.css";
 import { PageEditor } from "./PageEditor";
-import { getPage } from "@lib/database";
+import { getPage } from "@lib/db/database";
 import { Metadata } from "next";
+import { defaultPageData } from "@config/page.config";
 
 export async function generateMetadata({
   params: { editPath = [] },
@@ -22,9 +23,9 @@ export default async function Page({
   params: { editPath: string[] };
 }) {
   const path = `/${editPath.join("/")}`;
-+  const data = await getPage(path);
-+
-   return <PageEditor path={path} data={data || {}} />;
- }
+  const data = await getPage(path) ?? defaultPageData;
+
+  return <PageEditor path={path} data={data} />;
+}
 
 export const dynamic = "force-dynamic";

@@ -2,8 +2,8 @@
 
 import type { Data } from "@measured/puck";
 import { Puck } from "@measured/puck";
-import pageConfig from "@config/page.config";
-import { deletePage, savePage } from "@lib/database";
+import { pageConfig } from "@config/page.config";
+import { deletePage, savePage } from "@lib/db/database";
 import { ReactNode } from "react";
 
 function HeaderActions({
@@ -44,13 +44,7 @@ function HeaderActions({
   );
 }
 
-export function PageEditor({
-  path,
-  data,
-}: {
-  path: string;
-  data: Partial<Data>;
-}) {
+export function PageEditor({ path, data }: { path: string; data: Data }) {
   return (
     <Puck
       config={pageConfig}

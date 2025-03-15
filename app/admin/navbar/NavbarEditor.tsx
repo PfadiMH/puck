@@ -1,10 +1,9 @@
 "use client";
 
-import type { Data } from "@measured/puck";
 import { Puck } from "@measured/puck";
-import { saveNavbar } from "@lib/database";
+import { saveNavbar } from "@lib/db/database";
 import { ReactNode } from "react";
-import navbarConfig from "@config/navbar.config";
+import { navbarConfig, NavbarData } from "@config/navbar.config";
 
 function HeaderActions({ children }: { children: ReactNode }) {
   return (
@@ -26,7 +25,7 @@ function HeaderActions({ children }: { children: ReactNode }) {
   );
 }
 
-export function NavbarEditor({ data }: { data: Partial<Data> }) {
+export function NavbarEditor({ data }: { data: NavbarData }) {
   return (
     <Puck
       config={navbarConfig}

@@ -1,15 +1,23 @@
-import type { Config } from "@measured/puck";
+import type { Config, Data } from "@measured/puck";
 import type { TextProps } from "@components/Text";
 import { textConfig } from "@components/Text";
 
-type FooterProps = {
+export type FooterProps = {
   Text: TextProps;
 };
+export type FooterRootProps = {};
+export type FooterConfig = Config<FooterProps, FooterRootProps>;
+export type FooterData = Data<FooterProps, FooterRootProps>;
 
-const footerConfig: Config<FooterProps> = {
+export const footerConfig: FooterConfig = {
   components: {
     Text: textConfig,
   },
 };
 
-export default footerConfig;
+export const defaultFooterData: FooterData = {
+  content: [],
+  root: {
+    props: {},
+  },
+};

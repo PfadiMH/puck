@@ -1,11 +1,9 @@
-import { PageConfig, PageProps } from "@config/page.config";
-import { ComponentConfig, Data, WithId, WithPuckProps } from "@measured/puck";
-import { PropsWithChildren } from "react";
+import { PageConfig, PageData } from "@config/page.config";
+import { WithId, WithPuckProps } from "@measured/puck";
+import { ComponentProps, PropsWithChildren } from "react";
 import { mapObjectEntries } from "./util";
 import PuckSectionThemeUpdater from "@components/PuckSectionThemeUpdater";
 import SectionThemedComponent from "@components/SectionThemedComponent";
-
-type PageData = Data<PageProps>;
 
 export type Theme = "sun" | "mud";
 
@@ -20,17 +18,20 @@ export function applySectionTheming(data: PageData): {
 } {
   // Alternate between sun and mud themes for each section, divided by the SectionDivider component
   let theme = "mud";
-  const newContent = [];
+  const newContent: PageData["content"] = [];
   let didChange = false;
 
   for (const item of data.content) {
     if (item.type === "SectionDivider") {
       theme = theme === "sun" ? "mud" : "sun";
     }
-    if (item.props["theme"] !== theme) {
+    if ("theme" in item.props && item.props["theme"] !== theme) {
       didChange = true;
     }
-    newContent.push({ ...item, props: { ...item.props, theme } });
+    newContent.push({
+      ...item,
+      props: { ...item.props, theme } as any, // Smelly workaround >_<
+    });
   }
 
   return { data: { ...data, content: newContent }, didChange };
@@ -51,15 +52,17 @@ function RootRender<Props extends PropsWithChildren>({
  * This function wraps a component render function in a `SectionThemedComponent`
  * that applies and provides the theme context.
  */
-function sectionThemedComponentConfig(
-  config: ComponentConfig
-): ComponentConfig {
-  const SectionThemedRender = <Props extends { theme?: Theme }>({
-    theme,
+function sectionThemedComponentConfig<K extends keyof PageConfig["components"]>(
+  config: PageConfig["components"][K]
+): PageConfig["components"][K] {
+  const SectionThemedRender = ({
     ...props
-  }: WithId<WithPuckProps<Props>>) => {
+  }: ComponentProps<typeof config.render> &
+    JSX.IntrinsicAttributes & {
+      theme?: Theme;
+    }) => {
     return (
-      <SectionThemedComponent theme={theme}>
+      <SectionThemedComponent theme={props.theme ?? "mud"}>
         <config.render {...props} />
       </SectionThemedComponent>
     );
@@ -83,9 +86,12 @@ export function sectionThemedConfig(config: PageConfig): PageConfig {
       ...config.root,
       render: RootRender,
     },
-    components: mapObjectEntries(config.components, <T,>([key, value]) => [
-      key,
-      sectionThemedComponentConfig(value),
-    ]),
+    components: mapObjectEntries(
+      config.components,
+      ([key, componentConfig]) => [
+        key,
+        sectionThemedComponentConfig(componentConfig),
+      ]
+    ),
   };
 }

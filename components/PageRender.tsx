@@ -1,17 +1,15 @@
-import React from "react";
-import { Render } from "@measured/puck/rsc";
-import type { Data } from "@measured/puck";
-import type navbarConfig from "@config/navbar.config";
-import type pageConfig from "@config/page.config";
-import type footerConfig from "@config/footer.config";
+import { Render } from "@measured/puck/dist/rsc";
+import type { NavbarConfig, NavbarData } from "@config/navbar.config";
+import type { PageConfig, PageData } from "@config/page.config";
+import type { FooterConfig, FooterData } from "@config/footer.config";
 
 export interface PageRenderProps {
-  navbarConfig: typeof navbarConfig;
-  navbarData: Data;
-  pageConfig: typeof pageConfig;
-  pageData: Data;
-  footerConfig: typeof footerConfig;
-  footerData: Data;
+  navbarConfig: NavbarConfig;
+  navbarData: NavbarData;
+  pageConfig: PageConfig;
+  pageData: PageData;
+  footerConfig: FooterConfig;
+  footerData: FooterData;
 }
 
 async function PageRender({

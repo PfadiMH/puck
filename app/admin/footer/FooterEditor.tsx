@@ -1,10 +1,9 @@
 "use client";
 
-import type { Data } from "@measured/puck";
 import { Puck } from "@measured/puck";
-import { saveFooter, saveNavbar } from "@lib/database";
+import { saveFooter } from "@lib/db/database";
 import { ReactNode } from "react";
-import footerConfig from "@config/footer.config";
+import { footerConfig, FooterData } from "@config/footer.config";
 
 function HeaderActions({ children }: { children: ReactNode }) {
   return (
@@ -26,7 +25,7 @@ function HeaderActions({ children }: { children: ReactNode }) {
   );
 }
 
-export function FooterEditor({ data }: { data: Partial<Data> }) {
+export function FooterEditor({ data }: { data: FooterData }) {
   return (
     <Puck
       config={footerConfig}
