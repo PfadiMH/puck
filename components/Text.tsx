@@ -1,12 +1,11 @@
 import { ComponentConfig } from "@measured/puck";
-import React from "react";
 
 export type TextProps = {
   text: string;
 };
 
 function Text({ text }: TextProps) {
-  return <p className="font-sans text-wrap">{text}</p>;
+  return <p className="text-wrap">{text}</p>;
 }
 
 export const textConfig: ComponentConfig<TextProps> = {

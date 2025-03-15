@@ -1,9 +1,15 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
 
-body {
-  margin: 0;
+@theme {
+  --font-rockingsoda: var(--rockingsoda);
+  --font-poppins: var(--poppins);
+
+  --color-background: var(--color-background);
+  --color-current: var(--color-current);
+  --color-primary: var(--color-primary);
+  --color-accent: var(--color-accent);
+  --color-brand-yellow: #f4d51f;
+  --color-brand-red: #be1622;
 }
 
 :root {
@@ -37,15 +43,17 @@ body {
 }
 
 @layer base {
+  /* This is needed because the font variables aren't available in @theme */
   body {
-    @apply mud-theme font-poppins bg-background;
+    --font-rockingsoda: var(--rockingsoda);
+    --font-poppins: var(--poppins);
   }
 
   h1,
   h2,
   h3,
   h4 {
-    @apply font-rockingsoda;
+    font-family: var(--rockingsoda);
   }
 
   h1 {

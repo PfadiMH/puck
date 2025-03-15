@@ -1,6 +1,6 @@
 import { ComponentConfig } from "@measured/puck";
-import { createElement } from "react";
 import { Property } from "csstype";
+import { createElement } from "react";
 
 export type HeadingProps = {
   text: string;
@@ -9,7 +9,7 @@ export type HeadingProps = {
 };
 
 function Heading({ text, textAlign, level }: HeadingProps) {
-  let heading = createElement(
+  const heading = createElement(
     level,
     { style: { textAlign }, className: "text-wrap" },
     text

@@ -1,6 +1,6 @@
 import { poppins, rockingsodaPlus } from "@lib/fonts";
 import clsx from "clsx";
-import "./styles.css";
+import "./globals.css";
 
 export default function RootLayout({
   children,
@@ -9,7 +9,13 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={clsx(rockingsodaPlus.variable, poppins.variable)}>
+      <body
+        className={clsx(
+          rockingsodaPlus.variable,
+          poppins.variable,
+          "font-poppins bg-background mud-theme"
+        )}
+      >
         {children}
       </body>
     </html>

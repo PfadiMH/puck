@@ -10,6 +10,7 @@
  * will invalidate the cache as the page is written in /api/puck/route.ts
  */
 
+
 import PageRender from "@components/PageRender";
 import { footerConfig } from "@config/footer.config";
 import { pageConfig } from "@config/page.config";
@@ -17,11 +18,14 @@ import { getFooter, getNavbar, getPage } from "@lib/db/database";
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
 
+type Params = Promise<{ puckPath: string[] }>;
+
 export async function generateMetadata({
-  params: { puckPath = [] },
+  params,
 }: {
-  params: { puckPath: string[] };
+  params: Params;
 }): Promise<Metadata> {
+  const { puckPath = [] } = await params;
   const path = `/${puckPath.join("/")}`;
   const page = await getPage(path);
 
@@ -34,11 +38,8 @@ export async function generateMetadata({
   };
 }
 
-export default async function Page({
-  params: { puckPath = [] },
-}: {
-  params: { puckPath: string[] };
-}) {
+export default async function Page({ params }: { params: Params }) {
+  const { puckPath = [] } = await params;
   const path = `/${puckPath.join("/")}`;
   const pageData = await getPage(path);
 

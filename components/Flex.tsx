@@ -1,11 +1,16 @@
-import { ComponentConfig, DropZone } from "@measured/puck";
+import { ComponentConfig, WithPuckProps } from "@measured/puck";
 
 export type FlexProps = {
   items: { minItemWidth?: number }[];
   minItemWidth: number;
 };
 
-function Flex({ items, minItemWidth }: FlexProps) {
+function Flex({
+  items,
+  minItemWidth,
+  puck: { renderDropZone },
+}: WithPuckProps<FlexProps>) {
+  const DropZone = renderDropZone;
   return (
     <div>
       {items.map((item, idx) => (

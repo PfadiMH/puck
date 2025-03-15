@@ -1,5 +1,5 @@
-import localFont from "next/font/local";
 import { Poppins } from "next/font/google";
+import localFont from "next/font/local";
 
 export const rockingsodaPlus = localFont({
   src: "./RockingsodaPlus-Regular.otf",

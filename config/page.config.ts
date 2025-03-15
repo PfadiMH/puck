@@ -14,14 +14,15 @@ import {
 import { sectionThemedConfig } from "@lib/sectionTheming";
 import type { Config, Data } from "@measured/puck";
 
+// @keep-sorted
 export type PageProps = {
-  Heading: HeadingProps;
-  Text: TextProps;
-  Hero: HeroProps;
-  VerticalSpace: VerticalSpaceProps;
   Flex: FlexProps;
+  Heading: HeadingProps;
+  Hero: HeroProps;
   IFrame: IFrameProps;
   SectionDivider: SectionDividerProps;
+  Text: TextProps;
+  VerticalSpace: VerticalSpaceProps;
 };
 export type PageRootProps = {
   title: string;
@@ -30,14 +31,15 @@ export type PageConfig = Config<PageProps, PageRootProps>;
 export type PageData = Data<PageProps, PageRootProps>;
 
 export const pageConfig: PageConfig = sectionThemedConfig({
+  // @keep-sorted
   components: {
-    Heading: headingConfig,
-    Text: textConfig,
-    Hero: heroConfig,
-    VerticalSpace: verticalSpaceConfig,
     Flex: flexConfig,
+    Heading: headingConfig,
+    Hero: heroConfig,
     IFrame: iframeConfig,
     SectionDivider: sectionDividerConfig,
+    Text: textConfig,
+    VerticalSpace: verticalSpaceConfig,
   },
 });
 

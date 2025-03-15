@@ -1,15 +1,17 @@
-import React from "react";
-import "@measured/puck/puck.css";
-import { PageEditor } from "./PageEditor";
-import { getPage } from "@lib/db/database";
-import { Metadata } from "next";
 import { defaultPageData } from "@config/page.config";
+import { getPage } from "@lib/db/database";
+import "@measured/puck/puck.css";
+import { Metadata } from "next";
+import { PageEditor } from "./PageEditor";
+
+type Params = Promise<{ editPath: string[] }>;
 
 export async function generateMetadata({
-  params: { editPath = [] },
+  params,
 }: {
-  params: { editPath: string[] };
+  params: Params;
 }): Promise<Metadata> {
+  const { editPath = [] } = await params;
   const path = `/${editPath.join("/")}`;
 
   return {
@@ -17,13 +19,10 @@ export async function generateMetadata({
   };
 }
 
-export default async function Page({
-  params: { editPath = [] },
-}: {
-  params: { editPath: string[] };
-}) {
+export default async function Page({ params }: { params: Params }) {
+  const { editPath = [] } = await params;
   const path = `/${editPath.join("/")}`;
-  const data = await getPage(path) ?? defaultPageData;
+  const data = (await getPage(path)) ?? defaultPageData;
 
   return <PageEditor path={path} data={data} />;
 }
