@@ -1,9 +1,9 @@
 "use client";
 
-import { Puck } from "@measured/puck";
-import { saveFooter } from "@lib/db/database";
-import { ReactNode } from "react";
 import { footerConfig, FooterData } from "@config/footer.config";
+import { saveFooter } from "@lib/db/database";
+import { Puck } from "@measured/puck";
+import { ReactNode } from "react";
 
 function HeaderActions({ children }: { children: ReactNode }) {
   return (

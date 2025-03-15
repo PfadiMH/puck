@@ -1,9 +1,9 @@
 "use client";
 
-import { Puck } from "@measured/puck";
-import { saveNavbar } from "@lib/db/database";
-import { ReactNode } from "react";
 import { navbarConfig, NavbarData } from "@config/navbar.config";
+import { saveNavbar } from "@lib/db/database";
+import { Puck } from "@measured/puck";
+import { ReactNode } from "react";
 
 function HeaderActions({ children }: { children: ReactNode }) {
   return (

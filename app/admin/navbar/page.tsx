@@ -1,7 +1,7 @@
-import "@measured/puck/puck.css";
-import { NavbarEditor } from "./NavbarEditor";
 import { getNavbar } from "@lib/db/database";
+import "@measured/puck/puck.css";
 import { Metadata } from "next";
+import { NavbarEditor } from "./NavbarEditor";
 
 export async function generateMetadata(): Promise<Metadata> {
   return {

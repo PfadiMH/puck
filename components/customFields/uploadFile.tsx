@@ -1,6 +1,6 @@
 import { CustomField } from "@measured/puck";
 
-type UploadFileProps = string;
+type UploadFileProps = string | undefined;
 
 export const uploadFile: CustomField<UploadFileProps> = {
   type: "custom",
