@@ -1,14 +1,13 @@
 "use client";
 import { NavbarDropdownGroupedProps } from "@components/Navbar/NavbarDropdown";
 import { NavbarDropdownArrowSvg } from "@components/Navbar/NavbarDropdownArrowSvg";
-import { WithPuckProps } from "@measured/puck";
 import { useState } from "react";
 
 export function NavbarDropdownMobile({
   label,
   groupedItems,
   editMode = false,
-}: WithPuckProps<NavbarDropdownGroupedProps>) {
+}: NavbarDropdownGroupedProps & { editMode?: boolean }) {
   const [open, setOpen] = useState(editMode);
   const toggleOpen = () => {
     setOpen((prevOpen) => !prevOpen);

@@ -37,7 +37,7 @@ export function NavbarDropdown({
       <NavbarDropdownMobile
         label={title}
         groupedItems={groupedItems}
-        {...props}
+        editMode={editMode}
       />
     );
   }
@@ -45,11 +45,7 @@ export function NavbarDropdown({
   return (
     <>
       <div className="md:hidden flex flex-col gap-1">
-        <NavbarDropdownMobile
-          label={title}
-          groupedItems={groupedItems}
-          {...props}
-        />
+        <NavbarDropdownMobile label={title} groupedItems={groupedItems} />
       </div>
       <div className="hidden md:block">
         <NavbarDropdownDesktop label={title} groupedItems={groupedItems} />
