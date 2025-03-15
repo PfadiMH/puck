@@ -1,7 +1,7 @@
+import { uploadFile } from "@components/customFields/uploadFile";
 import { ComponentConfig } from "@measured/puck";
 import Image from "next/image";
 import { SVGProps } from "react";
-import { uploadFile } from "@components/customFields/uploadFile";
 
 export const PostHeroSvg = (props: SVGProps<SVGSVGElement>) => (
   <svg
@@ -22,10 +22,10 @@ export const PostHeroSvg = (props: SVGProps<SVGSVGElement>) => (
 
 export type HeroProps = {
   title: string;
-  url: string;
+  backgroundImage?: string;
 };
 
-function Hero({ title, url }: HeroProps) {
+function Hero({ title, backgroundImage: url }: HeroProps) {
   return (
     <div className="w-full h-96 relative flex flex-col justify-center overflow-hidden items-center">
       {url && (
@@ -51,6 +51,6 @@ export const heroConfig: ComponentConfig<HeroProps> = {
       type: "text",
       label: "Title (Optional)",
     },
-    url: uploadFile,
+    backgroundImage: uploadFile,
   },
 };
