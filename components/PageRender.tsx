@@ -1,4 +1,4 @@
-import { Render } from "@measured/puck/dist/rsc";
+import { Render } from "@measured/puck/rsc";
 import type { NavbarConfig, NavbarData } from "@config/navbar.config";
 import type { PageConfig, PageData } from "@config/page.config";
 import type { FooterConfig, FooterData } from "@config/footer.config";
