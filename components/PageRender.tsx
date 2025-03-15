@@ -1,3 +1,4 @@
+// @ts-ignore - because for some reason it can't find the declaration file
 import { Render } from "@measured/puck/rsc";
 import type { NavbarConfig, NavbarData } from "@config/navbar.config";
 import type { PageConfig, PageData } from "@config/page.config";

@@ -1,22 +1,17 @@
 import { CustomField } from "@measured/puck";
 
-export const uploadFile: CustomField = {
+type UploadFileProps = string;
+
+export const uploadFile: CustomField<UploadFileProps> = {
   type: "custom",
   label: "Upload File",
-  render: (props: {
-    field: CustomField<{}>;
-    name: string;
-    id: string;
-    value: string;
-    onChange: (value: string) => void;
-    readOnly?: boolean;
-  }) => {
+  render: ({ id, onChange, value }) => {
     return (
       <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 flex flex-col items-center justify-center cursor-pointer hover:border-gray-400">
         <input
           type="file"
           className="hidden"
-          id={props.id}
+          id={id}
           onChange={(e) => {
             const file = e.target.files?.[0];
             if (file) {
@@ -26,13 +21,16 @@ export const uploadFile: CustomField = {
               }
               const reader = new FileReader();
               reader.onload = () => {
-                props.onChange(reader.result as string);
+                onChange(reader.result as string);
               };
               reader.readAsDataURL(file);
             }
           }}
         />
-        <label htmlFor={props.id} className="flex flex-col items-center justify-center w-full h-full">
+        <label
+          htmlFor={id}
+          className="flex flex-col items-center justify-center w-full h-full"
+        >
           <svg
             className="w-12 h-12 text-gray-400"
             fill="none"
@@ -47,11 +45,17 @@ export const uploadFile: CustomField = {
               d="M3 7l6 6m0 0l6-6m-6 6V3"
             ></path>
           </svg>
-          <span className="mt-2 text-sm text-gray-600">Drag & drop or click to upload</span>
+          <span className="mt-2 text-sm text-gray-600">
+            Drag & drop or click to upload
+          </span>
         </label>
-        {props.value && (
+        {value && (
           <div className="mt-4">
-            <img src={props.value} alt="Uploaded file" className="max-w-full h-auto rounded-lg" />
+            <img
+              src={value}
+              alt="Uploaded file"
+              className="max-w-full h-auto rounded-lg"
+            />
           </div>
         )}
       </div>
