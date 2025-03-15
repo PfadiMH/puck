@@ -1,9 +1,8 @@
-// @ts-ignore - because for some reason it can't find the declaration file
+import { NavbarRender } from "@components/Navbar/NavbarRender";
 import type { FooterConfig, FooterData } from "@config/footer.config";
 import type { NavbarData } from "@config/navbar.config";
 import type { PageConfig, PageData } from "@config/page.config";
 import { Render } from "@measured/puck";
-import { Navbar } from "./Navbar/Navbar";
 
 export interface PageRenderProps {
   navbarData: NavbarData;
@@ -22,7 +21,7 @@ async function PageRender({
 }: PageRenderProps) {
   return (
     <>
-      <Navbar data={navbarData} />
+      <NavbarRender data={navbarData} />
       <Render config={pageConfig} data={pageData} />
       <Render config={footerConfig} data={footerData} />
     </>

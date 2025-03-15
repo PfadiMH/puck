@@ -1,13 +1,14 @@
 "use client";
 import { NavbarDropdownGroupedProps } from "@components/Navbar/NavbarDropdown";
 import { NavbarDropdownArrowSvg } from "@components/Navbar/NavbarDropdownArrowSvg";
+import { WithPuckProps } from "@measured/puck";
 import { useState } from "react";
 
 export function NavbarDropdownMobile({
-  title,
+  label,
   groupedItems,
   editMode = false,
-}: NavbarDropdownGroupedProps & { editMode?: boolean }) {
+}: WithPuckProps<NavbarDropdownGroupedProps>) {
   const [open, setOpen] = useState(editMode);
   const toggleOpen = () => {
     setOpen((prevOpen) => !prevOpen);
@@ -18,7 +19,7 @@ export function NavbarDropdownMobile({
         onClick={toggleOpen}
         className="text-brand-yellow items-center gap-2 text-2xl font-rockingsoda bg-primary  w-full p-3 flex justify-center"
       >
-        {title}
+        {label}
         <NavbarDropdownArrowSvg
           invertRotationDirection={true}
           open={open}
@@ -42,7 +43,7 @@ export function NavbarDropdownMobile({
                   className="block text-center py-2"
                   href={item.url || undefined}
                 >
-                  {item.title}
+                  {item.label}
                 </a>
               ))}
             </div>

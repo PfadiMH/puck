@@ -1,4 +1,5 @@
 "use client";
+import { HamburgerIcon } from "@components/Navbar/NavbarHamburgerSvg";
 import { NavbarLogo } from "@components/Navbar/NavbarLogo";
 import ClickAwayListener from "@components/helperComponents/ClickAwayListener";
 import { NavbarData } from "@config/navbar.config";
@@ -9,17 +10,17 @@ export type NavbarComponentsProps = {
   data: NavbarData;
 };
 
-export function NavbarComponentsMobile({
+export function NavbarItemsMobile({
   navbarItems,
   data,
 }: NavbarComponentsProps) {
   const [open, setOpen] = useState(false);
-  const mobileButtonRef = useRef<HTMLButtonElement>(null);
+  const buttonRef = useRef<HTMLButtonElement>(null);
   const navbarOverlayId = useId();
 
   function handleClickAway(type: string, event: Event) {
     // Ignore clicks on the button
-    if (mobileButtonRef.current?.contains(event.target as Node)) return;
+    if (buttonRef.current?.contains(event.target as Node)) return;
 
     setOpen(false);
   }
@@ -35,7 +36,7 @@ export function NavbarComponentsMobile({
         )}
         <div className="flex items-center justify-end">
           <button
-            ref={mobileButtonRef}
+            ref={buttonRef}
             className="text-gray-500 w-10 h-10 relative mr-5 focus:outline-none border rounded-full border-dashed"
             onClick={() => setOpen(!open)}
             aria-expanded={open}
@@ -59,34 +60,5 @@ export function NavbarComponentsMobile({
         </div>
       )}
     </>
-  );
-}
-
-interface HamburgerIconProps {
-  open: boolean;
-}
-
-function HamburgerIcon({ open }: HamburgerIconProps) {
-  return (
-    <div className="block w-5 absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2">
-      <span
-        aria-hidden="true"
-        className={`block absolute h-0.5 w-5 bg-black transform transition duration-500 ease-in-out ${
-          open ? "rotate-45" : "-translate-y-1.5"
-        }`}
-      ></span>
-      <span
-        aria-hidden="true"
-        className={`block absolute h-0.5 w-5 bg-black transform transition duration-500 ease-in-out ${
-          open ? "opacity-0" : ""
-        }`}
-      ></span>
-      <span
-        aria-hidden="true"
-        className={`block absolute h-0.5 w-5 bg-black transform transition duration-500 ease-in-out ${
-          open ? "-rotate-45" : "translate-y-1.5"
-        }`}
-      ></span>
-    </div>
   );
 }

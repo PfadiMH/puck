@@ -5,7 +5,7 @@ export interface ImageComponentProps {
   title: string;
 }
 
-export function ImageComponent({ path, title }: ImageComponentProps) {
+export function StaticImage({ path, title }: ImageComponentProps) {
   return (
     <Image
       src={path}

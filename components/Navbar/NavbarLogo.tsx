@@ -1,4 +1,4 @@
-import { ImageComponent } from "@components/helperComponents/ImageComponent";
+import { StaticImage } from "@components/helperComponents/StaticImage";
 
 type NavbarLogoProps = {
   logo?: string;
@@ -10,7 +10,7 @@ export function NavbarLogo({ logo }: NavbarLogoProps) {
   return (
     <div className="relative z-20 w-28 h-28 mb-[-50px]">
       <a href="/" className="block rounded-full overflow-hidden w-full h-full">
-        <ImageComponent path={logo} title="logo" />
+        <StaticImage path={logo} title="logo" />
       </a>
     </div>
   );

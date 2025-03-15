@@ -33,7 +33,7 @@ function splitData(data: NavbarData) {
   };
 }
 
-export function NavbarComponentsDesktop({ data }: NavbarComponentsProps) {
+export function NavbarItemsDesktop({ data }: NavbarComponentsProps) {
   const { leftItems, rightItems } = splitData(data);
   const logo = data.root.props?.logo;
   return (

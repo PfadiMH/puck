@@ -1,9 +1,9 @@
 import { NavbarDropdownDesktop } from "@components/Navbar/NavbarDropdownDesktop";
 import { NavbarDropdownMobile } from "@components/Navbar/NavbarDropdownMobile";
-import { ComponentConfig } from "@measured/puck";
+import { ComponentConfig, WithPuckProps } from "@measured/puck";
 
 export interface NavbarDropdownItem {
-  title: string;
+  label: string;
   url?: string;
   groups_with?: string;
 }
@@ -16,8 +16,9 @@ export interface NavbarDropdownProps {
 export function NavbarDropdown({
   title,
   items,
-  editMode,
-}: NavbarDropdownProps) {
+  editMode = false,
+  ...props
+}: WithPuckProps<NavbarDropdownProps>) {
   if (!items) {
     if (editMode) {
       return (
@@ -29,7 +30,40 @@ export function NavbarDropdown({
     }
     return <></>;
   }
-  const groupedItems: NavbarDropdownItem[][] = items.reduce((groups, item) => {
+  const groupedItems = itemsToGroupedItems(items);
+
+  if (editMode) {
+    return (
+      <NavbarDropdownMobile
+        label={title}
+        groupedItems={groupedItems}
+        {...props}
+      />
+    );
+  }
+
+  return (
+    <>
+      <div className="md:hidden flex flex-col gap-1">
+        <NavbarDropdownMobile
+          label={title}
+          groupedItems={groupedItems}
+          {...props}
+        />
+      </div>
+      <div className="hidden md:block">
+        <NavbarDropdownDesktop label={title} groupedItems={groupedItems} />
+      </div>
+    </>
+  );
+}
+export type NavbarDropdownGroupedProps = {
+  label: string;
+  groupedItems: NavbarDropdownItem[][];
+};
+
+function itemsToGroupedItems(items: NavbarDropdownItem[]) {
+  return items.reduce((groups, item) => {
     if (
       groups.length === 0 ||
       groups[groups.length - 1][0].groups_with !== item.groups_with
@@ -40,32 +74,7 @@ export function NavbarDropdown({
     }
     return groups;
   }, [] as NavbarDropdownItem[][]);
-
-  if (editMode) {
-    return (
-      <NavbarDropdownMobile
-        title={title}
-        groupedItems={groupedItems}
-        editMode={true}
-      />
-    );
-  }
-
-  return (
-    <>
-      <div className="md:hidden flex flex-col gap-1">
-        <NavbarDropdownMobile title={title} groupedItems={groupedItems} />
-      </div>
-      <div className="hidden md:block">
-        <NavbarDropdownDesktop title={title} groupedItems={groupedItems} />
-      </div>
-    </>
-  );
 }
-export type NavbarDropdownGroupedProps = {
-  title: string;
-  groupedItems: NavbarDropdownItem[][];
-};
 
 export const navbarDropdownConfig: ComponentConfig<NavbarDropdownProps> = {
   render: NavbarDropdown,
@@ -75,9 +84,9 @@ export const navbarDropdownConfig: ComponentConfig<NavbarDropdownProps> = {
     },
     items: {
       type: "array",
-      getItemSummary: (item) => item.title || "Empty Item",
+      getItemSummary: (item) => item.label || "Empty Item",
       arrayFields: {
-        title: {
+        label: {
           type: "text",
         },
         url: {
@@ -88,5 +97,9 @@ export const navbarDropdownConfig: ComponentConfig<NavbarDropdownProps> = {
         },
       },
     },
+  },
+  defaultProps: {
+    title: "Dropdown",
+    items: [],
   },
 };
