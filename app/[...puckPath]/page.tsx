@@ -12,7 +12,7 @@
 
 import { notFound } from "next/navigation";
 import { Metadata } from "next";
-import PuckPage from "@components/PageRender";
+import PageRender from "@components/PageRender";
 import { getFooter, getNavbar, getPage } from "@lib/db/database";
 import { navbarConfig } from "@config/navbar.config";
 import { pageConfig } from "@config/page.config";
@@ -51,7 +51,7 @@ export default async function Page({
   const footerData = await getFooter();
 
   return (
-    <PuckPage
+    <PageRender
       {...{
         navbarData,
         pageData,
