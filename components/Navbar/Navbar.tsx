@@ -1,7 +1,7 @@
+import { NavbarComponentsDesktop } from "@components/Navbar/NavbarComponentsDesktop";
+import { NavbarComponentsMobile } from "@components/Navbar/NavbarComponentsMobile";
 import { navbarConfig, NavbarData } from "@config/navbar.config";
 import { Render } from "@measured/puck";
-import { NavbarComponentsDesktop } from "./NavbarComponentsDesktop";
-import { NavbarComponentsMobile } from "./NavbarComponentsMobile";
 
 export type NavbarProps = {
   data: NavbarData;

@@ -1,8 +1,8 @@
 "use client";
+import { NavbarLogo } from "@components/Navbar/NavbarLogo";
 import ClickAwayListener from "@components/helperComponents/ClickAwayListener";
 import { NavbarData } from "@config/navbar.config";
 import { ReactNode, useId, useRef, useState } from "react";
-import { NavbarLogo } from "./NavbarLogo";
 
 export type NavbarComponentsProps = {
   navbarItems: ReactNode;
@@ -27,7 +27,7 @@ export function NavbarComponentsMobile({
   return (
     <>
       <div className="md:hidden grid grid-cols-[1fr_min-content_1fr] border-b-[#F4D51F] border-b-8">
-        <div></div>
+        <div></div> {/* Empty div to align logo */}
         {logo && (
           <div className="relative z-20 w-28 h-28 mb-[-50px]">
             <NavbarLogo logo={logo} />
@@ -49,7 +49,7 @@ export function NavbarComponentsMobile({
       {open && (
         <div
           id={navbarOverlayId}
-          className="md:hidden absolute z-10 overflow-auto w-screen h-screen bg-[rgba(0,0,0,0.6)]"
+          className="md:hidden absolute z-10 overflow-auto w-full h-screen bg-[rgba(0,0,0,0.6)]"
         >
           <div className="py-20 px-2">
             <ClickAwayListener onClickAway={handleClickAway}>

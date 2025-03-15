@@ -9,7 +9,7 @@ export function NavbarLogo({ logo }: NavbarLogoProps) {
 
   return (
     <div className="relative z-20 w-28 h-28 mb-[-50px]">
-      <a href="/" className="rounded-full">
+      <a href="/" className="block rounded-full overflow-hidden w-full h-full">
         <ImageComponent path={logo} title="logo" />
       </a>
     </div>
