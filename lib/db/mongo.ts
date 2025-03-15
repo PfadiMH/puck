@@ -1,9 +1,9 @@
 import { MongoClient, Db } from "mongodb";
 import { DatabaseService } from "./database";
 import { Data } from "@measured/puck";
-import { NavbarData } from "@config/navbar.config";
+import { defaultNavbarData, NavbarData } from "@config/navbar.config";
 import { PageData } from "@config/page.config";
-import { FooterData } from "@config/footer.config";
+import { defaultFooterData, FooterData } from "@config/footer.config";
 
 /**
  * MongoDB implementation of DatabaseService.
@@ -18,6 +18,36 @@ export class MongoService implements DatabaseService {
   constructor(connectionString: string, dbName: string) {
     this.client = new MongoClient(connectionString);
     this.db = this.client.db(dbName);
+    this.initialize();
+  }
+
+  private async initialize(): Promise<void> {
+    // Ensure collection exists
+    const collections = await this.db
+      .listCollections({ name: this.collectionName })
+      .toArray();
+    if (collections.length === 0) {
+      await this.db.createCollection(this.collectionName);
+      await this.db.collection(this.collectionName).createIndex({ path: 1 });
+    }
+
+    // Ensure navbar exists
+    const navbar = await this.db
+      .collection(this.collectionName)
+      .findOne({ type: "navbar" });
+    if (!navbar) {
+      console.log("Navbar data not found, creating with default data");
+      await this.saveNavbar(defaultNavbarData);
+    }
+
+    // Ensure footer exists
+    const footer = await this.db
+      .collection(this.collectionName)
+      .findOne({ type: "footer" });
+    if (!footer) {
+      console.log("Footer data not found, creating with default data");
+      await this.saveFooter(defaultFooterData);
+    }
   }
 
   async connect(): Promise<void> {
