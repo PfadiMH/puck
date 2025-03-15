@@ -25,7 +25,7 @@ export function applySectionTheming(data: PageData): {
     if (item.type === "SectionDivider") {
       theme = theme === "sun" ? "mud" : "sun";
     }
-    if ("theme" in item.props && item.props["theme"] !== theme) {
+    if (!("theme" in item.props) || item.props["theme"] !== theme) {
       didChange = true;
     }
     newContent.push({
