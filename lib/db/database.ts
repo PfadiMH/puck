@@ -1,10 +1,10 @@
 "use server";
 
+import { FooterData } from "@lib/config/footer.config";
+import { NavbarData } from "@lib/config/navbar.config";
+import { PageData } from "@lib/config/page.config";
 import { JsonService } from "./json";
 import { MongoService } from "./mongo";
-import { PageData } from "@config/page.config";
-import { NavbarData } from "@config/navbar.config";
-import { FooterData } from "@config/footer.config";
 
 export interface DatabaseService {
   savePage(path: string, data: PageData): Promise<void>;

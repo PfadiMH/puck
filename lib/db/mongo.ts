@@ -1,9 +1,9 @@
-import { MongoClient, Db } from "mongodb";
-import { DatabaseService } from "./database";
+import { defaultFooterData, FooterData } from "@lib/config/footer.config";
+import { defaultNavbarData, NavbarData } from "@lib/config/navbar.config";
+import { PageData } from "@lib/config/page.config";
 import { Data } from "@measured/puck";
-import { defaultNavbarData, NavbarData } from "@config/navbar.config";
-import { PageData } from "@config/page.config";
-import { defaultFooterData, FooterData } from "@config/footer.config";
+import { Db, MongoClient } from "mongodb";
+import { DatabaseService } from "./database";
 
 /**
  * MongoDB implementation of DatabaseService.

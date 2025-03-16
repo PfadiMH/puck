@@ -1,8 +1,8 @@
-import { defaultPageData } from "@config/page.config";
+import { PageEditor } from "@components/page/PageEditor";
+import { defaultPageData } from "@lib/config/page.config";
 import { getPage } from "@lib/db/database";
 import "@measured/puck/puck.css";
 import { Metadata } from "next";
-import { PageEditor } from "./PageEditor";
 
 type Params = Promise<{ editPath: string[] }>;
 

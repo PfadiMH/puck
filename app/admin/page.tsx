@@ -1,5 +1,4 @@
 "use client";
-
 import { deletePage, getAllPaths } from "@lib/db/database";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
@@ -19,12 +18,15 @@ export default function Page() {
     loadPages();
   }, [loadPages]);
 
-  const onDeleteClick = useCallback(async (page: string) => {
-    if (confirm(`Are you sure you want to delete the page "${page}"?`)) {
-      await deletePage(page);
-      loadPages();
-    }
-  }, [loadPages]);
+  const onDeleteClick = useCallback(
+    async (page: string) => {
+      if (confirm(`Are you sure you want to delete the page "${page}"?`)) {
+        await deletePage(page);
+        loadPages();
+      }
+    },
+    [loadPages]
+  );
 
   const handleAddPageClick = () => {
     setIsModalOpen(true);

@@ -1,7 +1,7 @@
+import { FooterEditor } from "@components/footer/FooterEditor";
 import { getFooter } from "@lib/db/database";
 import "@measured/puck/puck.css";
 import { Metadata } from "next";
-import { FooterEditor } from "./FooterEditor";
 
 export async function generateMetadata(): Promise<Metadata> {
   return {

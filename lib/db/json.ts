@@ -1,8 +1,8 @@
-import { defaultNavbarData, NavbarData } from "@config/navbar.config";
-import { DatabaseService } from "./database";
+import { defaultFooterData, FooterData } from "@lib/config/footer.config";
+import { defaultNavbarData, NavbarData } from "@lib/config/navbar.config";
+import { PageData } from "@lib/config/page.config";
 import fs from "fs/promises";
-import { PageData } from "@config/page.config";
-import { defaultFooterData, FooterData } from "@config/footer.config";
+import { DatabaseService } from "./database";
 
 interface DatabaseData {
   navbar: NavbarData;
