@@ -3,7 +3,7 @@ import { SectionThemedComponent } from "@components/page/SectionThemedComponent"
 import { PageConfig, PageData } from "@lib/config/page.config";
 import { WithId, WithPuckProps } from "@measured/puck";
 import { ComponentProps, JSX, PropsWithChildren } from "react";
-import { mapObjectEntries } from "./util";
+import { mapObjectEntries } from "./typed-object-entries";
 
 export type Theme = "sun" | "mud";
 
