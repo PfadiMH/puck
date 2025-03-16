@@ -1,3 +1,4 @@
+import { uploadFileField } from "@components/puck-fields/upload-file";
 import {
   navbarDropdownConfig,
   NavbarDropdownProps,
@@ -6,7 +7,6 @@ import {
   navbarItemConfig,
   NavbarItemProps,
 } from "@components/puck/navbar/NavbarItem";
-import { uploadFileField } from "@lib/config/custom-fields/upload-file";
 import type { Config, Data } from "@measured/puck";
 
 // @keep-sorted

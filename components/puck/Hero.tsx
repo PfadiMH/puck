@@ -1,5 +1,5 @@
 import { PostHeroSvg } from "@components/graphics/PostHeroSvg";
-import { uploadFileField } from "@lib/config/custom-fields/upload-file";
+import { uploadFileField } from "@components/puck-fields/upload-file";
 import { ComponentConfig } from "@measured/puck";
 import Image from "next/image";
 
