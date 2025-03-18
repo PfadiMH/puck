@@ -1,3 +1,4 @@
+import { GraphicProps, graphicConfig } from "@components/page/Graphic";
 import { FlexProps, flexConfig } from "@components/puck/Flex";
 import { HeadingProps, headingConfig } from "@components/puck/Heading";
 import { HeroProps, heroConfig } from "@components/puck/Hero";
@@ -23,6 +24,7 @@ export type PageProps = {
   SectionDivider: SectionDividerProps;
   Text: TextProps;
   VerticalSpace: VerticalSpaceProps;
+  Graphic: GraphicProps;
 };
 export type PageRootProps = {
   title: string;
@@ -40,6 +42,7 @@ export const pageConfig: PageConfig = sectionThemedConfig({
     SectionDivider: sectionDividerConfig,
     Text: textConfig,
     VerticalSpace: verticalSpaceConfig,
+    Graphic: graphicConfig,
   },
 });
 
