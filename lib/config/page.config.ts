@@ -47,8 +47,8 @@ export const breakoutConfig = {
   // @keep-sorted
   Hero: "full",
   SectionDivider: "full",
-  IFrame: "feature",
-} as Record<keyof PageProps, "popout" | "full" | "feature" | "content">;
+  VerticalSpace: "full",
+} as Record<keyof PageProps, "popout" | "full" | "feature">;
 
 export const defaultPageData: PageData = {
   content: [],
