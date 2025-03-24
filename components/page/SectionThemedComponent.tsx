@@ -7,12 +7,15 @@ import { PropsWithChildren } from "react";
 export function SectionThemedComponent({
   children,
   theme,
-  key,
-}: PropsWithChildren<{ theme: Theme; key: keyof PageProps }>) {
+  sectionKey,
+}: PropsWithChildren<{ theme: Theme; sectionKey: keyof PageProps }>) {
   return (
     <SectionThemeProvider theme={theme}>
       <div
-        className={clsx([`${theme}-theme bg-background`, breakoutConfig[key]])}
+        className={clsx([
+          `${theme}-theme bg-background`,
+          breakoutConfig[sectionKey],
+        ])}
       >
         {children}
       </div>
