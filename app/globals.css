@@ -72,3 +72,37 @@
     @apply text-2xl;
   }
 }
+
+.content {
+  --gap: clamp(2rem, 6vw, 3rem);
+  --full: minmax(var(--gap), 1fr);
+  --content: min(100ch, 100% - var(--gap) * 3);
+  --popout: minmax(0, 2rem);
+  --feature: minmax(0, 5rem);
+
+  display: grid;
+  grid-template-columns:
+    [full-start] var(--full)
+    [feature-start] var(--feature)
+    [popout-start] var(--popout)
+    [content-start] var(--content) [content-end]
+    var(--popout) [popout-end]
+    var(--feature) [feature-end]
+    var(--full) [full-end];
+}
+
+.content > * {
+  grid-column: content;
+}
+
+.popout {
+  grid-column: popout;
+}
+
+.feature {
+  grid-column: feature;
+}
+
+.full {
+  grid-column: full;
+}

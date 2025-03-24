@@ -43,6 +43,13 @@ export const pageConfig: PageConfig = sectionThemedConfig({
   },
 });
 
+export const breakoutConfig = {
+  // @keep-sorted
+  Hero: "full",
+  SectionDivider: "full",
+  IFrame: "feature",
+} as Record<keyof PageProps, "popout" | "full" | "feature" | "content">;
+
 export const defaultPageData: PageData = {
   content: [],
   root: {

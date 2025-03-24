@@ -1,14 +1,21 @@
 import { SectionThemeProvider } from "@components/contexts/SectionThemeProvider";
+import { breakoutConfig, PageProps } from "@lib/config/page.config";
 import { Theme } from "@lib/section-theming";
+import clsx from "clsx";
 import { PropsWithChildren } from "react";
 
 export function SectionThemedComponent({
   children,
   theme,
-}: PropsWithChildren<{ theme: Theme }>) {
+  key,
+}: PropsWithChildren<{ theme: Theme; key: keyof PageProps }>) {
   return (
     <SectionThemeProvider theme={theme}>
-      <div className={`${theme}-theme bg-background`}>{children}</div>
+      <div
+        className={clsx([`${theme}-theme bg-background`, breakoutConfig[key]])}
+      >
+        {children}
+      </div>
     </SectionThemeProvider>
   );
 }

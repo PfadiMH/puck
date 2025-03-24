@@ -53,7 +53,8 @@ function RootRender<Props extends PropsWithChildren>({
  * that applies and provides the theme context.
  */
 function sectionThemedComponentConfig<K extends keyof PageConfig["components"]>(
-  config: PageConfig["components"][K]
+  config: PageConfig["components"][K],
+  key: K
 ): PageConfig["components"][K] {
   const SectionThemedRender = ({
     ...props
@@ -62,7 +63,7 @@ function sectionThemedComponentConfig<K extends keyof PageConfig["components"]>(
       theme?: Theme;
     }) => {
     return (
-      <SectionThemedComponent theme={props.theme ?? "mud"}>
+      <SectionThemedComponent theme={props.theme ?? "mud"} key={key}>
         <config.render {...props} />
       </SectionThemedComponent>
     );
@@ -90,7 +91,7 @@ export function sectionThemedConfig(config: PageConfig): PageConfig {
       config.components,
       ([key, componentConfig]) => [
         key,
-        sectionThemedComponentConfig(componentConfig),
+        sectionThemedComponentConfig(componentConfig, key),
       ]
     ),
   };
