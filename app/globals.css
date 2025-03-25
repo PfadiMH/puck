@@ -91,7 +91,7 @@
       var(--full) [full-end];
   }
 
-  .content > * {
+  .content-main > * {
     grid-column: content;
   }
 
