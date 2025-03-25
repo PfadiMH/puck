@@ -18,9 +18,7 @@ async function PageRender({
   return (
     <>
       <NavbarRender data={navbarData} />
-      <div className="content">
-        <Render config={pageConfig} data={pageData} />
-      </div>
+      <Render config={pageConfig} data={pageData} />
       <Render config={footerConfig} data={footerData} />
     </>
   );

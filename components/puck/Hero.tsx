@@ -10,7 +10,7 @@ export type HeroProps = {
 
 function Hero({ title, backgroundImage: url }: HeroProps) {
   return (
-    <div className="w-full h-96 relative flex flex-col justify-center overflow-hidden items-center">
+    <div className="full w-full h-96 relative flex flex-col justify-center overflow-hidden items-center">
       {url && (
         <Image fill src={url} alt="Hero Image" style={{ objectFit: "cover" }} />
       )}
