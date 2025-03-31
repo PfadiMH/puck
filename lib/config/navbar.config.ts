@@ -11,8 +11,8 @@ import type { Config, Data } from "@measured/puck";
 
 // @keep-sorted
 export type NavbarProps = {
-  NavbarItem: NavbarItemProps;
   NavbarDropdown: NavbarDropdownProps;
+  NavbarItem: NavbarItemProps;
 };
 export type NavbarRootProps = {
   logo?: string;
@@ -28,8 +28,8 @@ export const navbarConfig: NavbarConfig = {
   },
   // @keep-sorted
   components: {
-    NavbarItem: navbarItemConfig,
     NavbarDropdown: navbarDropdownConfig,
+    NavbarItem: navbarItemConfig,
   },
 };
 

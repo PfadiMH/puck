@@ -1,7 +1,7 @@
 import { poppins, rockingsodaPlus } from "@lib/fonts/fonts";
 import clsx from "clsx";
+import { Providers } from "../components/Providers";
 import "./globals.css";
-import { Providers } from "./providers";
 
 export default function RootLayout({
   children,

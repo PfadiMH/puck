@@ -5,9 +5,11 @@ type ParallaxRendererProps = {
   editMode?: boolean;
 };
 
-export function ParallaxRender({ editMode }: Readonly<ParallaxRendererProps>) {
+function ParallaxRender({ editMode }: ParallaxRendererProps) {
   if (editMode) {
-    return <img src={Desktop.src} alt="Mobile" className="w-full" />;
+    return <img src={Desktop.src} alt="Desktop Parallax" className="w-full" />;
   }
   return <Parallax />;
 }
+
+export default ParallaxRender;

@@ -9,7 +9,7 @@ import Layer7 from "@components/graphics/parallax-layers/Layer7.svg";
 import Mobile from "@components/graphics/parallax-layers/MobileCombined.svg";
 import { BannerLayer, ParallaxBanner } from "react-scroll-parallax";
 
-const Parallax = () => {
+function Parallax() {
   const parallaxLayer1: BannerLayer = {
     image: Layer1.src,
     translateY: [-12, 68],
@@ -91,6 +91,6 @@ const Parallax = () => {
       </div>
     </div>
   );
-};
+}
 
 export default Parallax;
