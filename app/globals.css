@@ -16,11 +16,13 @@
   --sun-background: #ffaf1b;
   --sun-current: #210002;
   --sun-primary: #5c1715;
+  --sun-secondary: #ffb700;
   --sun-accent: #f7a000;
 
   --mud-background: #210002;
   --mud-current: #ffaf1b;
-  --mud-primary: #5c1715;
+  --mud-primary: #ffb700;
+  --mud-secondary: #5c1715;
   --mud-accent: #390206;
 }
 
