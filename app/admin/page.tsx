@@ -1,5 +1,6 @@
 "use client";
 import Button from "@components/ui/Button";
+import Input from "@components/ui/Input";
 import { deletePage, getAllPaths } from "@lib/db/database";
 import { queryClient } from "@lib/query-client";
 import { useQuery } from "@tanstack/react-query";
@@ -90,10 +91,10 @@ export default function Page() {
         <div className="fixed inset-0 flex justify-center items-center bg-black/50">
           <div className="bg-background p-6 rounded-lg">
             <h2 className="text-lg font-bold mb-4">Add New Page</h2>
-            <input
+            <Input
               type="text"
               placeholder="Enter new page path"
-              className="border p-2 rounded w-full mb-4"
+              className="w-full mb-4"
               value={newPagePath}
               onChange={(e) => setNewPageName(e.target.value)}
             />
