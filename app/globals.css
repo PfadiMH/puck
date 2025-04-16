@@ -30,6 +30,7 @@
   --color-background: var(--sun-background);
   --color-current: var(--sun-current);
   --color-primary: var(--sun-primary);
+  --color-secondary: var(--sun-secondary);
   --color-accent: var(--sun-accent);
 
   color: var(--color-current);
@@ -39,6 +40,7 @@
   --color-background: var(--mud-background);
   --color-current: var(--mud-current);
   --color-primary: var(--mud-primary);
+  --color-secondary: var(--mud-secondary);
   --color-accent: var(--mud-accent);
 
   color: var(--color-current);
