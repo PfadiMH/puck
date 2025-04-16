@@ -20,9 +20,9 @@ function Input({
         "disabled:cursor-not-allowed disabled:bg-primary/70 disabled:text-accent/70",
         "placeholder:opacity-70",
         {
-          "text-sm px-2 py-1 font-medium": size === "small",
-          "text-base px-3 py-2 font-semibold": size === "medium",
-          "text-lg px-4 py-3 font-bold": size === "large",
+          "text-sm px-2 py-1": size === "small",
+          "text-base px-3 py-2": size === "medium",
+          "text-lg px-4 py-3": size === "large",
         },
         props.className
       )}
