@@ -10,7 +10,11 @@ function Button({
   children,
   size = "medium",
   ...props
-}: PropsWithChildren<ButtonHTMLAttributes<HTMLButtonElement>> & ButtonProps) {
+}: Omit<
+  PropsWithChildren<ButtonHTMLAttributes<HTMLButtonElement>>,
+  keyof ButtonProps
+> &
+  ButtonProps) {
   return (
     <button
       {...props}
