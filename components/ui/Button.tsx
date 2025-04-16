@@ -19,7 +19,7 @@ function Button({
     <button
       {...props}
       className={clsx(
-        "bg-primary text-background hover:bg-primary/90 active:bg-primary/80 font-semibold cursor-pointer",
+        "bg-primary text-accent hover:bg-primary/90 active:bg-primary/80 font-semibold cursor-pointer",
         {
           "text-sm px-5 py-1 font-medium": size === "small",
           "text-base px-5 py-2 font-semibold": size === "medium",
