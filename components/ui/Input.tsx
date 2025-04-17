@@ -14,10 +14,10 @@ function Input({
     <input
       {...props}
       className={clsx(
-        "bg-primary text-accent",
+        "bg-mud-secondary text-mud-contrast-secondary",
         "border-2 border-primary rounded",
-        "focus:outline-none focus:ring-2 focus:ring-primary/50",
-        "disabled:cursor-not-allowed disabled:bg-primary/70 disabled:text-accent/70",
+        "focus:outline-none focus:ring-2 focus:ring-primary/60",
+        "disabled:cursor-not-allowed disabled:bg-primary/70 disabled:text-primary/70",
         "placeholder:opacity-70",
         {
           "text-sm px-2 py-1": size === "small",

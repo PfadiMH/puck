@@ -14,7 +14,7 @@ export default function RootLayout({
         className={clsx(
           rockingsodaPlus.variable,
           poppins.variable,
-          "font-poppins bg-background mud-theme"
+          "font-poppins bg-ground mud-theme"
         )}
       >
         <Providers>{children}</Providers>

@@ -1,45 +1,71 @@
 @import "tailwindcss";
 
 @theme {
+  /* Fonts */
   --font-rockingsoda: var(--rockingsoda);
   --font-poppins: var(--poppins);
 
-  --color-background: var(--color-background);
-  --color-current: var(--color-current);
+  /* Base Colors, not for direct use */
+  --brown: hsl(356, 100%, 6%);
+  --brown-lighter: hsl(356, 100%, 12%);
+  --brown-alternative: hsl(356, 70%, 20%);
+  --orange: hsl(39, 100%, 55%);
+  --orange-lighter: hsl(39, 100%, 70%);
+  --orange-alternative: hsl(39, 80%, 50%);
+
+  /* Theme Dependent Colors */
+  --color-ground: var(--color-ground);
+  --color-contrast-ground: var(--color-contrast-ground);
+  --color-elevated: var(--color-elevated);
   --color-primary: var(--color-primary);
-  --color-accent: var(--color-accent);
+  --color-contrast-primary: var(--color-contrast-primary);
+  --color-secondary: var(--color-secondary);
+  --color-contrast-secondary: var(--color-contrast-secondary);
+
+  /* Sun Theme Colors */
+  --color-sun-ground: var(--orange);
+  --color-sun-contrast-ground: var(--brown);
+  --color-sun-elevated: var(--orange-lighter);
+  --color-sun-primary: var(--brown-lighter);
+  --color-sun-contrast-primary: var(--orange);
+  --color-sun-secondary: var(--orange-alternative);
+  --color-sun-contrast-secondary: var(--brown);
+
+  /* Mud Theme Colors */
+  --color-mud-ground: var(--brown);
+  --color-mud-contrast-ground: var(--orange);
+  --color-mud-elevated: var(--brown-lighter);
+  --color-mud-primary: var(--orange);
+  --color-mud-contrast-primary: var(--brown);
+  --color-mud-secondary: var(--brown-alternative);
+  --color-mud-contrast-secondary: var(--orange);
+
   --color-brand-yellow: #f4d51f;
   --color-brand-red: #be1622;
 }
 
-:root {
-  --sun-background: #ffaf1b;
-  --sun-current: #210002;
-  --sun-primary: #5c1715;
-  --sun-accent: #f7a000;
-
-  --mud-background: #210002;
-  --mud-current: #ffaf1b;
-  --mud-primary: #ffb700;
-  --mud-accent: #390206;
-}
-
 .sun-theme {
-  --color-background: var(--sun-background);
-  --color-current: var(--sun-current);
-  --color-primary: var(--sun-primary);
-  --color-accent: var(--sun-accent);
+  --color-ground: var(--color-sun-ground);
+  --color-contrast-ground: var(--color-sun-contrast-ground);
+  --color-elevated: var(--color-sun-elevated);
+  --color-primary: var(--color-sun-primary);
+  --color-contrast-primary: var(--color-sun-contrast-primary);
+  --color-secondary: var(--color-sun-secondary);
+  --color-contrast-secondary: var(--color-sun-contrast-secondary);
 
-  color: var(--color-current);
+  color: var(--color-contrast-ground);
 }
 
 .mud-theme {
-  --color-background: var(--mud-background);
-  --color-current: var(--mud-current);
-  --color-primary: var(--mud-primary);
-  --color-accent: var(--mud-accent);
+  --color-ground: var(--color-mud-ground);
+  --color-contrast-ground: var(--color-mud-contrast-ground);
+  --color-elevated: var(--color-mud-elevated);
+  --color-primary: var(--color-mud-primary);
+  --color-contrast-primary: var(--color-mud-contrast-primary);
+  --color-secondary: var(--color-mud-secondary);
+  --color-contrast-secondary: var(--color-mud-contrast-secondary);
 
-  color: var(--color-current);
+  color: var(--color-contrast-ground);
 }
 
 @layer base {
