@@ -13,7 +13,7 @@ function Card({
   return (
     <div
       {...props}
-      className={clsx("bg-accent rounded-xl p-4", props.className)}
+      className={clsx("bg-elevated rounded-xl p-6", props.className)}
     />
   );
 }

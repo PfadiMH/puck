@@ -18,8 +18,8 @@ export default preview;
 export const decorators: Decorator[] = [
   withThemeByClassName({
     themes: {
-      mud: "mud-theme bg-background",
-      sun: "sun-theme bg-background",
+      mud: "mud-theme bg-ground",
+      sun: "sun-theme bg-ground",
     },
     defaultTheme: "mud",
   }),
