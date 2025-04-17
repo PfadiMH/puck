@@ -9,7 +9,7 @@ type NavbarRenderProps = {
 
 export function NavbarRender({ data }: NavbarRenderProps) {
   return (
-    <nav className="bg-white sticky top-0 z-50 mud-theme">
+    <nav className='bg-white sticky top-0 z-50 sun-theme'>
       <NavbarItemsDesktop data={data} />
       <NavbarItemsMobile
         navbarItems={<Render config={navbarConfig} data={data} />}
