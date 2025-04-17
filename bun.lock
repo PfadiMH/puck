@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 {
   "lockfileVersion": 1,
   "workspaces": {
@@ -13809,3 +13810,5 @@
 >>>>>>> af9da4d (Storybook & UI component library (#41))
   }
 }
+=======
+>>>>>>> f2a0a62 (Storybook & UI component library (#41))
