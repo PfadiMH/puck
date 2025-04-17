@@ -73,8 +73,15 @@
 =======
         "react": "^19.0.0",
         "react-dom": "^19.0.0",
+<<<<<<< HEAD
 >>>>>>> 4363f18 (Storybook & UI component library (#41))
+=======
+<<<<<<< HEAD
+>>>>>>> 4aaa0dd (Storybook & UI component library (#41))
         "react-scroll-parallax": "^3.4.5",
+=======
+        "react-scroll-parallax": "^3.4.5"
+>>>>>>> 0fdbb76 (Storybook & UI component library (#41))
       },
       "devDependencies": {
 <<<<<<< HEAD
@@ -226,6 +233,7 @@
 >>>>>>> 91c30cd (Storybook & UI component library (#41))
 >>>>>>> 4363f18 (Storybook & UI component library (#41))
         "tailwindcss": "^4",
+<<<<<<< HEAD
         "typescript": "^5",
 >>>>>>> 7c42896 (Storybook & UI component library (#41))
 <<<<<<< HEAD
@@ -3667,6 +3675,10 @@
     "pkg-dir/find-up/locate-path/p-locate/p-limit/yocto-queue": ["yocto-queue@1.2.1", "", {}, "sha512-AyeEbWOu/TAXdxlV9wmGcR0+yh2j3vYPGOECcIj2S7MkrLyC7ne+oye2BKTItt0ii2PHk4cDy+95+LshzbXnGg=="],
 
     "@storybook/react-docgen-typescript-plugin/find-cache-dir/pkg-dir/find-up/locate-path/p-locate/p-limit": ["p-limit@2.3.0", "", { "dependencies": { "p-try": "^2.0.0" } }, "sha512-//88mFWSJx8lxCzwdAABTJL2MyWB12+eIY7MDL2SqLmAkeKU9qxRvWuSyTjm3FUmpBEMuFfckAIqEaVGUDxb6w=="],
+<<<<<<< HEAD
+=======
+=======
+>>>>>>> 4aaa0dd (Storybook & UI component library (#41))
         "typescript": "^5"
       }
     }
@@ -14770,8 +14782,12 @@
       { "dependencies": { "p-try": "^2.0.0" } },
       "sha512-//88mFWSJx8lxCzwdAABTJL2MyWB12+eIY7MDL2SqLmAkeKU9qxRvWuSyTjm3FUmpBEMuFfckAIqEaVGUDxb6w=="
     ]
+<<<<<<< HEAD
 =======
 >>>>>>> af9da4d (Storybook & UI component library (#41))
+=======
+>>>>>>> 0fdbb76 (Storybook & UI component library (#41))
+>>>>>>> 4aaa0dd (Storybook & UI component library (#41))
   }
 }
 =======

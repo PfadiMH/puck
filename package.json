@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "storybook": "storybook dev -p 6006 --no-open",
+    "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build"
   },
   "dependencies": {
@@ -16,7 +16,6 @@
     "@sendinblue/client": "^3.3.1",
     "@types/nodemailer": "^6.4.17",
     "@types/uuid": "^10.0.0",
-    "classnames": "^2.3.2",
     "@measured/puck": "^0.18.3",
     "@tailwindcss/vite": "^4.1.4",
     "clsx": "^2.1.1",
@@ -34,7 +33,7 @@
     "tailwind-merge": "^3.2.0"
   },
   "devDependencies": {
-    "@eslint/eslintrc": "^3.3.1",
+    "@eslint/eslintrc": "^3",
     "@storybook/addon-essentials": "^8.6.12",
     "@storybook/addon-interactions": "^8.6.12",
     "@storybook/addon-onboarding": "^8.6.12",
@@ -45,20 +44,17 @@
     "@storybook/nextjs": "^8.6.12",
     "@storybook/react": "^8.6.12",
     "@storybook/test": "^8.6.12",
-    "@tailwindcss/postcss": "^4.1.4",
-    "@types/node": "^20.17.30",
-    "@types/react": "^19.1.2",
-    "@types/react-dom": "^19.1.2",
-    "eslint": "^9.24.0",
+    "@tailwindcss/postcss": "^4",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9",
     "eslint-config-next": "15.2.2",
     "eslint-plugin-storybook": "^0.12.0",
     "postcss": "^8.5.3",
     "storybook": "^8.6.12",
-    "tailwindcss": "^4.1.4",
-    "typescript": "^5.8.3"
-  },
-  "peerDependencies": {
-    "jiti": "2.4.2"
+    "tailwindcss": "^4",
+    "typescript": "^5"
   },
   "eslintConfig": {
     "extends": [
