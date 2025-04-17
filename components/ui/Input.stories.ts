@@ -16,6 +16,5 @@ export const Primary: Story = {
     placeholder: "Input",
     size: "medium",
     type: "text",
-    error: false,
   },
 };
