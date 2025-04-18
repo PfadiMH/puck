@@ -23,7 +23,7 @@ function AddPageModal({ onClose }: AddPageModalProps) {
 
   return (
     <div className="fixed inset-0 flex justify-center items-center bg-black/50">
-      <div className="bg-background p-6 rounded-lg">
+      <div className="bg-elevated p-6 rounded-lg">
         <h2 className="text-lg font-bold mb-4">Add New Page</h2>
         <Input
           type="text"
@@ -36,7 +36,7 @@ function AddPageModal({ onClose }: AddPageModalProps) {
           <Button size="small" onClick={onClose}>
             Cancel
           </Button>
-          <Button size="small" onClick={handleCreate}>
+          <Button color="primary" size="small" onClick={handleCreate}>
             Create Page
           </Button>
         </div>
