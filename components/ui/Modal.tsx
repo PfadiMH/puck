@@ -24,6 +24,7 @@ function Modal({
     >
       <dialog
         open
+        onClick={(e) => e.stopPropagation()}
         className="m-auto bg-elevated text-contrast-ground rounded-lg p-4"
         aria-modal={true}
         aria-labelledby={title ? titleId : undefined}
