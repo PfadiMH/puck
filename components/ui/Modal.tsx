@@ -29,7 +29,11 @@ function Modal({
         aria-modal={true}
         aria-labelledby={title ? titleId : undefined}
       >
-        {title && <h3 id={titleId}>{title}</h3>}
+        {title && (
+          <h3 className="mb-2" id={titleId}>
+            {title}
+          </h3>
+        )}
         {children}
       </dialog>
     </div>,
