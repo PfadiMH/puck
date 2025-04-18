@@ -1,4 +1,4 @@
-import { poppins, rockingsodaPlus } from "@lib/fonts/fonts";
+import { poppins, rockingsodaPlus } from "@lib/fonts";
 import clsx from "clsx";
 import { Providers } from "../components/Providers";
 import "./globals.css";
