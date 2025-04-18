@@ -4,7 +4,7 @@ import { createPortal } from "react-dom";
 type ModalProps = {
   isOpen: boolean;
   onClose: () => void;
-  title: string;
+  title?: string;
 };
 
 function Modal({
