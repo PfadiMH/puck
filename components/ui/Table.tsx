@@ -1,4 +1,4 @@
-import clsx from "clsx";
+import cn from "@lib/cn";
 import { HTMLAttributes, PropsWithChildren } from "react";
 
 function Table({
@@ -8,7 +8,7 @@ function Table({
   return (
     <table
       {...props}
-      className={clsx("w-full caption-bottom text-sm", props.className)}
+      className={cn("w-full caption-bottom text-sm", props.className)}
     >
       {children}
     </table>
@@ -20,7 +20,13 @@ export function TableHeader({
   ...props
 }: PropsWithChildren<HTMLAttributes<HTMLTableSectionElement>>) {
   return (
-    <thead {...props} className={clsx("[&_tr]:border-b", props.className)}>
+    <thead
+      {...props}
+      className={cn(
+        "[&_tr]:border-b font-rockingsoda text-lg",
+        props.className
+      )}
+    >
       {children}
     </thead>
   );
@@ -33,8 +39,8 @@ export function TableHead({
   return (
     <th
       {...props}
-      className={clsx(
-        "h-12 px-4 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0",
+      className={cn(
+        "h-12 px-4 text-left align-middle [&:has([role=checkbox])]:pr-0",
         props.className
       )}
     >
@@ -50,7 +56,7 @@ export function TableBody({
   return (
     <tbody
       {...props}
-      className={clsx("[&_tr:last-child]:border-0", props.className)}
+      className={cn("[&_tr:last-child]:border-0", props.className)}
     >
       {children}
     </tbody>
@@ -64,7 +70,7 @@ export function TableRow({
   return (
     <tr
       {...props}
-      className={clsx(
+      className={cn(
         "border-b transition-colors hover:bg-elevated/50 data-[state=selected]:bg-elevated",
         props.className
       )}
@@ -81,7 +87,7 @@ export function TableCell({
   return (
     <td
       {...props}
-      className={clsx(
+      className={cn(
         "p-4 align-middle [&:has([role=checkbox])]:pr-0",
         props.className
       )}

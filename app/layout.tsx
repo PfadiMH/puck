@@ -1,5 +1,5 @@
+import cn from "@lib/cn";
 import { poppins, rockingsodaPlus } from "@lib/fonts";
-import clsx from "clsx";
 import { Providers } from "../components/Providers";
 import "./globals.css";
 
@@ -11,7 +11,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={clsx(
+        className={cn(
           rockingsodaPlus.variable,
           poppins.variable,
           "font-poppins bg-ground mud-theme"

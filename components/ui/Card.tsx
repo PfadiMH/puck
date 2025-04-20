@@ -1,4 +1,4 @@
-import clsx from "clsx";
+import cn from "@lib/cn";
 import { HTMLAttributes } from "react";
 
 type CardProps = {
@@ -13,7 +13,7 @@ function Card({
   return (
     <div
       {...props}
-      className={clsx("bg-elevated rounded-xl p-6", props.className)}
+      className={cn("bg-elevated rounded-xl p-6", props.className)}
     />
   );
 }

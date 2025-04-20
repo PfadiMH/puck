@@ -1,4 +1,4 @@
-import clsx from "clsx";
+import cn from "@lib/cn";
 import { SVGProps } from "react";
 
 interface NavbarDropdownArrowSvgProps extends SVGProps<SVGSVGElement> {
@@ -17,7 +17,7 @@ export function NavbarDropdownArrowSvg({
     <svg
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 95.05 57.43"
-      className={clsx(
+      className={cn(
         "stroke-none w-5 h-5 transform transition duration-250 ease-in-out",
         { [rotationString]: open },
         className
