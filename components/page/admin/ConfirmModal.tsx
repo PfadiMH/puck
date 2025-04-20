@@ -10,7 +10,7 @@ import {
 type ConfirmModalProps = {
   title: string;
   message?: string;
-  onConfirm: () => void;
+  onConfirm?: () => void;
 };
 
 function ConfirmModal({ title, message, onConfirm }: ConfirmModalProps) {
@@ -22,12 +22,7 @@ function ConfirmModal({ title, message, onConfirm }: ConfirmModalProps) {
         <DialogClose>
           <Button>Cancel</Button>
         </DialogClose>
-        <Button
-          color="primary"
-          onClick={() => {
-            onConfirm();
-          }}
-        >
+        <Button color="primary" onClick={onConfirm}>
           Confirm
         </Button>
       </DialogActions>

@@ -3,24 +3,20 @@ import { CollapseSvg } from "@components/graphics/CollapseSvg";
 import LeftSideBarSvg from "@components/graphics/LeftSideBarSvg";
 import RightSideBarSvg from "@components/graphics/RightSideBarSvg";
 import cn from "@lib/cn";
-import { PageConfig, PageData } from "@lib/config/page.config";
+import { PageConfig } from "@lib/config/page.config";
 import { usePuck } from "@measured/puck";
-import { PropsWithChildren, useState } from "react";
+import { ReactNode, useState } from "react";
 import styles from "./PuckHeader.module.css";
-import PuckHeaderActions from "./PuckHeaderActions";
 
 type PuckHeaderProps = {
-  path: string;
-  onPublish: (data: PageData) => Promise<void>;
+  headerTitle?: ReactNode;
+  headerActions?: ReactNode;
 };
 
-function PuckHeader({ path }: PropsWithChildren<PuckHeaderProps>) {
+function PuckHeader({ headerTitle, headerActions }: PuckHeaderProps) {
   const [menuOpen, setMenuOpen] = useState(false);
 
-  const {
-    dispatch,
-    appState: { data },
-  } = usePuck<PageConfig>();
+  const { dispatch } = usePuck<PageConfig>();
 
   const toggleLeftSideBar = () => {
     dispatch({
@@ -67,10 +63,9 @@ function PuckHeader({ path }: PropsWithChildren<PuckHeaderProps>) {
       </div>
 
       <div>
-        <h1 className="text-lg font-bold">
-          Editing {path}: {data.root?.props?.title}
-        </h1>
+        <h1 className="text-lg font-bold">{headerTitle}</h1>
       </div>
+
       <div className="sm:hidden">
         <button
           className="w-6 h-6 cursor-pointer"
@@ -88,7 +83,7 @@ function PuckHeader({ path }: PropsWithChildren<PuckHeaderProps>) {
           "sm:static sm:border-0 sm:mt-0 sm:p-0 sm:bg-transparent"
         )}
       >
-        <PuckHeaderActions path={path} />
+        {headerActions}
       </div>
     </header>
   );

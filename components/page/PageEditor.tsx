@@ -1,8 +1,20 @@
 "use client";
-import { pageConfig, PageData } from "@lib/config/page.config";
-import { savePage } from "@lib/db/database";
-import { Puck } from "@measured/puck";
-import PuckHeader from "./overrides/PuckHeader";
+import PageHeaderActions from "@components/puck-overrides/PageHeaderActions";
+import PuckHeader from "@components/puck-overrides/PuckHeader";
+import { PageConfig, pageConfig, PageData } from "@lib/config/page.config";
+import { Puck, usePuck } from "@measured/puck";
+
+type HeaderTitleProps = {
+  path: string;
+};
+
+function HeaderTitle({ path }: HeaderTitleProps) {
+  const {
+    appState: { data },
+  } = usePuck<PageConfig>();
+  const title = data?.root?.props?.title;
+  return `Editing ${path}: ${title}`;
+}
 
 type PageEditorProps = {
   path: string;
@@ -18,10 +30,8 @@ export function PageEditor({ path, data }: PageEditorProps) {
       overrides={{
         header: () => (
           <PuckHeader
-            onPublish={async (data) => {
-              await savePage(path, data);
-            }}
-            path={path}
+            headerTitle={<HeaderTitle path={path} />}
+            headerActions={<PageHeaderActions path={path} />}
           />
         ),
       }}
