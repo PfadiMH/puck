@@ -13,7 +13,7 @@ function HeaderTitle({ path }: HeaderTitleProps) {
     appState: { data },
   } = usePuck<PageConfig>();
   const title = data?.root?.props?.title;
-  return `Editing ${path}: ${title}`;
+  return `Editing ${path}${title ? `: ${title}` : ""}`;
 }
 
 type PageEditorProps = {
