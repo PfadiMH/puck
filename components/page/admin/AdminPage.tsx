@@ -24,7 +24,7 @@ function AdminPage() {
         <TableHeader>
           <TableRow>
             <TableHead>Path</TableHead>
-            <TableHead>Actions</TableHead>
+            <TableHead className="text-right">Actions</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
