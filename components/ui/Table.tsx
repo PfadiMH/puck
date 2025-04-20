@@ -1,5 +1,5 @@
 import cn from "@lib/cn";
-import { HTMLAttributes, PropsWithChildren } from "react";
+import { AllHTMLAttributes, HTMLAttributes, PropsWithChildren } from "react";
 
 function Table({
   children,
@@ -83,7 +83,7 @@ export function TableRow({
 export function TableCell({
   children,
   ...props
-}: PropsWithChildren<HTMLAttributes<HTMLTableCellElement>>) {
+}: PropsWithChildren<AllHTMLAttributes<HTMLTableCellElement>>) {
   return (
     <td
       {...props}

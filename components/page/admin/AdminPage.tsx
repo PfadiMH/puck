@@ -1,6 +1,7 @@
 "use client";
 import Table, {
   TableBody,
+  TableCell,
   TableHead,
   TableHeader,
   TableRow,
@@ -11,7 +12,7 @@ import Header from "./Header";
 import PageRow from "./PageRow";
 
 function AdminPage() {
-  const { data: pages = [] } = useQuery({
+  const { data: pages = [], isLoading } = useQuery({
     queryKey: ["pages"],
     queryFn: getAllPaths,
   });
@@ -31,6 +32,11 @@ function AdminPage() {
           {pages.map((page) => (
             <PageRow key={page} page={page} />
           ))}
+          {isLoading && (
+            <TableRow>
+              <TableCell colSpan={2}>Loading...</TableCell>
+            </TableRow>
+          )}
         </TableBody>
       </Table>
     </div>
