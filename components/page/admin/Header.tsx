@@ -1,12 +1,9 @@
-"use client";
 import Button from "@components/ui/Button";
+import { DialogRoot, DialogTrigger } from "@components/ui/Dialog";
 import { useRouter } from "next/navigation";
+import AddPageModal from "./AddPageModal";
 
-type AdminHeaderActionsProps = {
-  onClickAddPage: () => void;
-};
-
-function AdminHeaderActions({ onClickAddPage }: AdminHeaderActionsProps) {
+function Header() {
   const router = useRouter();
 
   return (
@@ -21,10 +18,17 @@ function AdminHeaderActions({ onClickAddPage }: AdminHeaderActionsProps) {
             Footer
           </Button>
         </div>
-        <Button onClick={onClickAddPage}>Add Page</Button>
+
+        <DialogRoot>
+          <DialogTrigger>
+            <Button color="primary">Add Page</Button>
+          </DialogTrigger>
+
+          <AddPageModal />
+        </DialogRoot>
       </div>
     </div>
   );
 }
 
-export default AdminHeaderActions;
+export default Header;

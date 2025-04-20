@@ -1,47 +1,55 @@
 "use client";
 import Button from "@components/ui/Button";
+import {
+  Dialog,
+  DialogActions,
+  DialogClose,
+  DialogTitle,
+} from "@components/ui/Dialog";
+import ErrorLabel from "@components/ui/ErrorLabel";
 import Input from "@components/ui/Input";
+import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
-type AddPageModalProps = {
-  onClose: () => void;
-};
-
-function AddPageModal({ onClose }: AddPageModalProps) {
-  const [newPagePath, setNewPagePath] = useState("");
+function AddPageModal() {
   const router = useRouter();
+  const [newPagePath, setNewPagePath] = useState("");
 
-  const handleCreate = () => {
-    if (newPagePath.trim() !== "") {
-      router.push(`/admin/editor/${newPagePath.trim()}`);
-      onClose();
-    } else {
-      alert("Please enter a page name.");
-    }
+  const handleCreate = async (path: string) => {
+    if (path.trim() === "") throw new Error("Page path cannot be empty");
+
+    router.push(`/admin/editor/${path.trim()}`);
   };
 
+  const { mutate: createPage, error } = useMutation({
+    mutationFn: handleCreate,
+  });
+
   return (
-    <div className="fixed inset-0 flex justify-center items-center bg-black/50">
-      <div className="bg-elevated p-6 rounded-lg">
-        <h2 className="text-lg font-bold mb-4">Add New Page</h2>
-        <Input
-          type="text"
-          placeholder="Enter new page path"
-          className="w-full mb-4"
-          value={newPagePath}
-          onChange={(e) => setNewPagePath(e.target.value)}
-        />
-        <div className="flex flex-wrap justify-end gap-4">
-          <Button size="small" onClick={onClose}>
-            Cancel
-          </Button>
-          <Button color="primary" size="small" onClick={handleCreate}>
-            Create Page
-          </Button>
-        </div>
-      </div>
-    </div>
+    <Dialog>
+      <DialogTitle>Add New Page</DialogTitle>
+      <Input
+        type="text"
+        placeholder="Enter new page path"
+        className="w-full"
+        value={newPagePath}
+        onChange={(e) => setNewPagePath(e.target.value)}
+      />
+      {error && <ErrorLabel message={error.message} />}
+      <DialogActions>
+        <DialogClose>
+          <Button size="small">Cancel</Button>
+        </DialogClose>
+        <Button
+          color="primary"
+          size="small"
+          onClick={() => createPage(newPagePath)}
+        >
+          Create Page
+        </Button>
+      </DialogActions>
+    </Dialog>
   );
 }
 
