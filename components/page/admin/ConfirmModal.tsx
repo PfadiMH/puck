@@ -16,7 +16,7 @@ type ConfirmModalProps = {
 function ConfirmModal({ title, message, onConfirm }: ConfirmModalProps) {
   return (
     <Dialog>
-      {title && <DialogTitle>title</DialogTitle>}
+      {title && <DialogTitle>{title}</DialogTitle>}
       {message && <DialogDescription>{message}</DialogDescription>}
       <DialogActions>
         <DialogClose>
