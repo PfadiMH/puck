@@ -32,7 +32,7 @@ function AddPageModal() {
       <Input
         type="text"
         placeholder="Enter new page path"
-        className="w-full"
+        className="w-full mb-2"
         value={newPagePath}
         onChange={(e) => setNewPagePath(e.target.value)}
       />
