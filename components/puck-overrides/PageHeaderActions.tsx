@@ -2,6 +2,7 @@
 import SpinnerSvg from "@components/graphics/SpinnerSvg";
 import Button from "@components/ui/Button";
 import { DialogRoot, DialogTrigger } from "@components/ui/Dialog";
+import { toast } from "@components/ui/Toast";
 import { PageConfig } from "@lib/config/page.config";
 import { deletePage, savePage } from "@lib/db/database";
 import { queryClient } from "@lib/query-client";
@@ -31,6 +32,7 @@ function PageHeaderActions({ path }: PageHeaderActionsProps) {
       await savePage(path, data);
       queryClient.invalidateQueries({ queryKey: ["pages"] });
     },
+    onSuccess: () => toast("Page saved successfully"),
   });
 
   return (

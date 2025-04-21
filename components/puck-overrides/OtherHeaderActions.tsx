@@ -1,6 +1,7 @@
 "use client";
 import SpinnerSvg from "@components/graphics/SpinnerSvg";
 import Button from "@components/ui/Button";
+import { toast } from "@components/ui/Toast";
 import { Config, usePuck, UserGenerics } from "@measured/puck";
 import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
@@ -20,6 +21,7 @@ function OtherHeaderActions<UserConfig extends Config>({
 
   const { mutate: saveMutation, isPending } = useMutation({
     mutationFn: saveData,
+    onSuccess: () => toast("Saved successfully"),
   });
 
   return (
