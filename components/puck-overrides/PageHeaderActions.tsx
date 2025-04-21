@@ -1,10 +1,12 @@
 "use client";
+import SpinnerSvg from "@components/graphics/SpinnerSvg";
 import Button from "@components/ui/Button";
 import { DialogRoot, DialogTrigger } from "@components/ui/Dialog";
 import { PageConfig } from "@lib/config/page.config";
 import { deletePage, savePage } from "@lib/db/database";
 import { queryClient } from "@lib/query-client";
 import { usePuck } from "@measured/puck";
+import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import ConfirmModal from "../page/admin/ConfirmModal";
 import UndoRedoButtons from "./UndoRedoButtons";
@@ -24,10 +26,12 @@ function PageHeaderActions({ path }: PageHeaderActionsProps) {
     queryClient.invalidateQueries({ queryKey: ["pages"] });
   };
 
-  const handlePublish = async () => {
-    await savePage(path, data);
-    queryClient.invalidateQueries({ queryKey: ["pages"] });
-  };
+  const { mutate: savePageMutation, isPending } = useMutation({
+    mutationFn: async () => {
+      await savePage(path, data);
+      queryClient.invalidateQueries({ queryKey: ["pages"] });
+    },
+  });
 
   return (
     <div className="flex gap-4 items-center justify-between">
@@ -64,8 +68,14 @@ function PageHeaderActions({ path }: PageHeaderActionsProps) {
           View Page
         </Button>
       </div>
-      <Button onClick={handlePublish} color="primary" className="">
+      <Button
+        onClick={() => savePageMutation()}
+        color="primary"
+        className="flex gap-2 items-center"
+        disabled={isPending}
+      >
         Save Changes
+        {isPending && <SpinnerSvg className="w-4 h-4" />}
       </Button>
     </div>
   );

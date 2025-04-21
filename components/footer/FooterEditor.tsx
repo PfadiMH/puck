@@ -10,10 +10,6 @@ import { saveFooter } from "@lib/db/database";
 import { Puck } from "@measured/puck";
 
 export function FooterEditor({ data }: { data: FooterData }) {
-  const handlePublish = async (data: FooterData) => {
-    await saveFooter(data);
-  };
-
   return (
     <Puck
       config={footerConfig}
@@ -23,7 +19,7 @@ export function FooterEditor({ data }: { data: FooterData }) {
           <PuckHeader
             headerTitle="Editing Navbar"
             headerActions={
-              <OtherHeaderActions<FooterConfig> onPublish={handlePublish} />
+              <OtherHeaderActions<FooterConfig> saveData={saveFooter} />
             }
           />
         ),

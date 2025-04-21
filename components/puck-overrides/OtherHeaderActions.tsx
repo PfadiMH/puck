@@ -1,22 +1,26 @@
 "use client";
+import SpinnerSvg from "@components/graphics/SpinnerSvg";
 import Button from "@components/ui/Button";
 import { Config, usePuck, UserGenerics } from "@measured/puck";
+import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import UndoRedoButtons from "./UndoRedoButtons";
 
 type OtherHeaderActionsProps<UserConfig extends Config> = {
-  onPublish?: (data: UserGenerics<UserConfig>["UserData"]) => void;
+  saveData: (data: UserGenerics<UserConfig>["UserData"]) => Promise<void>;
 };
 
 function OtherHeaderActions<UserConfig extends Config>({
-  onPublish,
+  saveData,
 }: OtherHeaderActionsProps<UserConfig>) {
   const router = useRouter();
   const {
     appState: { data },
   } = usePuck<UserConfig>();
 
-  const handlePublish = async () => onPublish && (await onPublish(data));
+  const { mutate: saveMutation, isPending } = useMutation({
+    mutationFn: saveData,
+  });
 
   return (
     <div className="flex gap-4 items-center justify-between">
@@ -32,8 +36,14 @@ function OtherHeaderActions<UserConfig extends Config>({
         </Button>
       </div>
 
-      <Button onClick={handlePublish} color="primary" className="">
+      <Button
+        onClick={() => saveMutation(data)}
+        color="primary"
+        className="flex gap-2 items-center"
+        disabled={isPending}
+      >
         Save Changes
+        {isPending && <SpinnerSvg className="w-4 h-4" />}
       </Button>
     </div>
   );

@@ -10,10 +10,6 @@ import { saveNavbar } from "@lib/db/database";
 import { Puck } from "@measured/puck";
 
 export function NavbarEditor({ data }: { data: NavbarData }) {
-  const handlePublish = async (data: NavbarData) => {
-    await saveNavbar(data);
-  };
-
   return (
     <Puck
       config={navbarConfig}
@@ -23,7 +19,7 @@ export function NavbarEditor({ data }: { data: NavbarData }) {
           <PuckHeader
             headerTitle="Editing Navbar"
             headerActions={
-              <OtherHeaderActions<NavbarConfig> onPublish={handlePublish} />
+              <OtherHeaderActions<NavbarConfig> saveData={saveNavbar} />
             }
           />
         ),
