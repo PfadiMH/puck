@@ -15,7 +15,7 @@ export default async function Page() {
       <form
         action={async () => {
           "use server";
-          await signIn("keycloak");
+          await signIn();
         }}
       >
         <button type="submit">Signin with Keycloak</button>
