@@ -19,9 +19,6 @@ const config: StorybookConfig = {
   features: {
     experimentalRSC: true,
   },
-<<<<<<< HEAD
   staticDirs: ["../lib/assets"],
-=======
->>>>>>> 7c42896 (Storybook & UI component library (#41))
 };
 export default config;
