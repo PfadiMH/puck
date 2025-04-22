@@ -1,5 +1,24 @@
-import NextAuth from "next-auth";
+import NextAuth, { DefaultSession } from "next-auth";
+import { JWT } from "next-auth/jwt";
 import Keycloak from "next-auth/providers/keycloak";
+
+declare module "next-auth" {
+  interface Session {
+    user: {
+      roles: string[];
+      //permissions: Permission[];
+    } & DefaultSession["user"];
+  }
+  interface Profile {
+    roles: string[];
+  }
+}
+declare module "next-auth/jwt" {
+  interface JWT {
+    roles: string[];
+    //permissions: Permission[];
+  }
+}
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   basePath: "/auth",
@@ -14,25 +33,21 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   ],
   callbacks: {
     async jwt({ token, account, profile }) {
-      console.log("jwt", token, account);
       if (profile?.roles) {
         token.roles = profile.roles;
       }
       return token;
     },
     async session({ session, token }) {
-      console.log("session", session, token);
       if (token?.roles) {
-        session.roles = token.roles;
+        session.user.roles = token.roles;
       }
       return session;
     },
     async authorized({ auth }) {
-      console.log("authorized", auth);
       return true;
     },
     async signIn(props) {
-      console.log("signIn", props);
       return true;
     },
   },
