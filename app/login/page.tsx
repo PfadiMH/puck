@@ -1,15 +1,8 @@
-import { signIn, signOut } from "@lib/auth/auth";
-import {
-  createEvaluator,
-  hasAnyPermission,
-  requireAuth,
-} from "@lib/auth/authorization";
+import { auth, signIn, signOut } from "@lib/auth/auth";
 import { getRolesPermissions } from "@lib/db/database";
 
 export default async function Page() {
-  const session = await requireAuth(
-    createEvaluator(hasAnyPermission, "custom")
-  );
+  const session = await auth();
 
   const permissions = await getRolesPermissions(session?.user.roles || []);
 

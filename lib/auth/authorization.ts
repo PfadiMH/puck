@@ -17,7 +17,7 @@ export function createEvaluator<T extends any[]>(
   return (session: Session) => fn(session, ...args);
 }
 
-export async function requireAuth(
+export async function requirePageAuth(
   ...evaluations: EvaluationFunction[]
 ): Promise<Session> {
   const session = await auth();
@@ -33,6 +33,30 @@ export async function requireAuth(
       const isAuthorized = await evaluation(session);
       if (!isAuthorized) {
         unauthorized();
+      }
+    }
+  }
+
+  return session;
+}
+
+// its important to catch the errors thrown here by *components* who call them. (not the actions)
+export async function requireActionAuth(
+  ...evaluations: EvaluationFunction[]
+): Promise<Session> {
+  const session = await auth();
+
+  // 1. Authentication Check
+  if (!session?.user) {
+    throw new Error("Unauthenticated");
+  }
+
+  // 2. Authorization/Evaluation Check (only if authenticated)
+  if (evaluations.length > 0) {
+    for (const evaluation of evaluations) {
+      const isAuthorized = await evaluation(session);
+      if (!isAuthorized) {
+        throw new Error("Unauthorized");
       }
     }
   }
