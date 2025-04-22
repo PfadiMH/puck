@@ -19,8 +19,7 @@ declare module "next-auth/jwt" {
     //permissions: Permission[];
   }
 }
-
-export const { handlers, signIn, signOut, auth } = NextAuth({
+const { handlers, signIn, signOut, auth } = NextAuth({
   basePath: "/auth",
   providers: [
     Keycloak({
@@ -52,3 +51,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     },
   },
 });
+
+const signInWithKeycloak = () => signIn("keycloak");
+export { auth, handlers, signInWithKeycloak as signIn, signOut };
