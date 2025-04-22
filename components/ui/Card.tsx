@@ -1,20 +1,15 @@
-import clsx from "clsx";
-import { HTMLAttributes } from "react";
+import cn from "@lib/cn";
+import { PropsWithChildren } from "react";
 
 type CardProps = {
-  size?: "small" | "medium" | "large";
-  type?: "text" | "email" | "password" | "number";
+  className?: string;
 };
 
-function Card({
-  size = "medium",
-  ...props
-}: Omit<HTMLAttributes<HTMLDivElement>, keyof CardProps> & CardProps) {
+function Card({ children, className }: PropsWithChildren<CardProps>) {
   return (
-    <div
-      {...props}
-      className={clsx("bg-elevated rounded-xl p-6", props.className)}
-    />
+    <div className={cn("bg-elevated rounded-xl p-6", className)}>
+      {children}
+    </div>
   );
 }
 
