@@ -2,16 +2,15 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { ComponentProps } from "react";
 import Button from "./Button";
 import Toaster, { toast } from "./Toast";
-import { Toast } from "./ToastOld";
 
-type ToastPropsAndArgs = ComponentProps<typeof Toast> & {
+type ToastPropsAndArgs = ComponentProps<typeof Toaster> & {
   title: string;
   description: string;
   actionText?: string;
 };
 
 const meta: Meta<ToastPropsAndArgs> = {
-  component: Toast,
+  component: Toaster,
   title: "Components/Toast",
   render: ({ title, description, actionText, ...args }) => {
     const showToast = () => {
