@@ -1,3 +1,4 @@
+import { Permission, RoleConfig } from "@lib/auth/permissions";
 import { defaultFooterData, FooterData } from "@lib/config/footer.config";
 import { defaultNavbarData, NavbarData } from "@lib/config/navbar.config";
 import { PageData } from "@lib/config/page.config";
@@ -123,5 +124,44 @@ export class MongoService implements DatabaseService {
       .find({ type: "page" })
       .toArray();
     return pages.map((page) => page.path);
+  }
+
+  async getRolePermissions(role: string): Promise<Permission[]> {
+    const result = await this.db
+      .collection(this.collectionName)
+      .findOne({ type: "role", name: role });
+    if (!result) throw new Error(`Role ${role} not found`);
+    return result.permissions;
+  }
+
+  async getRolesPermissions(roles: string[]): Promise<Permission[]> {
+    const permissions: Permission[] = [];
+    for (const role of roles) {
+      const result = await this.db
+        .collection(this.collectionName)
+        .findOne({ type: "role", name: role });
+      if (result) {
+        permissions.push(...result.permissions);
+      }
+    }
+    return permissions;
+  }
+
+  async getRoleConfig(): Promise<RoleConfig> {
+    const result = await this.db
+      .collection(this.collectionName)
+      .findOne({ type: "roleConfig" });
+    if (!result) throw new Error("Role config not found");
+    return result.data;
+  }
+
+  async saveRoleConfig(roleConfig: RoleConfig): Promise<void> {
+    await this.db
+      .collection(this.collectionName)
+      .updateOne(
+        { type: "roleConfig" },
+        { $set: { data: roleConfig, type: "roleConfig" } },
+        { upsert: true }
+      );
   }
 }

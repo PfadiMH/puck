@@ -1,3 +1,8 @@
+import {
+  defaultRoleConfig,
+  Permission,
+  RoleConfig,
+} from "@lib/auth/permissions";
 import { defaultFooterData, FooterData } from "@lib/config/footer.config";
 import { defaultNavbarData, NavbarData } from "@lib/config/navbar.config";
 import { PageData } from "@lib/config/page.config";
@@ -8,12 +13,14 @@ interface DatabaseData {
   navbar: NavbarData;
   page: Record<string, PageData>;
   footer: FooterData;
+  RoleConfig: RoleConfig;
 }
 
 const defaultDatabaseData: DatabaseData = {
   navbar: defaultNavbarData,
   page: {},
   footer: defaultFooterData,
+  RoleConfig: defaultRoleConfig,
 };
 
 /**
@@ -88,5 +95,36 @@ export class JsonService implements DatabaseService {
   async getAllPaths(): Promise<string[]> {
     const db = await this.getDatabase();
     return Object.keys(db.page);
+  }
+
+  async getRolePermissions(role: string): Promise<Permission[]> {
+    const db = await this.getDatabase();
+    if (db.RoleConfig[role]) {
+      return db.RoleConfig[role].permissions;
+    }
+    return [];
+  }
+
+  async getRolesPermissions(roles: string[]): Promise<Permission[]> {
+    const db = await this.getDatabase();
+    const permissions: Permission[] = [];
+    if (db.RoleConfig) {
+      for (const role of roles) {
+        if (db.RoleConfig[role]) {
+          permissions.push(...db.RoleConfig[role].permissions);
+        }
+      }
+    }
+    return [...new Set(permissions)];
+  }
+
+  async getRoleConfig(): Promise<RoleConfig> {
+    const db = await this.getDatabase();
+    return db.RoleConfig;
+  }
+  async saveRoleConfig(roleConfig: RoleConfig): Promise<void> {
+    const db = await this.getDatabase();
+    db.RoleConfig = roleConfig;
+    await this.saveDatabase(db);
   }
 }
