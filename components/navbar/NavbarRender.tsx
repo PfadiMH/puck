@@ -9,11 +9,7 @@ type NavbarRenderProps = {
 
 export function NavbarRender({ data }: NavbarRenderProps) {
   return (
-<<<<<<< HEAD
     <nav className='bg-white sticky top-0 z-50 mud-theme'>
-=======
-    <nav className="bg-white sticky top-0 z-50 sun-theme">
->>>>>>> 0fdbb76 (Storybook & UI component library (#41))
       <NavbarItemsDesktop data={data} />
       <NavbarItemsMobile
         navbarItems={<Render config={navbarConfig} data={data} />}

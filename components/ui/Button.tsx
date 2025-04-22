@@ -1,4 +1,4 @@
-import clsx from "clsx";
+import cn from "@lib/cn";
 import { ButtonHTMLAttributes, PropsWithChildren } from "react";
 import styles from "./Button.module.css";
 
@@ -20,12 +20,12 @@ function Button({
   return (
     <button
       {...props}
-      className={clsx(
+      className={cn(
         "cursor-pointer",
         {
-          "bg-primary text-contrast-primary hover:bg-primary/90 active:bg-primary/80":
+          "bg-primary text-contrast-primary hover:bg-primary/90 active:bg-primary/80 disabled:bg-primary/50":
             color === "primary",
-          "bg-secondary text-contrast-secondary hover:bg-secondary/90 active:bg-secondary/80":
+          "bg-secondary text-contrast-secondary hover:bg-secondary/90 active:bg-secondary/80 disabled:bg-secondary/50":
             color === "secondary",
         },
         {
