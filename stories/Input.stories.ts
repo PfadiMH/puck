@@ -1,5 +1,5 @@
+import Input from "@components/ui/Input";
 import type { Meta, StoryObj } from "@storybook/react";
-import Input from "./Input";
 
 const meta: Meta<typeof Input> = {
   component: Input,
@@ -16,6 +16,5 @@ export const Primary: Story = {
     placeholder: "Input",
     size: "medium",
     type: "text",
-    error: false,
   },
 };

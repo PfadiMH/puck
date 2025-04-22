@@ -32,7 +32,7 @@ function NavbarItemDesktop({ title, url }: NavbarItemProps) {
 
 function NavbarItemMobile({ title, url }: NavbarItemProps) {
   return (
-    <div className="bg-primary  w-full p-3 flex justify-center">
+    <div className="bg-elevated w-full p-3 flex justify-center">
       <a
         href={url || undefined}
         className="text-brand-yellow text-2xl font-rockingsoda"

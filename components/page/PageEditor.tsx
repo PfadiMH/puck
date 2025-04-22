@@ -1,61 +1,39 @@
 "use client";
-import { pageConfig } from "@lib/config/page.config";
-import { deletePage, savePage } from "@lib/db/database";
-import { Data, Puck } from "@measured/puck";
-import { ReactNode } from "react";
+import PageHeaderActions from "@components/puck-overrides/PageHeaderActions";
+import PuckHeader from "@components/puck-overrides/PuckHeader";
+import { PageConfig, pageConfig, PageData } from "@lib/config/page.config";
+import { Puck, usePuck } from "@measured/puck";
 
-function HeaderActions({
-  path,
-  children,
-}: {
+type HeaderTitleProps = {
   path: string;
-  children: ReactNode;
-}) {
-  const deletePageHandler = async () => {
-    if (confirm("Are you sure you want to delete this page?")) {
-      deletePage(path);
-    }
-  };
-  return (
-    <div className="flex gap-2">
-      <div className="grid grid-cols-2 gap-2">
-        <button
-          onClick={deletePageHandler}
-          className="bg-red-600 hover:bg-red-800 text-white font-bold py-1 px-2 rounded text-sm"
-        >
-          Delete
-        </button>
+};
 
-        <a href="/admin" className="text-gray-700 hover:underline">
-          <button className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-1 px-2 rounded text-sm">
-            To Admin
-          </button>
-        </a>
-        <a href={path} className="text-green-700 hover:underline">
-          <button className="bg-green-500 hover:bg-green-700 text-white font-bold py-1 px-2 rounded text-sm">
-            View Page
-          </button>
-        </a>
-      </div>
-      {children}
-    </div>
-  );
+function HeaderTitle({ path }: HeaderTitleProps) {
+  const {
+    appState: { data },
+  } = usePuck<PageConfig>();
+  const title = data?.root?.props?.title;
+  return `Editing ${path}${title ? `: ${title}` : ""}`;
 }
 
-export function PageEditor({ path, data }: { path: string; data: Data }) {
+type PageEditorProps = {
+  path: string;
+  data: PageData;
+};
+
+export function PageEditor({ path, data }: PageEditorProps) {
   return (
     <Puck
       config={pageConfig}
       data={data}
       headerPath={path}
       overrides={{
-        headerActions: ({ children }) => (
-          <HeaderActions path={path}>{children}</HeaderActions>
+        header: () => (
+          <PuckHeader
+            headerTitle={<HeaderTitle path={path} />}
+            headerActions={<PageHeaderActions path={path} />}
+          />
         ),
-      }}
-      headerTitle={`Editing: ${data.root?.props?.title || ""}`}
-      onPublish={async (data) => {
-        await savePage(path, data);
       }}
     />
   );
