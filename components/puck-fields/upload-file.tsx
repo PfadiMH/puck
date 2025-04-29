@@ -1,5 +1,6 @@
 import { UploadFileSvg } from "@components/graphics/UploadFileSvg";
 import { CustomFieldRenderProps } from "@lib/custom-field-types";
+import { saveFile } from "@lib/filemanager/filemanager";
 import { CustomField } from "@measured/puck";
 
 type UploadFileProps = string | undefined;
@@ -12,6 +13,7 @@ function UploadFile({
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      saveFile(file);
       if (file.size > 900 * 1024) {
         alert("File size exceeds 900KB");
         return;
@@ -25,7 +27,7 @@ function UploadFile({
   };
 
   return (
-    <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 flex flex-col items-center justify-center cursor-pointer hover:border-gray-400">
+    <div className="border-2 border-dashed border-gray-300 rounded-lg flex flex-col items-center justify-center cursor-pointer hover:border-gray-400">
       <input type="file" className="hidden" id={id} onChange={handleChange} />
       <label
         htmlFor={id}

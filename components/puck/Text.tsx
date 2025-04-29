@@ -1,11 +1,10 @@
 import { ComponentConfig } from "@measured/puck";
-
 export type TextProps = {
-  text: string;
+  text: string[];
 };
 
 function Text({ text }: TextProps) {
-  return <p className="text-wrap">{text}</p>;
+  return <div>{/* <Textin text={text} /> */}</div>;
 }
 
 export const textConfig: ComponentConfig<TextProps> = {
@@ -16,6 +15,6 @@ export const textConfig: ComponentConfig<TextProps> = {
     },
   },
   defaultProps: {
-    text: "Mir sind Voll Däbii!",
+    text: ["Mir sind Voll Däbii!"],
   },
 };
