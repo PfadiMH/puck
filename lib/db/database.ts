@@ -1,6 +1,6 @@
 "use server";
 
-import { Permission, RoleConfig } from "@lib/auth/permissions";
+import { Permission, SecurityConfig } from "@lib/auth/permissions";
 import { FooterData } from "@lib/config/footer.config";
 import { NavbarData } from "@lib/config/navbar.config";
 import { PageData } from "@lib/config/page.config";
@@ -16,10 +16,10 @@ export interface DatabaseService {
   saveFooter(data: FooterData): Promise<void>;
   getFooter(): Promise<FooterData>;
   getAllPaths(): Promise<string[]>;
-  getRolePermissions(role: string): Promise<Permission[]>;
-  getRolesPermissions(roles: string[]): Promise<Permission[]>;
-  getRoleConfig(): Promise<RoleConfig>;
-  saveRoleConfig(RoleConfig: RoleConfig): Promise<void>;
+  getPermissionsByRole(role: string): Promise<Permission[]>;
+  getPermissionsByRoles(roles: string[]): Promise<Permission[]>;
+  getRoleConfig(): Promise<SecurityConfig>;
+  saveRoleConfig(RoleConfig: SecurityConfig): Promise<void>;
 }
 
 function getDatabaseService(): DatabaseService {
@@ -78,16 +78,16 @@ export async function getAllPaths() {
   return dbService.getAllPaths();
 }
 
-export async function getRolePermissions(role: string) {
-  return dbService.getRolePermissions(role);
+export async function getPermissionsByRole(role: string) {
+  return dbService.getPermissionsByRole(role);
 }
 
-export async function getRolesPermissions(roles: string[]) {
-  return dbService.getRolesPermissions(roles);
+export async function getPermissionsByRoles(roles: string[]) {
+  return dbService.getPermissionsByRoles(roles);
 }
 export async function getRoleConfig() {
   return dbService.getRoleConfig();
 }
-export async function saveRoleConfig(permissions: RoleConfig) {
+export async function saveRoleConfig(permissions: SecurityConfig) {
   return dbService.saveRoleConfig(permissions);
 }

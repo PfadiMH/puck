@@ -1,10 +1,11 @@
-import { auth, signIn, signOut } from "@lib/auth/auth";
-import { getRolesPermissions } from "@lib/db/database";
+import { auth, signIn, signOut } from "@lib/auth/auth-client";
 
 export default async function Page() {
   const session = await auth();
 
-  const permissions = await getRolesPermissions(session?.user.roles || []);
+  const permissions = session?.user.permissions; /* await getPermissionsByRoles(
+    session?.user.roles || ["no session"]
+  ); */
 
   return (
     <>

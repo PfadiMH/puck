@@ -1,21 +1,10 @@
-import { getRolesPermissions } from "@lib/db/database";
+import { getPermissionsByRoles } from "@lib/db/database";
 import { Session } from "next-auth";
 import { forbidden, unauthorized } from "next/navigation";
-import { auth } from "./auth";
+import { auth } from "./auth-client";
 import { Permission } from "./permissions";
 
 type EvaluationFunction = (session: Session, ...args: any) => Promise<boolean>;
-
-/**
- * Helper function to convert any function that takes a session as its first parameter
- * into an EvaluationFunction without needing to write (session) => each time
- */
-export function createEvaluator<T extends any[]>(
-  fn: (session: Session, ...args: T) => Promise<boolean>,
-  ...args: T
-): EvaluationFunction {
-  return (session: Session) => fn(session, ...args);
-}
 
 export async function requirePageAuth(
   ...evaluations: EvaluationFunction[]
@@ -64,7 +53,7 @@ export async function requireActionAuth(
   return session;
 }
 
-export async function hasAnyPermission(
+async function hasAnyPermissionInternal(
   session: Session,
   ...permissions: Permission[]
 ): Promise<boolean> {
@@ -72,12 +61,20 @@ export async function hasAnyPermission(
     return false;
   }
 
+  const userPermissions = await getPermissionsByRoles(session.user.roles);
+
+  if (userPermissions.includes("global-admin")) return true; // Admin Bypass
+
   // Check if the user has any of the required permissions
-  const userPermissions = await getRolesPermissions(session.user.roles);
   return permissions.some((permission) => userPermissions.includes(permission));
 }
 
-export async function hasAllPermissions(
+export function hasAnyPermission(...permissions: Permission[]) {
+  return (session: Session) =>
+    hasAnyPermissionInternal(session, ...permissions);
+}
+
+export async function hasAllPermissionsInternal(
   session: Session,
   ...permissions: Permission[]
 ): Promise<boolean> {
@@ -85,18 +82,27 @@ export async function hasAllPermissions(
     return false;
   }
 
-  const userPermissions = await getRolesPermissions(session.user.roles);
+  const userPermissions = await getPermissionsByRoles(session.user.roles);
+
+  if (userPermissions.includes("global-admin")) return true; // Admin Bypass
+
+  // Check if the user has all of the required permissions
   return permissions.every((permission) =>
     userPermissions.includes(permission)
   );
 }
 
+export function hasAllPermissions(...permissions: Permission[]) {
+  return (session: Session) =>
+    hasAllPermissionsInternal(session, ...permissions);
+}
+
 /* Example usage of requireAuth with hasPermission using the createEvaluator
 
-export async function requireAuthWithPermissions(
-  ...permissions: Permission[]
-): Promise<Session> {
-  return requireAuth(createEvaluator(hasPermission, ...permissions));
+export async function PageXYZ(): Promise<NexPage> {
+  requirePageAuth(hasPermission, "page:update"));
+
+  return xyz;
 }
 
  */

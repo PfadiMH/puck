@@ -1,7 +1,7 @@
 import {
-  defaultRoleConfig,
+  defaultRoleConfig as defaultSecurityConfig,
   Permission,
-  RoleConfig,
+  SecurityConfig,
 } from "@lib/auth/permissions";
 import { defaultFooterData, FooterData } from "@lib/config/footer.config";
 import { defaultNavbarData, NavbarData } from "@lib/config/navbar.config";
@@ -13,14 +13,14 @@ interface DatabaseData {
   navbar: NavbarData;
   page: Record<string, PageData>;
   footer: FooterData;
-  RoleConfig: RoleConfig;
+  securityConfig: SecurityConfig;
 }
 
 const defaultDatabaseData: DatabaseData = {
   navbar: defaultNavbarData,
   page: {},
   footer: defaultFooterData,
-  RoleConfig: defaultRoleConfig,
+  securityConfig: defaultSecurityConfig,
 };
 
 /**
@@ -97,34 +97,34 @@ export class JsonService implements DatabaseService {
     return Object.keys(db.page);
   }
 
-  async getRolePermissions(role: string): Promise<Permission[]> {
+  async getPermissionsByRole(role: string): Promise<Permission[]> {
     const db = await this.getDatabase();
-    if (db.RoleConfig[role]) {
-      return db.RoleConfig[role].permissions;
+    if (db.securityConfig.roles[role]) {
+      return db.securityConfig.roles[role].permissions;
     }
     return [];
   }
 
-  async getRolesPermissions(roles: string[]): Promise<Permission[]> {
+  async getPermissionsByRoles(roles: string[]): Promise<Permission[]> {
     const db = await this.getDatabase();
     const permissions: Permission[] = [];
-    if (db.RoleConfig) {
+    if (db.securityConfig && db.securityConfig.roles) {
       for (const role of roles) {
-        if (db.RoleConfig[role]) {
-          permissions.push(...db.RoleConfig[role].permissions);
+        if (db.securityConfig.roles[role]?.permissions) {
+          permissions.push(...db.securityConfig.roles[role].permissions);
         }
       }
     }
     return [...new Set(permissions)];
   }
 
-  async getRoleConfig(): Promise<RoleConfig> {
+  async getRoleConfig(): Promise<SecurityConfig> {
     const db = await this.getDatabase();
-    return db.RoleConfig;
+    return db.securityConfig;
   }
-  async saveRoleConfig(roleConfig: RoleConfig): Promise<void> {
+  async saveRoleConfig(roleConfig: SecurityConfig): Promise<void> {
     const db = await this.getDatabase();
-    db.RoleConfig = roleConfig;
+    db.securityConfig = roleConfig;
     await this.saveDatabase(db);
   }
 }

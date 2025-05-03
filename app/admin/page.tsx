@@ -1,11 +1,8 @@
 import AdminPage from "@components/page/admin/AdminPage";
-import {
-  createEvaluator,
-  hasAnyPermission,
-  requirePageAuth,
-} from "@lib/auth/authorization";
+import { hasAnyPermission, requirePageAuth } from "@lib/auth/auth-functions";
 
 export default async function Page() {
-  await requirePageAuth(createEvaluator(hasAnyPermission, "custom"));
+  const session = await requirePageAuth(hasAnyPermission("admin-ui:read"));
+
   return <AdminPage />;
 }
