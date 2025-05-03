@@ -1,33 +1,23 @@
+"use client";
 import Button from "@components/ui/Button";
 import { DialogRoot, DialogTrigger } from "@components/ui/Dialog";
 import { useRouter } from "next/navigation";
-import AddPageModal from "./AddPageModal";
 
 function Header() {
   const router = useRouter();
 
   return (
     <div className="flex flex-wrap gap-2 justify-between mb-4">
-      <h1>Leitereberiich</h1>
+      <h1>ACCESS MANAGMENT</h1>
       <div className="flex flex-wrap gap-4">
         <Button size="medium" onClick={() => router.push("/admin/access")}>
-          Access Control
+          Back to Admin
         </Button>
-        <div className="grid grid-rows-2 gap-2">
-          <Button size="small" onClick={() => router.push("/admin/navbar")}>
-            Navbar
-          </Button>
-          <Button size="small" onClick={() => router.push("/admin/footer")}>
-            Footer
-          </Button>
-        </div>
 
         <DialogRoot>
           <DialogTrigger>
-            <Button color="primary">Add Page</Button>
+            <Button color="primary">Grant Permission</Button>
           </DialogTrigger>
-
-          <AddPageModal />
         </DialogRoot>
       </div>
     </div>

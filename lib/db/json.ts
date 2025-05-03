@@ -120,6 +120,11 @@ export class JsonService implements DatabaseService {
 
   async getRoleConfig(): Promise<SecurityConfig> {
     const db = await this.getDatabase();
+    if (!db.securityConfig) {
+      // If securityConfig is not defined, return the default
+      return defaultSecurityConfig;
+    }
+    // If securityConfig is defined, return it
     return db.securityConfig;
   }
   async saveRoleConfig(roleConfig: SecurityConfig): Promise<void> {

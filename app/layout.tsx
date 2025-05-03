@@ -3,7 +3,7 @@ import { poppins, rockingsodaPlus } from "@lib/fonts";
 import { Providers } from "../components/Providers";
 import "./globals.css";
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
