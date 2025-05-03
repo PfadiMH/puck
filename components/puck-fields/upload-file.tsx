@@ -1,6 +1,5 @@
 import { UploadFileSvg } from "@components/graphics/UploadFileSvg";
 import { CustomFieldRenderProps } from "@lib/custom-field-types";
-import { saveFile } from "@lib/filemanager/filemanager";
 import { CustomField } from "@measured/puck";
 
 type UploadFileProps = string | undefined;
@@ -13,7 +12,6 @@ function UploadFile({
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      saveFile(file);
       if (file.size > 900 * 1024) {
         alert("File size exceeds 900KB");
         return;

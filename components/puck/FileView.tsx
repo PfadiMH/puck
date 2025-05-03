@@ -1,17 +1,23 @@
 import { ComponentConfig } from "@measured/puck";
-export type FileViewProps = {
-  file: string[];
-};
-
 import { ColumnDef } from "@tanstack/react-table";
-import { FileTable } from "./FileTable";
-import { Textin } from "./Textout";
+
+import { FileSaveProps, FileTable } from "@components/puck-fields/fileTable";
+export type FileViewProps = {
+  file: FileSaveProps[];
+};
 
 export const columns: ColumnDef<File>[] = [];
 
 function FileView({ file }: FileViewProps) {
-  return <Textin text={file} />;
-  //return <div>{file}</div>;
+  return (
+    <div>
+      {file.map((single_file) => (
+        <a key={single_file.name} href={single_file.url}>
+          {single_file.name}
+        </a>
+      ))}
+    </div>
+  );
 }
 
 export const fileViewConfig: ComponentConfig<FileViewProps> = {

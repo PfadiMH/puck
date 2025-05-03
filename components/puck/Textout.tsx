@@ -1,5 +1,4 @@
 "use client";
-import { getFile } from "@lib/db/asb/database";
 import { useEffect, useState } from "react";
 export type TextProps = {
   text: string[];
@@ -19,10 +18,7 @@ export function Textin({ text }: TextProps) {
 function DownloadButton({ text }: { text: string }) {
   const [url, setUrl] = useState<string | null>(null);
 
-  const getFileUrl = async () => {
-    const fileURL = await getFile(text);
-    setUrl(fileURL);
-  };
+  const getFileUrl = async () => {};
   useEffect(() => {
     getFileUrl();
   }, [text]);

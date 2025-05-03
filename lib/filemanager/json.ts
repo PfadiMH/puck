@@ -1,11 +1,10 @@
-// implementation of the file manager for ASB inplements the interface
-import { FilemanagerService } from "./filemanager";
+import { FileManagerService } from "./filemanager";
 
 /**
  * JSON file implementation of DatabaseService
  * Data is stored in a single JSON file.
  */
-export class FilemanagerJsonService implements FilemanagerService {
+export class FilemanagerJsonService implements FileManagerService {
   private dbPath: string;
 
   constructor(dbPath: string) {
@@ -20,6 +19,27 @@ export class FilemanagerJsonService implements FilemanagerService {
       // If the file doesn't exist, create it with default data
       await this.saveDatabase({});
     }
+  }
+
+  async getFileUrl(name: string): Promise<string> {
+    console.log("Getting file URL:", name);
+    return new Promise(async (resolve) => {
+      const db = (await this.getDatabase()) as { [key: string]: any };
+      if (db[name]) {
+        const fileData = db[name];
+        let content;
+
+        content = Buffer.from(fileData.content, "base64");
+
+        const blob = new Blob([content], { type: fileData.type });
+        const file = new File([blob], name, {
+          type: fileData.type,
+          lastModified: fileData.lastModified,
+        });
+        console.log("File found:", file);
+        resolve(URL.createObjectURL(file));
+      }
+    });
   }
 
   async deleteFile(name: string): Promise<void> {

@@ -1,36 +1,29 @@
-// implementation of the file manager for ASB implements the interface
-
 "use client";
 
-import { BlobServiceClient, ContainerClient } from "@azure/storage-blob";
-import { FilemanagerService } from "./filemanager";
+import { ContainerClient } from "@azure/storage-blob";
+import { FileManagerService } from "./filemanager";
 
 /**
  * Azure Blob Storage implementation of ASBDatabaseService.
  * Data is stored as blobs in a container.
  */
 
-export class ABSFileManagerImpl implements FilemanagerService {
-  private blobServiceClient: BlobServiceClient;
+export class ABSFileManagerImpl implements FileManagerService {
   private containerClient: ContainerClient;
   private containerName: string;
-  private blobSasUrl: string;
   private sasToken: string;
   private accountName: string;
   private baseUrl: string;
 
-  constructor(sasToken: string) {
-    this.containerName = process.env.AZURE_STORAGE_BLOB_CONTAINER_NAME!;
-    this.accountName = process.env.AZURE_USERNAME!;
+  constructor(containerName: string, accountName: string, sasToken: string) {
+    this.containerName = containerName;
+    this.accountName = accountName;
     this.sasToken = sasToken;
-    this.blobSasUrl = `https://${this.accountName}.blob.core.windows.net/?${this.sasToken}`;
     this.baseUrl = `https://${this.accountName}.blob.core.windows.net/${this.containerName}/`;
-    this.blobServiceClient = new BlobServiceClient(this.blobSasUrl);
-    this.containerClient = this.blobServiceClient.getContainerClient(
-      this.containerName
+    this.containerClient = new ContainerClient(
+      `${this.baseUrl}?${this.sasToken}`
     );
     this.initialize();
-    this;
   }
 
   private async initialize(): Promise<void> {
@@ -83,6 +76,9 @@ export class ABSFileManagerImpl implements FilemanagerService {
 
   async saveFile(file: File): Promise<void> {
     await this.uploadBlob(file);
+  }
+  async getFileUrl(name: string): Promise<string> {
+    return `${this.baseUrl}${name}`;
   }
 
   async getFile(name: string): Promise<string> {
