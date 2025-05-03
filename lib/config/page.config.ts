@@ -40,7 +40,6 @@ export type FormResponse = {
   pageId: string;
   componentId: string;
   formData: FormData;
-  formResponseObject?: Record<string, unknown>;
 };
 
 export const pageConfig: PageConfig = sectionThemedConfig({
