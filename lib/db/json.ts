@@ -1,19 +1,22 @@
 import { defaultFooterData, FooterData } from "@lib/config/footer.config";
 import { defaultNavbarData, NavbarData } from "@lib/config/navbar.config";
-import { PageData } from "@lib/config/page.config";
+import { DocumentData, FormResponse, PageData } from "@lib/config/page.config";
 import fs from "fs/promises";
+import { v4 as uuid } from "uuid";
 import { DatabaseService } from "./database";
 
 interface DatabaseData {
   navbar: NavbarData;
-  page: Record<string, PageData>;
+  document: Record<string, DocumentData>;
   footer: FooterData;
+  formResponses: Record<string, FormResponse>;
 }
 
 const defaultDatabaseData: DatabaseData = {
   navbar: defaultNavbarData,
-  page: {},
+  document: {},
   footer: defaultFooterData,
+  formResponses: {},
 };
 
 /**
@@ -47,20 +50,35 @@ export class JsonService implements DatabaseService {
   }
 
   async savePage(path: string, data: PageData): Promise<void> {
+    const id = uuid();
     const db = await this.getDatabase();
-    db.page[path] = data;
+    db.document[path] = {
+      ...data,
+      id,
+    };
+    await this.saveDatabase(db);
+  }
+
+  async saveFormResponse(data: FormResponse): Promise<void> {
+    const db = await this.getDatabase();
+    const id = uuid();
+    db.formResponses[id] = {
+      componentId: data.componentId,
+      pageId: data.pageId,
+      formData: data.formData,
+    };
     await this.saveDatabase(db);
   }
 
   async deletePage(path: string): Promise<void> {
     const db = await this.getDatabase();
-    delete db.page[path];
+    delete db.document[path];
     await this.saveDatabase(db);
   }
 
-  async getPage(path: string): Promise<PageData | undefined> {
+  async getDocument(path: string): Promise<DocumentData | undefined> {
     const db = await this.getDatabase();
-    return db.page[path];
+    return db.document[path];
   }
 
   async saveNavbar(data: NavbarData): Promise<void> {
@@ -87,6 +105,24 @@ export class JsonService implements DatabaseService {
 
   async getAllPaths(): Promise<string[]> {
     const db = await this.getDatabase();
-    return Object.keys(db.page);
+    return Object.keys(db.document);
+  }
+
+  async getDocumentComponent<T>(
+    pageId: string,
+    componentId: string
+  ): Promise<T> {
+    const db = await this.getDatabase();
+    const document = Object.values(db.document).find(
+      (doc) => doc.id === pageId
+    );
+    if (!document) {
+      throw new Error(`Document with id ${pageId} not found`);
+    }
+    const comp = document.content.find((comp) => comp.props.id === componentId);
+    if (!comp) {
+      throw new Error(`Component with id ${componentId} not found`);
+    }
+    return comp.props as T;
   }
 }

@@ -1,8 +1,8 @@
 import { defaultFooterData, FooterData } from "@lib/config/footer.config";
 import { defaultNavbarData, NavbarData } from "@lib/config/navbar.config";
-import { PageData } from "@lib/config/page.config";
+import { DocumentData, FormResponse } from "@lib/config/page.config";
 import { Data } from "@measured/puck";
-import { Db, MongoClient } from "mongodb";
+import { Db, MongoClient, ObjectId } from "mongodb";
 import { DatabaseService } from "./database";
 
 /**
@@ -68,17 +68,25 @@ export class MongoService implements DatabaseService {
       );
   }
 
+  async saveFormResponse(data: FormResponse): Promise<void> {
+    await this.db.collection(this.collectionName).insertOne({
+      componentId: data.componentId,
+      pageId: data.pageId,
+      formData: data.formData,
+    });
+  }
+
   async deletePage(path: string): Promise<void> {
     await this.db
       .collection(this.collectionName)
       .deleteOne({ type: "page", path: path });
   }
 
-  async getPage(path: string): Promise<PageData | undefined> {
+  async getDocument(path: string): Promise<DocumentData | undefined> {
     const result = await this.db
       .collection(this.collectionName)
       .findOne({ type: "page", path: path });
-    return result ? result.data : undefined;
+    return result ? { id: result._id, ...result.data } : undefined;
   }
 
   async saveNavbar(data: NavbarData): Promise<void> {
@@ -123,5 +131,21 @@ export class MongoService implements DatabaseService {
       .find({ type: "page" })
       .toArray();
     return pages.map((page) => page.path);
+  }
+
+  async getDocumentComponent<T>(
+    pageId: string,
+    componentId: string
+  ): Promise<T> {
+    const result = await this.db
+      .collection(this.collectionName)
+      .findOne({ type: "page", _id: new ObjectId(pageId) });
+    if (!result) throw new Error(`Page with id ${pageId} not found`);
+    const component = result.data.content.find(
+      (comp: any) => comp.props.id === componentId
+    );
+    if (!component)
+      throw new Error(`Component with id ${componentId} not found`);
+    return component.props as T;
   }
 }
