@@ -15,7 +15,6 @@ export async function handleFormSubmit(formData: FormResponse) {
   formData.formData.forEach((value, key) => {
     formResponseObject[key] = value;
   });
-  formData.formResponseObject = formResponseObject;
 
   const res = await getDocumentComponent<FormGroupProps>(
     formData.pageId,
