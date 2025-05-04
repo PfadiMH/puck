@@ -34,10 +34,10 @@ export function FormGroup({
   });
   return (
     <FormGroupForm componentId={id}>
-      {groupedFields.map((row) => (
-        <div className='flex'>
+      {groupedFields.map((row, rowIndex) => (
+        <div className='flex' key={`row-${rowIndex}`}>
           {row.map((field, index) => (
-            <span className='flex grow mt-2 mb-2'>
+            <span className='flex grow mt-2 mb-2' key={`field-${index}`}>
               {field.size === "full" ? (
                 <span className='flex grow flex-col'>
                   <Label htmlFor={field.label}>{field.label}</Label>
