@@ -118,7 +118,7 @@ export class JsonService implements DatabaseService {
     return [...new Set(permissions)];
   }
 
-  async getRoleConfig(): Promise<SecurityConfig> {
+  async getSecurityConfig(): Promise<SecurityConfig> {
     const db = await this.getDatabase();
     if (!db.securityConfig) {
       // If securityConfig is not defined, return the default
@@ -127,7 +127,7 @@ export class JsonService implements DatabaseService {
     // If securityConfig is defined, return it
     return db.securityConfig;
   }
-  async saveRoleConfig(roleConfig: SecurityConfig): Promise<void> {
+  async saveSecurityConfig(roleConfig: SecurityConfig): Promise<void> {
     const db = await this.getDatabase();
     db.securityConfig = roleConfig;
     await this.saveDatabase(db);

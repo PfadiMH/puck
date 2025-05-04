@@ -1,0 +1,62 @@
+# docker-compose.yml
+version: '3.8'
+
+services:
+  keycloak-db:
+    # Use a specific PostgreSQL version for stability
+    image: postgres:16
+    restart: unless-stopped
+    environment:
+      # Database credentials and database name for Keycloak
+      POSTGRES_DB: keycloak
+      POSTGRES_USER: keycloak
+      POSTGRES_PASSWORD: password # <-- Change this! Use a strong password even for local dev.
+    volumes:
+      # Persistent volume for database data
+      - keycloak_data:/var/lib/postgresql/data
+    # Optional: Expose database port if you need to connect to the DB directly
+    # ports:
+    #   - "5432:5432"
+
+  keycloak:
+    # Use the official Keycloak image from quay.io
+    image: quay.io/keycloak/keycloak:23.0.4 # Use a specific, recent version
+    restart: unless-stopped
+    environment:
+      # Database configuration - connects to the 'keycloak-db' service
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://keycloak-db:5432/keycloak
+      KC_DB_USERNAME: keycloak
+      KC_DB_PASSWORD: password # <-- Must match POSTGRES_PASSWORD above
+
+      # Initial admin user credentials - set on first run only
+      KEYCLOAK_ADMIN: admin # <-- Change this username!
+      KEYCLOAK_ADMIN_PASSWORD: admin_password # <-- Change this password! Use a strong password.
+
+      # General settings
+      KC_HOSTNAME: localhost # Important for generating correct redirect URIs
+      KC_HTTP_PORT: 8080 # Keycloak listens on 8080 internally
+
+      # Optional features (uncomment if needed)
+      # KC_FEATURES: token-exchange,admin-fine-grained-authz
+
+      # Optimize configuration (speeds up subsequent starts)
+      # KC_OPTIMIZE: true
+
+    ports:
+      # Map host port 8080 to container port 8080
+      # This makes Keycloak accessible at http://localhost:8080
+      - "8080:8080"
+
+    # Ensure the database service is started before Keycloak
+    depends_on:
+      - keycloak-db
+
+    # Command to start Keycloak in development mode.
+    # This enables HTTP and simplified setup for local testing.
+    # REMOVE THIS FOR PRODUCTION!
+    command: start-dev
+
+volumes:
+  # Define the named volume for PostgreSQL data
+  keycloak_data:

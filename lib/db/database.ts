@@ -18,8 +18,8 @@ export interface DatabaseService {
   getAllPaths(): Promise<string[]>;
   getPermissionsByRole(role: string): Promise<Permission[]>;
   getPermissionsByRoles(roles: string[]): Promise<Permission[]>;
-  getRoleConfig(): Promise<SecurityConfig>;
-  saveRoleConfig(RoleConfig: SecurityConfig): Promise<void>;
+  getSecurityConfig(): Promise<SecurityConfig>;
+  saveSecurityConfig(RoleConfig: SecurityConfig): Promise<void>;
 }
 
 function getDatabaseService(): DatabaseService {
@@ -85,9 +85,9 @@ export async function getPermissionsByRole(role: string) {
 export async function getPermissionsByRoles(roles: string[]) {
   return dbService.getPermissionsByRoles(roles);
 }
-export async function getRoleConfig() {
-  return dbService.getRoleConfig();
+export async function getSecurityConfig() {
+  return dbService.getSecurityConfig();
 }
-export async function saveRoleConfig(permissions: SecurityConfig) {
-  return dbService.saveRoleConfig(permissions);
+export async function saveSecurityConfig(permissions: SecurityConfig) {
+  return dbService.saveSecurityConfig(permissions);
 }

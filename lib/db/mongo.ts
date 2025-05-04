@@ -152,7 +152,7 @@ export class MongoService implements DatabaseService {
     return permissions;
   }
 
-  async getRoleConfig(): Promise<SecurityConfig> {
+  async getSecurityConfig(): Promise<SecurityConfig> {
     const result = await this.db
       .collection(this.securityCollectionName)
       .findOne({ type: "roleConfig" });
@@ -160,7 +160,7 @@ export class MongoService implements DatabaseService {
     return result.data;
   }
 
-  async saveRoleConfig(roleConfig: SecurityConfig): Promise<void> {
+  async saveSecurityConfig(roleConfig: SecurityConfig): Promise<void> {
     await this.db
       .collection(this.securityCollectionName)
       .updateOne(

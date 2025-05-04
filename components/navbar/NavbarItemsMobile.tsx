@@ -27,7 +27,7 @@ export function NavbarItemsMobile({
   const logo = data.root.props?.logo;
   return (
     <>
-      <div className="md:hidden grid grid-cols-[1fr_min-content_1fr] border-b-[#F4D51F] border-b-8">
+      <div className="md:hidden grid grid-cols-[1fr_min-content_1fr] border-b-[#edc600] border-b-8">
         <div></div> {/* Empty div to align logo */}
         <div className="relative z-20 w-28 h-28 mb-[-50px]">
           {logo && <NavbarLogo logo={logo} />}
