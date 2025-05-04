@@ -2,6 +2,7 @@
 import Button from "@components/ui/Button";
 import { DialogRoot, DialogTrigger } from "@components/ui/Dialog";
 import { useRouter } from "next/navigation";
+import { RoleModal } from "./RoleModal";
 
 function Header() {
   const router = useRouter();
@@ -16,8 +17,9 @@ function Header() {
 
         <DialogRoot>
           <DialogTrigger>
-            <Button color="primary">Grant Permission</Button>
+            <Button color="primary">Add Role</Button>
           </DialogTrigger>
+          <RoleModal isEditing={false} isAdding={true} />
         </DialogRoot>
       </div>
     </div>

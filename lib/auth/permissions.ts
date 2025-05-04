@@ -1,3 +1,15 @@
+export const assignablePermissions: Permission[] = [
+  "admin-ui:read",
+  "page:create",
+  "page:update",
+  "page:delete",
+  "asset:create",
+  "asset:update",
+  "asset:delete",
+  "role-permissions:read",
+  "role-permissions:update",
+];
+
 // @keep-sorted
 export type Permission =
   | "admin-ui:read"
@@ -10,18 +22,6 @@ export type Permission =
   | "role-permissions:read"
   | "role-permissions:update"
   | "global-admin";
-
-export const assignablePermissions: Permission[] = [
-  "admin-ui:read",
-  "page:create",
-  "page:update",
-  "page:delete",
-  "asset:create",
-  "asset:update",
-  "asset:delete",
-  "role-permissions:read",
-  "role-permissions:update",
-];
 
 export interface SecurityConfig {
   roles: {

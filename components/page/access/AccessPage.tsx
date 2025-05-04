@@ -7,18 +7,26 @@ import Table, {
   TableRow,
 } from "@components/ui/Table";
 import { getSecurityConfig } from "@lib/db/database";
+import { queryClient } from "@lib/query-client";
 import { useQuery } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
+import { useState } from "react";
 import Header from "./Header";
 import RoleRow from "./RoleRow";
 
 function AccessPage() {
   const session = useSession().data;
+  const [open, setOpen] = useState(false);
 
   const { data: securityConfig = { roles: {} }, isLoading } = useQuery({
     queryKey: ["securityConfig"],
     queryFn: getSecurityConfig,
   });
+
+  const handleRoleUpdate = () => {
+    queryClient.invalidateQueries({ queryKey: ["securityConfig"] });
+  };
+
   return (
     <div className="p-4">
       <Header />
