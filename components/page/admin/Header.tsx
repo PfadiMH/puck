@@ -10,6 +10,9 @@ function Header() {
     <div className="flex flex-wrap gap-2 justify-between mb-4">
       <h1>Leitereberiich</h1>
       <div className="flex flex-wrap gap-4">
+        <Button size="medium" onClick={() => router.push("/admin/access")}>
+          Access Control
+        </Button>
         <div className="grid grid-rows-2 gap-2">
           <Button size="small" onClick={() => router.push("/admin/navbar")}>
             Navbar

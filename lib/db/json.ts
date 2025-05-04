@@ -1,3 +1,8 @@
+import {
+  defaultRoleConfig as defaultSecurityConfig,
+  Permission,
+  SecurityConfig,
+} from "@lib/auth/permissions";
 import { defaultFooterData, FooterData } from "@lib/config/footer.config";
 import { defaultNavbarData, NavbarData } from "@lib/config/navbar.config";
 import { PageData } from "@lib/config/page.config";
@@ -8,12 +13,14 @@ interface DatabaseData {
   navbar: NavbarData;
   page: Record<string, PageData>;
   footer: FooterData;
+  securityConfig: SecurityConfig;
 }
 
 const defaultDatabaseData: DatabaseData = {
   navbar: defaultNavbarData,
   page: {},
   footer: defaultFooterData,
+  securityConfig: defaultSecurityConfig,
 };
 
 /**
@@ -88,5 +95,41 @@ export class JsonService implements DatabaseService {
   async getAllPaths(): Promise<string[]> {
     const db = await this.getDatabase();
     return Object.keys(db.page);
+  }
+
+  async getPermissionsByRole(role: string): Promise<Permission[]> {
+    const db = await this.getDatabase();
+    if (db.securityConfig.roles[role]) {
+      return db.securityConfig.roles[role].permissions;
+    }
+    return [];
+  }
+
+  async getPermissionsByRoles(roles: string[]): Promise<Permission[]> {
+    const db = await this.getDatabase();
+    const permissions: Permission[] = [];
+    if (db.securityConfig && db.securityConfig.roles) {
+      for (const role of roles) {
+        if (db.securityConfig.roles[role]?.permissions) {
+          permissions.push(...db.securityConfig.roles[role].permissions);
+        }
+      }
+    }
+    return [...new Set(permissions)];
+  }
+
+  async getSecurityConfig(): Promise<SecurityConfig> {
+    const db = await this.getDatabase();
+    if (!db.securityConfig) {
+      // If securityConfig is not defined, return the default
+      return defaultSecurityConfig;
+    }
+    // If securityConfig is defined, return it
+    return db.securityConfig;
+  }
+  async saveSecurityConfig(roleConfig: SecurityConfig): Promise<void> {
+    const db = await this.getDatabase();
+    db.securityConfig = roleConfig;
+    await this.saveDatabase(db);
   }
 }

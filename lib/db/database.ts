@@ -1,5 +1,6 @@
 "use server";
 
+import { Permission, SecurityConfig } from "@lib/auth/permissions";
 import { FooterData } from "@lib/config/footer.config";
 import { NavbarData } from "@lib/config/navbar.config";
 import { PageData } from "@lib/config/page.config";
@@ -15,6 +16,10 @@ export interface DatabaseService {
   saveFooter(data: FooterData): Promise<void>;
   getFooter(): Promise<FooterData>;
   getAllPaths(): Promise<string[]>;
+  getPermissionsByRole(role: string): Promise<Permission[]>;
+  getPermissionsByRoles(roles: string[]): Promise<Permission[]>;
+  getSecurityConfig(): Promise<SecurityConfig>;
+  saveSecurityConfig(RoleConfig: SecurityConfig): Promise<void>;
 }
 
 function getDatabaseService(): DatabaseService {
@@ -71,4 +76,18 @@ export async function getFooter(): Promise<FooterData> {
 
 export async function getAllPaths() {
   return dbService.getAllPaths();
+}
+
+export async function getPermissionsByRole(role: string) {
+  return dbService.getPermissionsByRole(role);
+}
+
+export async function getPermissionsByRoles(roles: string[]) {
+  return dbService.getPermissionsByRoles(roles);
+}
+export async function getSecurityConfig() {
+  return dbService.getSecurityConfig();
+}
+export async function saveSecurityConfig(permissions: SecurityConfig) {
+  return dbService.saveSecurityConfig(permissions);
 }

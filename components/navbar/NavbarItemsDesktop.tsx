@@ -37,7 +37,7 @@ export function NavbarItemsDesktop({ data }: NavbarComponentsProps) {
   const { leftItems, rightItems } = splitData(data);
   const logo = data.root.props?.logo;
   return (
-    <div className="hidden md:grid grid-cols-[1fr_min-content_1fr] gap-4 items-end border-b-[#F4D51F] border-b-8">
+    <div className="hidden md:grid grid-cols-[1fr_min-content_1fr] gap-4 items-end border-b-[#edc600] border-b-8">
       <div className="flex justify-end gap-4 flex-wrap mb-1">
         <Render config={navbarConfig} data={leftItems} />
       </div>
