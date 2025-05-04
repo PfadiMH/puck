@@ -2,7 +2,8 @@
 
 import { FooterData } from "@lib/config/footer.config";
 import { NavbarData } from "@lib/config/navbar.config";
-import { DocumentData, FormResponse, PageData } from "@lib/config/page.config";
+import { DocumentData, PageData } from "@lib/config/page.config";
+import { FormResponseWithObject } from "@lib/form";
 import { JsonService } from "./json";
 import { MongoService } from "./mongo";
 
@@ -10,14 +11,13 @@ export interface DatabaseService {
   savePage(path: string, data: PageData): Promise<void>;
   deletePage(path: string): Promise<void>;
   getDocument(path: string): Promise<DocumentData | undefined>;
-  saveFormResponse(data: FormResponse): Promise<void>;
+  saveFormResponse(data: FormResponseWithObject): Promise<void>;
   saveNavbar(data: NavbarData): Promise<void>;
   getNavbar(): Promise<NavbarData>;
   saveFooter(data: FooterData): Promise<void>;
   getFooter(): Promise<FooterData>;
   getAllPaths(): Promise<string[]>;
   getDocumentComponent<T>(pageId: string, componentId: string): Promise<T>;
-  saveFormResponse(data: FormResponse): Promise<void>;
 }
 
 function getDatabaseService(): DatabaseService {
@@ -85,6 +85,6 @@ export async function getAllPaths() {
   return dbService.getAllPaths();
 }
 
-export async function saveFormResponse(data: FormResponse) {
+export async function saveFormResponse(data: FormResponseWithObject) {
   return dbService.saveFormResponse(data);
 }

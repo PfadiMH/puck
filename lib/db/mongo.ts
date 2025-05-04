@@ -1,6 +1,7 @@
 import { defaultFooterData, FooterData } from "@lib/config/footer.config";
 import { defaultNavbarData, NavbarData } from "@lib/config/navbar.config";
-import { DocumentData, FormResponse } from "@lib/config/page.config";
+import { DocumentData } from "@lib/config/page.config";
+import { FormResponseWithObject } from "@lib/form";
 import { Data } from "@measured/puck";
 import { Db, MongoClient, ObjectId } from "mongodb";
 import { DatabaseService } from "./database";
@@ -68,11 +69,11 @@ export class MongoService implements DatabaseService {
       );
   }
 
-  async saveFormResponse(data: FormResponse): Promise<void> {
+  async saveFormResponse(data: FormResponseWithObject): Promise<void> {
     await this.db.collection(this.collectionName).insertOne({
       componentId: data.componentId,
       pageId: data.pageId,
-      formData: data.formData,
+      formResponseObject: data.formResponseObject,
     });
   }
 

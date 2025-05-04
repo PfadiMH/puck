@@ -1,6 +1,7 @@
 import { defaultFooterData, FooterData } from "@lib/config/footer.config";
 import { defaultNavbarData, NavbarData } from "@lib/config/navbar.config";
-import { DocumentData, FormResponse, PageData } from "@lib/config/page.config";
+import { DocumentData, PageData } from "@lib/config/page.config";
+import { FormResponseWithObject } from "@lib/form";
 import fs from "fs/promises";
 import { v4 as uuid } from "uuid";
 import { DatabaseService } from "./database";
@@ -9,7 +10,7 @@ interface DatabaseData {
   navbar: NavbarData;
   document: Record<string, DocumentData>;
   footer: FooterData;
-  formResponses: Record<string, FormResponse>;
+  formResponses: Record<string, FormResponseWithObject>;
 }
 
 const defaultDatabaseData: DatabaseData = {
@@ -59,13 +60,13 @@ export class JsonService implements DatabaseService {
     await this.saveDatabase(db);
   }
 
-  async saveFormResponse(data: FormResponse): Promise<void> {
+  async saveFormResponse(data: FormResponseWithObject): Promise<void> {
     const db = await this.getDatabase();
     const id = uuid();
     db.formResponses[id] = {
       componentId: data.componentId,
       pageId: data.pageId,
-      formData: data.formData,
+      formResponseObject: data.formResponseObject,
     };
     await this.saveDatabase(db);
   }
