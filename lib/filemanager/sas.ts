@@ -9,33 +9,32 @@ import {
   StorageSharedKeyCredential,
 } from "@azure/storage-blob";
 
-const constants = {
-  accountName: process.env.AZURE_STORAGE_ACCOUNT_NAME,
-  accountKey: process.env.AZURE_STORAGE_ACCOUNT_KEY,
-};
-
-if (!constants.accountName || !constants.accountKey) {
-  console.error(
-    "AZURE_STORAGE_ACCOUNT_NAME and AZURE_STORAGE_ACCOUNT_KEY environment variables must be set."
-  );
-  throw new Error(
-    "AZURE_STORAGE_ACCOUNT_NAME and AZURE_STORAGE_ACCOUNT_KEY environment variables must be set."
-  );
-}
-
-const sharedKeyCredential = new StorageSharedKeyCredential(
-  constants.accountName,
-  constants.accountKey
-);
-
 export async function createAccountSas() {
+  const constants = {
+    accountName: process.env.AZURE_STORAGE_ACCOUNT_NAME,
+    accountKey: process.env.AZURE_STORAGE_ACCOUNT_KEY,
+  };
+
+  if (!constants.accountName || !constants.accountKey) {
+    console.error(
+      "AZURE_STORAGE_ACCOUNT_NAME and AZURE_STORAGE_ACCOUNT_KEY environment variables must be set."
+    );
+    throw new Error(
+      "AZURE_STORAGE_ACCOUNT_NAME and AZURE_STORAGE_ACCOUNT_KEY environment variables must be set."
+    );
+  }
+
+  const sharedKeyCredential = new StorageSharedKeyCredential(
+    constants.accountName,
+    constants.accountKey
+  );
   const sasOptions = {
-    services: AccountSASServices.parse("btqf").toString(), // blobs, tables, queues, files
-    resourceTypes: AccountSASResourceTypes.parse("sco").toString(), // service, container, object
-    permissions: AccountSASPermissions.parse("rwdlacupi"), // permissions
+    services: AccountSASServices.parse("btqf").toString(),
+    resourceTypes: AccountSASResourceTypes.parse("sco").toString(),
+    permissions: AccountSASPermissions.parse("rwdlacupi"),
     protocol: SASProtocol.Https,
     startsOn: new Date(),
-    expiresOn: new Date(new Date().valueOf() + 3600 * 1000), // 1 hour
+    expiresOn: new Date(new Date().valueOf() + 3600 * 1000),
   };
 
   const sasToken = generateAccountSASQueryParameters(

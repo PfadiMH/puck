@@ -1,5 +1,5 @@
-import { ABSFileManagerImpl } from "./asb";
-import { FilemanagerJsonService } from "./json";
+import { ABSFileManagerImpl } from "./asbFilleManagerImpl";
+import { LocalFileManagerImpl } from "./clientLocalFileManagerImpl";
 import { createAccountSas, getAccountInfos } from "./sas";
 
 export interface FileManagerService {
@@ -11,16 +11,18 @@ export interface FileManagerService {
 }
 
 export async function getFileManagerService(): Promise<FileManagerService> {
-  const accountSas = await createAccountSas();
-  if (accountSas) {
-    const accountInfos = await getAccountInfos();
-    return new ABSFileManagerImpl(
-      accountInfos.containerName,
-      accountInfos.accountName,
-      accountSas
-    );
+  try {
+    const accountSas = await createAccountSas();
+    if (accountSas) {
+      const accountInfos = await getAccountInfos();
+      return new ABSFileManagerImpl(
+        accountInfos.containerName,
+        accountInfos.accountName,
+        accountSas
+      );
+    }
+  } catch (e) {
+    console.log("Using JSON storage");
   }
-
-  console.log("Using JSON storage");
-  return new FilemanagerJsonService("abs_database.json");
+  return new LocalFileManagerImpl("./public/uploadedFiles");
 }
