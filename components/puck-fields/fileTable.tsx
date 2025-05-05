@@ -2,7 +2,6 @@
 
 import { ColumnDef } from "@tanstack/react-table";
 
-import { queryClient } from "@components/Providers";
 import { Button } from "@components/puck/Button";
 import { Checkbox } from "@components/puck/Checkbox";
 import { DataTable } from "@components/puck/DataTable";
@@ -12,6 +11,7 @@ import {
   FileManagerService,
   getFileManagerService,
 } from "@lib/filemanager/filemanager";
+import { queryClient } from "@lib/query-client";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { TrashCan } from "../../assets/TrashCan";
