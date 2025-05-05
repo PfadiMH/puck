@@ -1,4 +1,5 @@
 "use client";
+import { toast } from "@components/ui/Toast";
 import { usePageId } from "@lib/contexts/page-id-context";
 import { handleFormSubmit } from "@lib/form";
 import Form from "next/form";
@@ -16,13 +17,14 @@ function FormGroupForm({
 
   return (
     <Form
-      action={async (formData) =>
+      action={async (formData) => {
+        toast("Form submitted");
         handleFormSubmit({
           componentId,
           pageId,
           formData,
-        })
-      }
+        });
+      }}
     >
       {children}
     </Form>

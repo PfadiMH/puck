@@ -1,12 +1,12 @@
-import type { Config } from "@measured/puck";
-import { textConfig, TextProps } from "@components/Text";
+import { flexConfig, FlexProps } from "@components/Flex";
 import { formGroupConfig, FormGroupProps } from "@components/FormGroup";
 import { heroConfig, HeroProps } from "@components/Hero";
+import { textConfig, TextProps } from "@components/Text";
 import {
   verticalSpaceConfig,
   VerticalSpaceProps,
 } from "@components/VerticalSpace";
-import { flexConfig, FlexProps } from "@components/Flex";
+import type { Config } from "@measured/puck";
 
 type Props = {
   FormGroup: FormGroupProps;
