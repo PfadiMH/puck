@@ -8,7 +8,7 @@
     "start": "next start",
     "lint": "next lint",
     "storybook": "storybook dev -p 6006 --no-open",
-    "build-storybook": "storybook build"
+    "build-storybook": "storybook build",
   },
   "dependencies": {
     "@measured/puck": "^0.18.3",
@@ -36,7 +36,6 @@
     "tailwind-merge": "^3.2.0"
   },
   "devDependencies": {
-    "autoprefixer": "^10.4.20",
     "@eslint/eslintrc": "^3.3.1",
     "@storybook/addon-essentials": "^8.6.12",
     "@storybook/addon-interactions": "^8.6.12",
@@ -55,6 +54,7 @@
     "eslint": "^9.24.0",
     "eslint-config-next": "15.2.2",
     "eslint-plugin-storybook": "^0.12.0",
+    "eslint-plugin-storybook": "^0.12.0",
     "postcss": "^8.5.3",
     "storybook": "^8.6.12",
     "tailwindcss": "^4.1.4",
@@ -66,6 +66,10 @@
   "eslintConfig": {
     "extends": [
       "plugin:storybook/recommended"
-    ]
-  }
+    ],
+    "storybook": "^8.6.12",
+    "tailwindcss": "^4.1.4",
+    "typescript": "^5.8.3"
+  },
+
 }
