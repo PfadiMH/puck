@@ -113,10 +113,10 @@ export function FileTable({
 
         return (
           <Button
-            variant="ghost"
+            variant="link"
             size="sm"
-            onClick={() => {
-              fileManager?.deleteFile(name);
+            onClick={async () => {
+              await fileManager?.deleteFile(name);
               queryClient.invalidateQueries({
                 queryKey: ["files"],
               });
@@ -138,8 +138,8 @@ export function FileTable({
         event.preventDefault();
         const files = event.dataTransfer.files;
         if (files && files.length > 0) {
-          Array.from(files).forEach((file: File) => {
-            fileManager?.saveFile(file);
+          Array.from(files).forEach(async (file: File) => {
+            await fileManager?.saveFile(file);
           });
           queryClient.invalidateQueries({
             queryKey: ["files"],
@@ -156,8 +156,8 @@ export function FileTable({
           event.preventDefault();
           const files = event.target.files;
           if (files && files.length > 0) {
-            Array.from(files).forEach((file: File) => {
-              fileManager?.saveFile(file);
+            Array.from(files).forEach(async (file: File) => {
+              await fileManager?.saveFile(file);
               queryClient.invalidateQueries({
                 queryKey: ["files"],
               });
