@@ -22,6 +22,30 @@
       },
       "revId": "7ff186cd4b0ef349353244b6aba020c763059bc3",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "b91baac0_4bea1887",
+        "filename": "lib/auth/auth.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 1038509
+      },
+      "writtenOn": "2025-05-05T14:42:12Z",
+      "side": 1,
+      "message": "Acknowledged",
+      "parentUuid": "504c6e2b_f5b516fa",
+      "range": {
+        "startLine": 8,
+        "startChar": 1,
+        "endLine": 17,
+        "endChar": 23
+      },
+      "revId": "7ff186cd4b0ef349353244b6aba020c763059bc3",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     }
   ]
 }
