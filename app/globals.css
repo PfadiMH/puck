@@ -42,94 +42,94 @@
 
   --color-brand-yellow: #f4d51f;
   --color-brand-red: #be1622;
+}
 
-  .sun-theme {
-    --color-ground: var(--color-sun-ground);
-    --color-contrast-ground: var(--color-sun-contrast-ground);
-    --color-elevated: var(--color-sun-elevated);
-    --color-primary: var(--color-sun-primary);
-    --color-contrast-primary: var(--color-sun-contrast-primary);
-    --color-secondary: var(--color-sun-secondary);
-    --color-contrast-secondary: var(--color-sun-contrast-secondary);
+.sun-theme {
+  --color-ground: var(--color-sun-ground);
+  --color-contrast-ground: var(--color-sun-contrast-ground);
+  --color-elevated: var(--color-sun-elevated);
+  --color-primary: var(--color-sun-primary);
+  --color-contrast-primary: var(--color-sun-contrast-primary);
+  --color-secondary: var(--color-sun-secondary);
+  --color-contrast-secondary: var(--color-sun-contrast-secondary);
 
-    color: var(--color-contrast-ground);
+  color: var(--color-contrast-ground);
+}
+
+.mud-theme {
+  --color-ground: var(--color-mud-ground);
+  --color-contrast-ground: var(--color-mud-contrast-ground);
+  --color-elevated: var(--color-mud-elevated);
+  --color-primary: var(--color-mud-primary);
+  --color-contrast-primary: var(--color-mud-contrast-primary);
+  --color-secondary: var(--color-mud-secondary);
+  --color-contrast-secondary: var(--color-mud-contrast-secondary);
+
+  color: var(--color-contrast-ground);
+}
+
+@layer base {
+  /* This is needed because the font variables aren't available in @theme */
+  body {
+    --font-rockingsoda: var(--rockingsoda);
+    --font-poppins: var(--poppins);
   }
 
-  .mud-theme {
-    --color-ground: var(--color-mud-ground);
-    --color-contrast-ground: var(--color-mud-contrast-ground);
-    --color-elevated: var(--color-mud-elevated);
-    --color-primary: var(--color-mud-primary);
-    --color-contrast-primary: var(--color-mud-contrast-primary);
-    --color-secondary: var(--color-mud-secondary);
-    --color-contrast-secondary: var(--color-mud-contrast-secondary);
-
-    color: var(--color-contrast-ground);
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--rockingsoda);
   }
 
-  @layer base {
-    /* This is needed because the font variables aren't available in @theme */
-    body {
-      --font-rockingsoda: var(--rockingsoda);
-      --font-poppins: var(--poppins);
-    }
-
-    h1,
-    h2,
-    h3,
-    h4 {
-      font-family: var(--rockingsoda);
-    }
-
-    h1 {
-      @apply text-5xl;
-    }
-
-    h2 {
-      @apply text-4xl;
-    }
-
-    h3 {
-      @apply text-3xl;
-    }
-
-    h4 {
-      @apply text-2xl;
-    }
+  h1 {
+    @apply text-5xl;
   }
-  @layer components {
-    .content-main {
-      --gap: clamp(2rem, 6vw, 3rem);
-      --full: minmax(var(--gap), 1fr);
-      --content: min(100ch, 100% - var(--gap) * 3);
-      --popout: minmax(0, 2rem);
-      --feature: minmax(0, 5rem);
 
-      display: grid;
-      grid-template-columns:
-        [full-start] var(--full)
-        [feature-start] var(--feature)
-        [popout-start] var(--popout)
-        [content-start] var(--content) [content-end]
-        var(--popout) [popout-end]
-        var(--feature) [feature-end]
-        var(--full) [full-end];
-    }
+  h2 {
+    @apply text-4xl;
+  }
 
-    .content-main > * {
-      grid-column: content;
-    }
+  h3 {
+    @apply text-3xl;
+  }
 
-    .popout {
-      grid-column: popout;
-    }
+  h4 {
+    @apply text-2xl;
+  }
+}
+@layer components {
+  .content-main {
+    --gap: clamp(2rem, 6vw, 3rem);
+    --full: minmax(var(--gap), 1fr);
+    --content: min(100ch, 100% - var(--gap) * 3);
+    --popout: minmax(0, 2rem);
+    --feature: minmax(0, 5rem);
 
-    .feature {
-      grid-column: feature;
-    }
+    display: grid;
+    grid-template-columns:
+      [full-start] var(--full)
+      [feature-start] var(--feature)
+      [popout-start] var(--popout)
+      [content-start] var(--content) [content-end]
+      var(--popout) [popout-end]
+      var(--feature) [feature-end]
+      var(--full) [full-end];
+  }
 
-    .full {
-      grid-column: full;
-    }
+  .content-main > * {
+    grid-column: content;
+  }
+
+  .popout {
+    grid-column: popout;
+  }
+
+  .feature {
+    grid-column: feature;
+  }
+
+  .full {
+    grid-column: full;
   }
 }
