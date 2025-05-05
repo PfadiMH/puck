@@ -27,6 +27,13 @@ The `next` recipe showcases one of the most powerful ways to implement Puck usin
   powershell -c "irm bun.sh/install.ps1|iex"
   ```
 
+## Clone Repository
+
+```bash
+git clone https://github.com/PfadiMH/puck.git
+cd puck/
+```
+
 ## Install dependencies
 
 ```bash
