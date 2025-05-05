@@ -4,7 +4,11 @@ import { ComponentConfig } from "@measured/puck";
 export type SectionDividerProps = {};
 
 function SectionDivider({}: SectionDividerProps) {
-  return <SectionBreak />;
+  return (
+    <div className="full">
+      <SectionBreak />
+    </div>
+  );
 }
 
 export const sectionDividerConfig: ComponentConfig<SectionDividerProps> = {

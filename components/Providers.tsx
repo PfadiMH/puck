@@ -1,18 +1,16 @@
 "use client";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { ReactNode } from "react";
+
+import { queryClient } from "@lib/query-client";
+import { QueryClientProvider } from "@tanstack/react-query";
+import { PropsWithChildren } from "react";
 import { ParallaxProvider } from "react-scroll-parallax";
+import Toaster from "./ui/Toast";
 
-interface ProvidersProps {
-  children: ReactNode;
-}
-
-export const queryClient = new QueryClient();
-
-export const Providers = ({ children }: ProvidersProps) => {
+export function Providers({ children }: PropsWithChildren<unknown>) {
   return (
     <QueryClientProvider client={queryClient}>
       <ParallaxProvider>{children}</ParallaxProvider>
+      <Toaster />
     </QueryClientProvider>
   );
-};
+}

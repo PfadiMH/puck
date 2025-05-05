@@ -12,7 +12,7 @@ function Hero({ title, backgroundImage }: HeroProps) {
   const imageUrl = backgroundImage?.[0]?.url;
 
   return (
-    <div className="w-full h-96 relative flex flex-col justify-center overflow-hidden items-center">
+    <div className="full w-full h-96 relative flex flex-col justify-center overflow-hidden items-center">
       {imageUrl && (
         <Image
           fill

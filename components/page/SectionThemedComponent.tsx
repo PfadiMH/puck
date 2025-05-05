@@ -8,7 +8,9 @@ export function SectionThemedComponent({
 }: PropsWithChildren<{ theme: Theme }>) {
   return (
     <SectionThemeProvider theme={theme}>
-      <div className={`${theme}-theme bg-background`}>{children}</div>
+      <div className={`${theme}-theme bg-ground content-main overflow-hidden`}>
+        {children}
+      </div>
     </SectionThemeProvider>
   );
 }
