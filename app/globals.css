@@ -1,5 +1,5 @@
 @import "tailwindcss";
-
+@import "../components/puck-fields/ui/cn.css";
 @theme {
   /* Fonts */
   --font-rockingsoda: var(--rockingsoda);

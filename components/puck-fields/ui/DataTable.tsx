@@ -15,8 +15,8 @@ import {
 } from "@tanstack/react-table";
 import * as React from "react";
 
-import { Button } from "@components/puck/Button";
-import { Input } from "@components/puck/Input";
+import { Button } from "@components/puck-fields/ui/Button";
+import { Input } from "@components/puck-fields/ui/Input";
 import {
   Table,
   TableBody,
@@ -24,7 +24,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@components/puck/Table";
+} from "@components/puck-fields/ui/Table";
 
 type DataTableProps = {
   columns: ColumnDef<string>[];

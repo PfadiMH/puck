@@ -2,10 +2,10 @@
 
 import { ColumnDef } from "@tanstack/react-table";
 
-import { Button } from "@components/puck/Button";
-import { Checkbox } from "@components/puck/Checkbox";
-import { DataTable } from "@components/puck/DataTable";
-import { Input } from "@components/puck/Input";
+import { Button } from "@components/puck-fields/ui/Button";
+import { Checkbox } from "@components/puck-fields/ui/Checkbox";
+import { DataTable } from "@components/puck-fields/ui/DataTable";
+import { Input } from "@components/puck-fields/ui/Input";
 import { CustomFieldRenderProps } from "@lib/custom-field-types";
 import {
   FileManagerService,
@@ -14,7 +14,7 @@ import {
 import { queryClient } from "@lib/query-client";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
-import { TrashCan } from "../../assets/TrashCan";
+import TrashCanSvg from "../graphics/TrashCanSvg";
 
 export type FileSaveProps = {
   name: string;
@@ -122,7 +122,7 @@ export function FileTable({
               });
             }}
           >
-            <TrashCan />
+            <TrashCanSvg />
           </Button>
         );
       },

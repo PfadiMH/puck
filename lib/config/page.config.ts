@@ -1,4 +1,3 @@
-import { FileViewProps, fileViewConfig } from "@components/puck/FileView";
 import { FlexProps, flexConfig } from "@components/puck/Flex";
 import { GraphicProps, graphicConfig } from "@components/puck/Graphic";
 import { HeadingProps, headingConfig } from "@components/puck/Heading";
@@ -26,7 +25,6 @@ export type PageProps = {
   SectionDivider: SectionDividerProps;
   Text: TextProps;
   VerticalSpace: VerticalSpaceProps;
-  FileView: FileViewProps;
 };
 export type PageRootProps = {
   title: string;
@@ -45,7 +43,6 @@ export const pageConfig: PageConfig = sectionThemedConfig({
     SectionDivider: sectionDividerConfig,
     Text: textConfig,
     VerticalSpace: verticalSpaceConfig,
-    FileView: fileViewConfig,
   },
 });
 
