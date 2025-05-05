@@ -4,9 +4,16 @@ import FormGroupForm from "@components/page/FormGroupForm";
 import { ComponentConfig, WithId } from "@measured/puck";
 
 export type FormGroupProps = {
-  formFields: { label: string; size: string }[];
+  formFields: FormField[];
   buttonLabel: string;
   formRecipientEmail: string;
+};
+
+type FormField = {
+  label: string;
+  size: string;
+  placeholder: string;
+  required: boolean;
 };
 
 export function FormGroup({
@@ -14,24 +21,28 @@ export function FormGroup({
   buttonLabel,
   id,
 }: WithId<FormGroupProps>) {
-  const groupedFields: { label: string; size: string }[][] = [];
-  let tempRow: { label: string; size: string }[] = [];
+  const groupedFields: Array<FormField[]> = [];
+  let tempRow: FormField[] = [];
   formFields.forEach((field, index) => {
-    if (field.size === "full") {
-      groupedFields.push([field]);
-    } else if (field.size === "half") {
-      if (tempRow.length === 0) {
-        tempRow.push(field);
-        if (index === formFields.length - 1) {
-          groupedFields.push(tempRow);
-        }
-      } else if (tempRow.length === 1) {
-        tempRow.push(field);
+    if (field.size === "half" && tempRow.length === 1) {
+      tempRow.push(field);
+      groupedFields.push(tempRow);
+      tempRow = [];
+    } else if (field.size === "half" && tempRow.length === 0) {
+      tempRow.push(field);
+      if (index === formFields.length - 1) {
         groupedFields.push(tempRow);
         tempRow = [];
       }
+    } else if (field.size === "full") {
+      if (tempRow.length > 0) {
+        groupedFields.push(tempRow);
+        tempRow = [];
+      }
+      groupedFields.push([field]);
     }
   });
+
   return (
     <FormGroupForm componentId={id}>
       {groupedFields.map((row, rowIndex) => (
@@ -39,13 +50,16 @@ export function FormGroup({
           {row.map((field, index) => (
             <span className='flex grow mt-2 mb-2' key={`field-${index}`}>
               {field.size === "full" ? (
-                <span className='flex grow flex-col'>
-                  <Label htmlFor={field.label}>{field.label}</Label>
-                  <Input
-                    id={field.label}
-                    name={field.label}
-                    placeholder={field.label}
-                  />
+                <span className='flex grow'>
+                  <span className='flex-1'>
+                    <Label htmlFor={field.label}>{field.label}</Label>
+                    <Input
+                      id={field.label}
+                      name={field.label}
+                      placeholder={field.placeholder}
+                      required={field.required}
+                    />
+                  </span>
                 </span>
               ) : (
                 <span className='flex grow'>
@@ -54,13 +68,14 @@ export function FormGroup({
                     <Input
                       id={field.label}
                       name={field.label}
-                      placeholder={field.label}
+                      placeholder={field.placeholder}
+                      required={field.required}
                     />
                   </span>
-                  {index === 0 ? (
+                  {index === 0 && row.length - 1 !== index ? (
                     <span>
                       {row.length - 1 !== index ? (
-                        <span className='p-1'></span>
+                        <span className='pr-1 pl-1'></span>
                       ) : (
                         <span></span>
                       )}
@@ -93,9 +108,23 @@ export const formGroupConfig: ComponentConfig<FormGroupProps> = {
   fields: {
     formFields: {
       type: "array",
+      label: "Form Fields",
+      getItemSummary: (item) => {
+        return item.label;
+      },
       arrayFields: {
         label: {
           type: "text",
+        },
+        placeholder: {
+          type: "text",
+        },
+        required: {
+          type: "radio",
+          options: [
+            { value: true, label: "Required" },
+            { value: false, label: "Not required" },
+          ],
         },
         size: {
           type: "radio",
@@ -107,7 +136,9 @@ export const formGroupConfig: ComponentConfig<FormGroupProps> = {
       },
       defaultItemProps: {
         label: "label",
+        placeholder: "placeholder",
         size: "full",
+        required: false,
       },
     },
     buttonLabel: {
@@ -118,7 +149,14 @@ export const formGroupConfig: ComponentConfig<FormGroupProps> = {
     },
   },
   defaultProps: {
-    formFields: [{ label: "label", size: "full" }],
+    formFields: [
+      {
+        label: "label",
+        size: "full",
+        placeholder: "placeholder",
+        required: false,
+      },
+    ],
     buttonLabel: "Send response",
     formRecipientEmail: "example@example.com",
   },
