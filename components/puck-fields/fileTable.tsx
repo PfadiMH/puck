@@ -12,19 +12,26 @@ import {
   getFileManagerService,
 } from "@lib/filemanager/filemanager";
 import { queryClient } from "@lib/query-client";
+import { CustomField } from "@measured/puck";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import TrashCanSvg from "../graphics/TrashCanSvg";
+import { RadioGroup, RadioGroupItem } from "./ui/RadioGroup";
 
-export type FileSaveProps = {
-  name: string;
-  url: string;
+export type FileProps = {
+  name: string | null;
+  url: string | null;
 };
 
-export function FileTable({
+type FileTableProps<T> = CustomFieldRenderProps<T> & {
+  isSingleSelection: boolean;
+};
+
+function FileTable<T extends FileProps | FileProps[]>({
   onChange,
   value,
-}: CustomFieldRenderProps<FileSaveProps[]>) {
+  isSingleSelection,
+}: FileTableProps<T>) {
   useEffect(() => {
     const fetchData = async () => {
       setFileManager(await getFileManagerService());
@@ -42,7 +49,9 @@ export function FileTable({
     queryFn: () => fileManager?.getFileNames() || [],
     enabled: !!fileManager,
   });
-  const selection = value.map((rowValue) =>
+  const valueArray = Array.isArray(value) ? value : value ? [value] : [];
+
+  const selection = valueArray.map((rowValue) =>
     String(data?.findIndex((dataValue) => dataValue === rowValue.name) ?? -1)
   );
   const onSelectionChange = async (selected: string[]) => {
@@ -53,30 +62,38 @@ export function FileTable({
         return { name, url };
       });
       const selectedFiles = await Promise.all(selectedFilesPromises);
-      onChange(selectedFiles);
+      onChange(
+        isSingleSelection ? (selectedFiles[0] as T) : (selectedFiles as T)
+      );
     }
   };
 
   const columns: ColumnDef<string>[] = [
     {
       id: "select",
-      header: ({ table }) => (
-        <Checkbox
-          checked={
-            table.getIsAllPageRowsSelected() ||
-            (table.getIsSomePageRowsSelected() && "indeterminate")
-          }
-          onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-          aria-label="Select all"
-        />
-      ),
-      cell: ({ row }) => (
-        <Checkbox
-          checked={row.getIsSelected()}
-          onCheckedChange={(value) => row.toggleSelected(!!value)}
-          aria-label="Select row"
-        />
-      ),
+      header: ({ table }) =>
+        !isSingleSelection ? (
+          <Checkbox
+            checked={
+              table.getIsAllPageRowsSelected() ||
+              (table.getIsSomePageRowsSelected() && "indeterminate")
+            }
+            onCheckedChange={(value) =>
+              table.toggleAllPageRowsSelected(!!value)
+            }
+            aria-label="Select all"
+          />
+        ) : null,
+      cell: ({ row }) =>
+        !isSingleSelection ? (
+          <Checkbox
+            checked={row.getIsSelected()}
+            onCheckedChange={(value) => row.toggleSelected(!!value)}
+            aria-label="Select row"
+          />
+        ) : (
+          <RadioGroupItem value={row.index.toString()} />
+        ),
       enableSorting: false,
       enableHiding: false,
     },
@@ -165,13 +182,66 @@ export function FileTable({
           }
         }}
       />
-      <DataTable
-        columns={columns}
-        data={data || []}
-        searchField="filename"
-        selection={selection}
-        onSelectionChange={onSelectionChange}
-      />
+      <RadioGroup
+        onValueChange={(value) => {
+          onSelectionChange([value]);
+        }}
+        defaultValue={selection[0]}
+      >
+        <DataTable
+          columns={columns}
+          data={data || []}
+          searchField="filename"
+          selection={selection}
+          onSelectionChange={onSelectionChange}
+        />
+      </RadioGroup>
     </div>
   );
 }
+
+function SingleSelectionFileTable({
+  onChange,
+  value,
+  field,
+  name,
+  id,
+}: CustomFieldRenderProps<FileProps>) {
+  return FileTable<FileProps>({
+    onChange,
+    value,
+    field,
+    name,
+    id,
+    isSingleSelection: true,
+  });
+}
+
+function MultipleSelectionFileTable({
+  onChange,
+  value,
+  field,
+  name,
+  id,
+}: CustomFieldRenderProps<FileProps[]>) {
+  return FileTable<FileProps[]>({
+    onChange,
+    value,
+    field,
+    name,
+    id,
+    isSingleSelection: false,
+  });
+}
+
+export const singleSelectionFileTableField: CustomField<FileProps> = {
+  type: "custom",
+  label: "Upload File",
+  render: SingleSelectionFileTable,
+};
+
+export const multipleSelectionFileTableField: CustomField<FileProps[]> = {
+  type: "custom",
+  label: "Upload File",
+  render: MultipleSelectionFileTable,
+};

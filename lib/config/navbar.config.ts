@@ -1,4 +1,7 @@
-import { uploadFileField } from "@components/puck-fields/upload-file";
+import {
+  FileProps,
+  singleSelectionFileTableField,
+} from "@components/puck-fields/fileTable";
 import {
   navbarDropdownConfig,
   NavbarDropdownProps,
@@ -15,7 +18,7 @@ export type NavbarProps = {
   NavbarItem: NavbarItemProps;
 };
 export type NavbarRootProps = {
-  logo?: string;
+  logo: FileProps;
 };
 export type NavbarConfig = Config<NavbarProps, NavbarRootProps>;
 export type NavbarData = Data<NavbarProps, NavbarRootProps>;
@@ -23,7 +26,7 @@ export type NavbarData = Data<NavbarProps, NavbarRootProps>;
 export const navbarConfig: NavbarConfig = {
   root: {
     fields: {
-      logo: uploadFileField,
+      logo: singleSelectionFileTableField,
     },
   },
   // @keep-sorted
@@ -36,6 +39,8 @@ export const navbarConfig: NavbarConfig = {
 export const defaultNavbarData: NavbarData = {
   content: [],
   root: {
-    props: {},
+    props: {
+      logo: { name: null, url: null },
+    },
   },
 };

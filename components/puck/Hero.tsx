@@ -1,15 +1,18 @@
 import { PostHeroSvg } from "@components/graphics/PostHeroSvg";
-import { FileSaveProps, FileTable } from "@components/puck-fields/fileTable";
+import {
+  FileProps,
+  singleSelectionFileTableField,
+} from "@components/puck-fields/fileTable";
 import { ComponentConfig } from "@measured/puck";
 import Image from "next/image";
 
 export type HeroProps = {
   title: string;
-  backgroundImage: FileSaveProps[];
+  backgroundImage: FileProps;
 };
 
 function Hero({ title, backgroundImage }: HeroProps) {
-  const imageUrl = backgroundImage?.[0]?.url;
+  const imageUrl = backgroundImage?.url;
 
   return (
     <div className="full w-full h-96 relative flex flex-col justify-center overflow-hidden items-center">
@@ -41,13 +44,6 @@ export const heroConfig: ComponentConfig<HeroProps> = {
       type: "text",
       label: "Title (Optional)",
     },
-    backgroundImage: {
-      type: "custom",
-      render: FileTable,
-    },
-  },
-  defaultProps: {
-    title: "",
-    backgroundImage: [],
+    backgroundImage: singleSelectionFileTableField,
   },
 };
