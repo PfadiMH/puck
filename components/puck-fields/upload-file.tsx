@@ -25,7 +25,7 @@ function UploadFile({
   };
 
   return (
-    <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 flex flex-col items-center justify-center cursor-pointer hover:border-gray-400">
+    <div className="border-2 border-dashed border-gray-300 rounded-lg flex flex-col items-center justify-center cursor-pointer hover:border-gray-400">
       <input type="file" className="hidden" id={id} onChange={handleChange} />
       <label
         htmlFor={id}
