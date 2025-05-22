@@ -17,7 +17,7 @@ async function PageRender({
   footerData,
 }: PageRenderProps) {
   return (
-    <PageIdProvider id={String(document.id)}>
+    <PageIdProvider id={document.id}>
       <NavbarRender data={navbarData} />
       <Render config={pageConfig} data={document} />
       <Render config={footerConfig} data={footerData} />

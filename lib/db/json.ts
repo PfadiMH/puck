@@ -60,13 +60,17 @@ export class JsonService implements DatabaseService {
     await this.saveDatabase(db);
   }
 
-  async saveFormResponse(data: FormResponseWithObject): Promise<void> {
+  async saveFormResponse(
+    pageId: string,
+    componentId: string,
+    formResponseObject: Record<string, string>
+  ): Promise<void> {
     const db = await this.getDatabase();
     const id = uuid();
     db.formResponses[id] = {
-      componentId: data.componentId,
-      pageId: data.pageId,
-      formResponseObject: data.formResponseObject,
+      componentId,
+      pageId,
+      formResponseObject,
     };
     await this.saveDatabase(db);
   }
