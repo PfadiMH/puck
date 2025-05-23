@@ -1,7 +1,7 @@
-import { Input } from "@components/misc/external/input";
-import { Label } from "@components/misc/external/label";
 import FormGroupForm from "@components/page/FormGroupForm";
 import { ComponentConfig, WithId } from "@measured/puck";
+import { useMemo } from "react";
+import { FormGroupRow } from "./FormGropRow";
 
 export type FormGroupProps = {
   formFields: FormField[];
@@ -9,7 +9,7 @@ export type FormGroupProps = {
   formRecipientEmail: string;
 };
 
-type FormField = {
+export type FormField = {
   label: string;
   size: string;
   placeholder: string;
@@ -21,73 +21,36 @@ export function FormGroup({
   buttonLabel,
   id,
 }: WithId<FormGroupProps>) {
-  const groupedFields: Array<FormField[]> = [];
-  let tempRow: FormField[] = [];
-  formFields.forEach((field, index) => {
-    if (field.size === "half" && tempRow.length === 1) {
-      tempRow.push(field);
-      groupedFields.push(tempRow);
-      tempRow = [];
-    } else if (field.size === "half" && tempRow.length === 0) {
-      tempRow.push(field);
-      if (index === formFields.length - 1) {
-        groupedFields.push(tempRow);
-        tempRow = [];
+  const groupedFields =
+    useMemo(() => {
+      const fields: Array<FormField[]> = [];
+      let tempRow: FormField[] = [];
+      for (let i = 0; i < formFields.length; i++) {
+        if (formFields[i].size === "half" && tempRow.length === 1) {
+          tempRow.push(formFields[i]);
+          fields.push(tempRow);
+          tempRow = [];
+        } else if (formFields[i].size === "half" && tempRow.length === 0) {
+          tempRow.push(formFields[i]);
+          if (i === formFields.length - 1) {
+            fields.push(tempRow);
+            tempRow = [];
+          }
+        } else if (formFields[i].size === "full") {
+          if (tempRow.length > 0) {
+            fields.push(tempRow);
+            tempRow = [];
+          }
+          fields.push([formFields[i]]);
+        }
       }
-    } else if (field.size === "full") {
-      if (tempRow.length > 0) {
-        groupedFields.push(tempRow);
-        tempRow = [];
-      }
-      groupedFields.push([field]);
-    }
-  });
+      return fields;
+    }, [formFields]) || [];
 
   return (
     <FormGroupForm componentId={id}>
       {groupedFields.map((row, rowIndex) => (
-        <div className='flex' key={`row-${rowIndex}`}>
-          {row.map((field, index) => (
-            <span className='flex grow mt-2 mb-2' key={`field-${index}`}>
-              {field.size === "full" ? (
-                <span className='flex grow'>
-                  <span className='flex-1'>
-                    <Label htmlFor={field.label}>{field.label}</Label>
-                    <Input
-                      id={field.label}
-                      name={field.label}
-                      placeholder={field.placeholder}
-                      required={field.required}
-                    />
-                  </span>
-                </span>
-              ) : (
-                <span className='flex grow'>
-                  <span className='flex-1/2'>
-                    <Label htmlFor={field.label}>{field.label}</Label>
-                    <Input
-                      id={field.label}
-                      name={field.label}
-                      placeholder={field.placeholder}
-                      required={field.required}
-                    />
-                  </span>
-                  {index === 0 && row.length - 1 !== index ? (
-                    <span>
-                      {row.length - 1 !== index ? (
-                        <span className='pr-1 pl-1'></span>
-                      ) : (
-                        <span></span>
-                      )}
-                    </span>
-                  ) : (
-                    <span></span>
-                  )}
-                </span>
-              )}
-            </span>
-          ))}
-        </div>
+        <FormGroupRow row={row} key={`row-${rowIndex}`} />
       ))}
       {groupedFields.length > 0 ? (
         <button
