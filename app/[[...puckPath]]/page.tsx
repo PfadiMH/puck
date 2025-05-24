@@ -13,7 +13,7 @@
 import PageRender from "@components/page/PageRender";
 import { footerConfig } from "@lib/config/footer.config";
 import { pageConfig } from "@lib/config/page.config";
-import { getDocument, getFooter, getNavbar } from "@lib/db/database";
+import { getFooter, getNavbar, getPageDocument } from "@lib/db/database";
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
 
@@ -26,23 +26,23 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { puckPath = [] } = await params;
   const path = `/${puckPath.join("/")}`;
-  const page = await getDocument(path);
+  const page = await getPageDocument(path);
 
   if (!page) {
     return {};
   }
 
   return {
-    title: page.root.props?.title || "Pfadi Meilen Herrliberg",
+    title: page.data.root.props?.title || "Pfadi Meilen Herrliberg",
   };
 }
 
 export default async function Page({ params }: { params: Params }) {
   const { puckPath = [] } = await params;
   const path = `/${puckPath.join("/")}`;
-  const document = await getDocument(path);
+  const page = await getPageDocument(path);
 
-  if (!document) {
+  if (!page) {
     return notFound();
   }
 
@@ -53,7 +53,7 @@ export default async function Page({ params }: { params: Params }) {
     <PageRender
       {...{
         navbarData,
-        document,
+        page,
         footerData,
         pageConfig,
         footerConfig,

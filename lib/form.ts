@@ -1,5 +1,4 @@
 "use server";
-import { FormGroupProps } from "@components/puck/FormGroup";
 import { getDocumentComponent, saveFormResponse } from "@lib/db/database";
 import { sendMail } from "./smtp";
 
@@ -9,16 +8,22 @@ export type FormResponseWithObject = {
   formResponseObject: Record<string, unknown>;
 };
 
+export type FormResponse = {
+  pageId: string;
+  componentId: string;
+  formData: FormData;
+};
+
 export async function handleFormSubmit(
   pageId: string,
   componentId: string,
-  formResponseObject: Record<string, string>
+  data: Record<string, string>
 ) {
-  const res = await getDocumentComponent<FormGroupProps>(pageId, componentId);
-  await saveFormResponse(pageId, componentId, formResponseObject);
+  const res = await getDocumentComponent<"FormGroup">(pageId, componentId);
+  await saveFormResponse(pageId, componentId, data);
   await sendMail(
     res.formRecipientEmail,
     "Form Submission",
-    JSON.stringify(formResponseObject, null, 2)
+    JSON.stringify(data, null, 2)
   );
 }

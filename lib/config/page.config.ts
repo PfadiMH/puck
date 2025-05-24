@@ -33,14 +33,6 @@ export type PageRootProps = {
 };
 export type PageConfig = Config<PageProps, PageRootProps>;
 export type PageData = Data<PageProps, PageRootProps>;
-export type DocumentData = PageData & {
-  id: string;
-};
-export type FormResponse = {
-  pageId: string;
-  componentId: string;
-  formData: FormData;
-};
 
 export const pageConfig: PageConfig = sectionThemedConfig({
   // @keep-sorted
