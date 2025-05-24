@@ -1,6 +1,6 @@
 import { PageEditor } from "@components/page/PageEditor";
 import { defaultPageData } from "@lib/config/page.config";
-import { getPage } from "@lib/db/database";
+import { getPageDocument } from "@lib/db/database";
 import "@measured/puck/puck.css";
 import { Metadata } from "next";
 
@@ -22,7 +22,7 @@ export async function generateMetadata({
 export default async function Page({ params }: { params: Params }) {
   const { editPath = [] } = await params;
   const path = `/${editPath.join("/")}`;
-  const data = (await getPage(path)) ?? defaultPageData;
+  let data = (await getPageDocument(path))?.data || defaultPageData;
 
   return <PageEditor path={path} data={data} />;
 }
