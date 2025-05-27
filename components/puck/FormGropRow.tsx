@@ -18,6 +18,7 @@ export function FormGroupRow({ row }: { row: FormField[] }) {
                 name={field.label}
                 placeholder={field.placeholder}
                 required={field.required}
+                type={field.type}
               />
             </span>
           </span>

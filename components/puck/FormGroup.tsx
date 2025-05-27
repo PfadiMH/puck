@@ -1,7 +1,8 @@
 import FormGroupForm from "@components/page/FormGroupForm";
 import Button from "@components/ui/Button";
+import { createFormSchema } from "@lib/form";
 import { ComponentConfig, WithId } from "@measured/puck";
-import { useMemo } from "react";
+import { HTMLInputTypeAttribute, useMemo } from "react";
 import { FormGroupRow } from "./FormGropRow";
 
 export type FormGroupProps = {
@@ -15,6 +16,7 @@ export type FormField = {
   size: string;
   placeholder: string;
   required: boolean;
+  type: HTMLInputTypeAttribute;
 };
 
 export function FormGroup({
@@ -48,8 +50,10 @@ export function FormGroup({
       return fields;
     }, [formFields]) || [];
 
+  const formSchema = createFormSchema(formFields);
+
   return (
-    <FormGroupForm componentId={id}>
+    <FormGroupForm componentId={id} formSchema={formSchema}>
       {groupedFields.map((row, rowIndex) => (
         <FormGroupRow row={row} key={`row-${rowIndex}`} />
       ))}
@@ -83,6 +87,20 @@ export const formGroupConfig: ComponentConfig<FormGroupProps> = {
         placeholder: {
           type: "text",
         },
+        type: {
+          type: "select",
+          options: [
+            { value: "text", label: "Text" },
+            { value: "email", label: "Email" },
+            { value: "number", label: "Number" },
+            { value: "tel", label: "Telephone" },
+            { value: "url", label: "URL" },
+            { value: "password", label: "Password" },
+            { value: "date", label: "Date" },
+            { value: "time", label: "Time" },
+            { value: "color", label: "Color" },
+          ],
+        },
         required: {
           type: "radio",
           options: [
@@ -103,6 +121,7 @@ export const formGroupConfig: ComponentConfig<FormGroupProps> = {
         placeholder: "placeholder",
         size: "full",
         required: false,
+        type: "text",
       },
     },
     buttonLabel: {
@@ -119,6 +138,7 @@ export const formGroupConfig: ComponentConfig<FormGroupProps> = {
         size: "full",
         placeholder: "placeholder",
         required: false,
+        type: "text",
       },
     ],
     buttonLabel: "Send response",

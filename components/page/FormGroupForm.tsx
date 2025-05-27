@@ -1,35 +1,39 @@
 "use client";
 import { toast } from "@components/ui/Toast";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { usePageId } from "@lib/contexts/page-id-context";
 import { handleFormSubmit } from "@lib/form";
 import { useMutation } from "@tanstack/react-query";
 import Form from "next/form";
 import { PropsWithChildren } from "react";
+import { useForm } from "react-hook-form";
 
 type FormGroupFormProps = {
   componentId: string;
+  formSchema: any;
 };
 
 function FormGroupForm({
   componentId,
   children,
+  formSchema,
 }: PropsWithChildren<FormGroupFormProps>) {
   const pageId = usePageId();
 
   function parseFormData(formData: FormData): Record<string, string> {
     const labelCounts: Record<string, number> = {};
-    const formResponseObject: Record<string, string> = {};
+    const data: Record<string, string> = {};
     for (const [key, value] of formData.entries()) {
       if (!labelCounts[key]) {
         labelCounts[key] = 1;
-        formResponseObject[key] = value as string;
+        data[key] = value as string;
       } else {
         labelCounts[key]++;
         const newKey = `${key} (${labelCounts[key] - 1})`;
-        formResponseObject[newKey] = value as string;
+        data[newKey] = value as string;
       }
     }
-    return formResponseObject;
+    return data;
   }
 
   const mutation = useMutation({
@@ -43,10 +47,25 @@ function FormGroupForm({
     },
   });
 
+  const onSubmit = (data: FormData) => {
+    console.log("Invoice Data:", data); // Logs validated form data
+  };
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    setError,
+  } = useForm<FormData>({
+    resolver: zodResolver(formSchema),
+  });
+
   return (
     <Form
-      action={async (formData) => {
-        mutation.mutate(formData);
+      action={() => {}}
+      onSubmit={(e) => {
+        e.preventDefault();
+        handleSubmit(onSubmit)(); // Executes validation before submission
       }}
     >
       {children}
