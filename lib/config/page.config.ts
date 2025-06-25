@@ -1,4 +1,5 @@
 import { FlexProps, flexConfig } from "@components/puck/Flex";
+import { FormGroupProps, formGroupConfig } from "@components/puck/FormGroup";
 import { GraphicProps, graphicConfig } from "@components/puck/Graphic";
 import { HeadingProps, headingConfig } from "@components/puck/Heading";
 import { HeroProps, heroConfig } from "@components/puck/Hero";
@@ -25,6 +26,7 @@ export type PageProps = {
   SectionDivider: SectionDividerProps;
   Text: TextProps;
   VerticalSpace: VerticalSpaceProps;
+  FormGroup: FormGroupProps;
 };
 export type PageRootProps = {
   title: string;
@@ -43,6 +45,7 @@ export const pageConfig: PageConfig = sectionThemedConfig({
     SectionDivider: sectionDividerConfig,
     Text: textConfig,
     VerticalSpace: verticalSpaceConfig,
+    FormGroup: formGroupConfig,
   },
 });
 

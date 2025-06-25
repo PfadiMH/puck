@@ -1,9 +1,8 @@
 import { defaultFooterData, FooterData } from "@lib/config/footer.config";
 import { defaultNavbarData, NavbarData } from "@lib/config/navbar.config";
-import { PageData } from "@lib/config/page.config";
 import { Data } from "@measured/puck";
-import { Db, MongoClient } from "mongodb";
-import { DatabaseService } from "./database";
+import { Db, MongoClient, ObjectId } from "mongodb";
+import { DatabaseService, PageDocument } from "./database";
 
 /**
  * MongoDB implementation of DatabaseService.
@@ -68,17 +67,32 @@ export class MongoService implements DatabaseService {
       );
   }
 
+  async saveFormResponse(
+    pageId: string,
+    componentId: string,
+    data: Record<string, string>
+  ): Promise<void> {
+    await this.db.collection(this.collectionName).insertOne({
+      type: "formResponse",
+      componentId,
+      pageId,
+      data,
+    });
+  }
+
   async deletePage(path: string): Promise<void> {
     await this.db
       .collection(this.collectionName)
       .deleteOne({ type: "page", path: path });
   }
 
-  async getPage(path: string): Promise<PageData | undefined> {
+  async getPageDocument(path: string): Promise<PageDocument | undefined> {
     const result = await this.db
       .collection(this.collectionName)
       .findOne({ type: "page", path: path });
-    return result ? result.data : undefined;
+    return result
+      ? { id: result._id, ...result.data, type: "page", path: path }
+      : undefined;
   }
 
   async saveNavbar(data: NavbarData): Promise<void> {
@@ -123,5 +137,36 @@ export class MongoService implements DatabaseService {
       .find({ type: "page" })
       .toArray();
     return pages.map((page) => page.path);
+  }
+
+  async getDocumentComponent<T>(
+    pageId: string,
+    componentId: string
+  ): Promise<T> {
+    const result = await this.db
+      .collection(this.collectionName)
+      .findOne({ type: "page", _id: new ObjectId(pageId) });
+    if (!result) throw new Error(`Page with id ${pageId} not found`);
+
+    const findInContent = (content: any[]): any => {
+      for (const comp of content) {
+        if (comp.props.id === componentId) return comp;
+        if (comp.zones) {
+          for (const zoneName in comp.zones) {
+            const found = findInContent(comp.zones[zoneName]);
+            if (found) return found;
+          }
+        }
+      }
+      return null;
+    };
+
+    const component = findInContent(result.data.content);
+    if (!component) {
+      throw new Error(
+        `Component with id ${componentId} not found in page ${pageId}`
+      );
+    }
+    return component.props as T;
   }
 }
