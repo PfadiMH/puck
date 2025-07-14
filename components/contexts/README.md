@@ -1,15 +1,14 @@
 # /components/contexts
 
-This directory is used for creating and housing React Context **Provider** components.
+This directory houses React Context **Provider** components used in this project.
 
-These components are responsible for wrapping parts of the application (or the entire app) to provide shared state, functions, or other values to the entire component tree below them. This avoids the need for "prop drilling."
+- [Official React Docs on Context](https://react.dev/learn/passing-data-deeply-with-context)
 
-**Examples:**
+**Context Providers:**
 
-- A `ThemeProvider` to provide theme data (colors, fonts).
-- An `AuthProvider` to share user session information.
-- A `QueryProvider` to provide a React Query client instance.
+- `SectionThemeProvider`: Provides theme data (colors, fonts) for sections of the application. This context should be used to ensure consistent styling across different sections. See `lib/section-theming.tsx` for details on the theme structure.
 
-### Further Reading
+**Avoid:**
 
-- Official React Docs on Context: https://react.dev/learn/passing-data-deeply-with-context
+- Don't use a single, monolithic Context for all of your global state.
+- If data only needs to be passed down one or two levels, passing props is often a simpler and more performant solution.

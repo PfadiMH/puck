@@ -1,11 +1,9 @@
 # /components/page
 
-This directory contains "macro" components that are used to construct the primary structure and layout of specific pages or large, complex sections within a page.
+This directory contains "macro" components that structure pages or large sections.
 
-Unlike the atomic components in `/ui`, these are larger compositions that often combine multiple smaller components. They define significant parts of the user experience.
+**Key points:**
 
-**Examples:**
-
-- `PageRender`: A component that takes page data and renders the entire content area.
-- `Parallax`: A complex hero section with parallax scrolling effects.
-- `PostLayout`: A layout component that structures a blog post with a header, content area, and sidebar.
+- **When to use:** Place components here that define the overall structure and layout of a page or section.
+- **Ensure:** Components are designed for flexibility and reusability across different pages.
+- **Consider:** How these components will integrate with the Puck editor.

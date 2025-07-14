@@ -1,8 +1,10 @@
 # /lib/assets
 
-This directory holds static asset files that are imported and used directly within your application's code, typically by the build system.
+This directory contains static asset files that are imported directly into the application's code.
 
-**Examples:**
+**Key points:**
 
-- Custom font files (`.ttf`, `.woff`, `.otf`) that you import and use with `@font-face` in your CSS or with a library like `@next/font`.
-- Small, static JSON files that you want to bundle with your application's JavaScript.
+- Use this directory for assets that are directly imported and used in the code.
+- **Examples:**
+  - Custom font files (`.ttf`, `.woff`, `.otf`) used with `@font-face` or `@next/font`.
+- **Avoid:** Do not place large media files (images, videos) here. These should be served from a CDN.

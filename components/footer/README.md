@@ -1,5 +1,7 @@
 # /components/footer
 
-This directory contains all the React components that are made available to a seperate content editor inside the Puck visual editor that is only used to create the footer.
+This directory contains React components for the site's global footer, specifically designed for use within the Puck editor.
 
-These are the fundamental building blocks that users can drag, drop, and configure to create the footer. Each component here must be registered in the footer Puck configuration file (`lib/config/footer.config.ts`) to appear in the editor.
+**Key points:**
+
+- **Important:** All components must be registered in the `lib/config/footer.config.ts` file to be available in the Puck editor.
