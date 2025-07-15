@@ -1,7 +1,4 @@
 "use client";
-
-import { ColumnDef } from "@tanstack/react-table";
-
 import { Button } from "@components/puck-fields/ui/Button";
 import { Checkbox } from "@components/puck-fields/ui/Checkbox";
 import { DataTable } from "@components/puck-fields/ui/DataTable";
@@ -14,8 +11,9 @@ import {
 import { queryClient } from "@lib/query-client";
 import { CustomField } from "@measured/puck";
 import { useQuery } from "@tanstack/react-query";
+import { ColumnDef } from "@tanstack/react-table";
+import { Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
-import TrashCanSvg from "../graphics/TrashCanSvg";
 import { RadioGroup, RadioGroupItem } from "./ui/RadioGroup";
 
 export type FileProps = {
@@ -32,17 +30,19 @@ function FileTable<T extends FileProps | FileProps[]>({
   value,
   isSingleSelection,
 }: FileTableProps<T>) {
+  const [fileManager, setFileManager] = useState<FileManagerService | null>(
+    null
+  );
+  const [isInitializing, setIsInitializing] = useState(true);
+
   useEffect(() => {
     const fetchData = async () => {
       setFileManager(await getFileManagerService());
+      setIsInitializing(false);
     };
 
     fetchData();
   }, []);
-
-  const [fileManager, setFileManager] = useState<FileManagerService | null>(
-    null
-  );
 
   const { data, isLoading, isFetching } = useQuery({
     queryKey: ["files"],
@@ -139,14 +139,14 @@ function FileTable<T extends FileProps | FileProps[]>({
               });
             }}
           >
-            <TrashCanSvg />
+            <Trash2 />
           </Button>
         );
       },
     },
   ];
 
-  return isLoading || isFetching ? (
+  return isInitializing || isLoading || isFetching ? (
     <div>loading...</div>
   ) : (
     <div
@@ -169,6 +169,7 @@ function FileTable<T extends FileProps | FileProps[]>({
     >
       <Input
         type="file"
+        multiple
         onChange={(event) => {
           event.preventDefault();
           const files = event.target.files;

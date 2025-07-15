@@ -86,7 +86,7 @@ export function DataTable({
   });
 
   return (
-    <div className="flex flex-col gap-5">
+    <div className="flex flex-col gap-5 w-min">
       <Input
         placeholder="Search ..."
         value={(table.getColumn(searchField)?.getFilterValue() as string) ?? ""}

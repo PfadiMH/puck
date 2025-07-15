@@ -1,0 +1,11 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`Text component renders the component unchanged 1`] = `
+<div>
+  <p
+    class="text-wrap"
+  >
+    Mir sind Voll Däbii!
+  </p>
+</div>
+`;
