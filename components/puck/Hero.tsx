@@ -19,10 +19,10 @@ function Hero({ title, backgroundImage: url }: HeroProps) {
           <h1 className="text-4xl font-bold text-center z-10 text-white">
             {title}
           </h1>
-          <div className="bg-black opacity-15 absolute z-5 w-full h-full" />
+          <div className="bg-black opacity-15 absolute w-full h-full" />
         </>
       )}
-      <PostHeroSvg className="z-20 absolute bottom-0" />
+      <PostHeroSvg className="absolute bottom-0" />
     </div>
   );
 }
