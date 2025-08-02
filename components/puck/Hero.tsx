@@ -1,18 +1,28 @@
 import { PostHeroSvg } from "@components/graphics/PostHeroSvg";
-import { uploadFileField } from "@components/puck-fields/upload-file";
+import {
+  FileProps,
+  singleSelectionFileTableField,
+} from "@components/puck-fields/fileTable";
 import { ComponentConfig } from "@measured/puck";
 import Image from "next/image";
 
 export type HeroProps = {
   title: string;
-  backgroundImage?: string;
+  backgroundImage: FileProps;
 };
 
-function Hero({ title, backgroundImage: url }: HeroProps) {
+function Hero({ title, backgroundImage }: HeroProps) {
+  const imageUrl = backgroundImage?.url;
+
   return (
     <div className="full w-full h-96 relative flex flex-col justify-center overflow-hidden items-center">
-      {url && (
-        <Image fill src={url} alt="Hero Image" style={{ objectFit: "cover" }} />
+      {imageUrl && (
+        <Image
+          fill
+          src={imageUrl}
+          alt="Hero Image"
+          style={{ objectFit: "cover" }}
+        />
       )}
       {title && (
         <>
@@ -34,6 +44,6 @@ export const heroConfig: ComponentConfig<HeroProps> = {
       type: "text",
       label: "Title (Optional)",
     },
-    backgroundImage: uploadFileField,
+    backgroundImage: singleSelectionFileTableField,
   },
 };
