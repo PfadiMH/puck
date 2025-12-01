@@ -2,7 +2,8 @@ name: Vitest CI
 
 on:
     push:
-        branches: [testing-ci]
+        branches:
+            - "*"
 
 jobs:
     build:
