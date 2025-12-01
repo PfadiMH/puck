@@ -21,7 +21,7 @@ jobs:
               run: bun install
 
             - name: Download playwright browsers
-              run: bun exec playwright install --with-deps
+              run: bunx --bun playwright install --with-deps
 
             - name: Run tests
               run: bun test:browser --browser.headless
