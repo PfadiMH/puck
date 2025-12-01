@@ -1,7 +1,7 @@
 name: Vitest CI
 
 on:
-    pull_request:
+    push:
         branches: [testing-ci]
 
 jobs:
