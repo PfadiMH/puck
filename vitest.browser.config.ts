@@ -5,12 +5,23 @@ import { defineConfig } from "vitest/config";
 
 export default defineConfig({
   plugins: [react(), tsconfigPaths()],
+
   test: {
     browser: {
       enabled: true,
       provider: playwright(),
       // https://vitest.dev/config/browser/playwright
       instances: [{ browser: "chromium" }],
+    },
+    setupFiles: "./vitest.setup.ts",
+  },
+  optimizeDeps: {
+    esbuildOptions: {
+      loader: {
+        ".otf": "file",
+        ".ttf": "file",
+        ".css": "css",
+      },
     },
   },
 });
