@@ -1,7 +1,7 @@
 import { ReactNode } from "react";
-import { render, RenderResult } from "vitest-browser-react";
+import { RenderResult, render as vitestRender } from "vitest-browser-react";
 import TestWrapper from "../../testing/TestWrapper";
 
-export function testRender(ui: ReactNode): Promise<RenderResult> {
-  return render(ui, { wrapper: TestWrapper });
+export function render(ui: ReactNode): Promise<RenderResult> {
+  return vitestRender(ui, { wrapper: TestWrapper });
 }
