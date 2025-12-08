@@ -15,4 +15,14 @@ export default defineConfig({
     },
     setupFiles: "./vitest.setup.ts",
   },
+  optimizeDeps: {
+    include: [
+      "vitest-browser-react",
+      "@tanstack/react-query",
+      "react-scroll-parallax",
+      "sonner",
+      "clsx",
+      "tailwind-merge",
+    ],
+  },
 });
