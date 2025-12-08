@@ -1,0 +1,22 @@
+@import "../app/globals.css";
+
+body {
+  --rockingsoda: rockingsodaPlus;
+  --poppins: poppins;
+}
+
+@font-face {
+  font-family: rockingsodaPlus;
+  src: url("../lib/assets/RockingsodaPlus-Regular.otf");
+}
+@font-face {
+  font-family: poppins;
+  src: url("../lib/assets/Poppins-Regular.ttf");
+  font-weight: 400;
+}
+
+@font-face {
+  font-family: poppins;
+  src: url("../lib/assets/Poppins-Bold.ttf");
+  font-weight: 700;
+}
