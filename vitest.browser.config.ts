@@ -15,13 +15,4 @@ export default defineConfig({
     },
     setupFiles: "./vitest.setup.ts",
   },
-  optimizeDeps: {
-    esbuildOptions: {
-      loader: {
-        ".otf": "file",
-        ".ttf": "file",
-        ".css": "css",
-      },
-    },
-  },
 });
