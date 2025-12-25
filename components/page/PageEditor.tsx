@@ -1,7 +1,7 @@
 "use client";
 import PageHeaderActions from "@components/puck-overrides/PageHeaderActions";
 import PuckHeader from "@components/puck-overrides/PuckHeader";
-import { PageConfig, pageConfig, PageData } from "@lib/config/page.config";
+import { editorConfig, PageConfig, PageData } from "@lib/config/page.config";
 import { Puck, usePuck } from "@measured/puck";
 
 type HeaderTitleProps = {
@@ -24,7 +24,7 @@ type PageEditorProps = {
 export function PageEditor({ path, data }: PageEditorProps) {
   return (
     <Puck
-      config={pageConfig}
+      config={editorConfig}
       data={data}
       headerPath={path}
       overrides={{

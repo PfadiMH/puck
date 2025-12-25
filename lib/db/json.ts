@@ -2,18 +2,20 @@ import { defaultFooterData, FooterData } from "@lib/config/footer.config";
 import { defaultNavbarData, NavbarData } from "@lib/config/navbar.config";
 import { PageData } from "@lib/config/page.config";
 import fs from "fs/promises";
-import { DatabaseService } from "./database";
+import { AllMetadataProps, DatabaseService, MetadataProps } from "./database";
 
 interface DatabaseData {
   navbar: NavbarData;
   page: Record<string, PageData>;
   footer: FooterData;
+  metadata: Record<string, MetadataProps>;
 }
 
 const defaultDatabaseData: DatabaseData = {
   navbar: defaultNavbarData,
   page: {},
   footer: defaultFooterData,
+  metadata: {},
 };
 
 /**
@@ -88,5 +90,32 @@ export class JsonService implements DatabaseService {
   async getAllPaths(): Promise<string[]> {
     const db = await this.getDatabase();
     return Object.keys(db.page);
+  }
+
+  async saveMetadata(metadata: MetadataProps): Promise<string> {
+    const db = await this.getDatabase();
+    const id = crypto.randomUUID();
+    db.metadata[id] = metadata;
+    await this.saveDatabase(db);
+    return id;
+  }
+
+  async getMetadata(id: string): Promise<MetadataProps | undefined> {
+    const db = await this.getDatabase();
+    return db.metadata[id];
+  }
+
+  async deleteMetadata(id: string): Promise<void> {
+    const db = await this.getDatabase();
+    delete db.metadata[id];
+    await this.saveDatabase(db);
+  }
+
+  async getAllMetadata(): Promise<AllMetadataProps[]> {
+    const db = await this.getDatabase();
+    return Object.entries(db.metadata).map(([id, metadata]) => ({
+      id,
+      ...metadata,
+    }));
   }
 }

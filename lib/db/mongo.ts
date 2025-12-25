@@ -2,8 +2,8 @@ import { defaultFooterData, FooterData } from "@lib/config/footer.config";
 import { defaultNavbarData, NavbarData } from "@lib/config/navbar.config";
 import { PageData } from "@lib/config/page.config";
 import { Data } from "@measured/puck";
-import { Db, MongoClient } from "mongodb";
-import { DatabaseService } from "./database";
+import { Db, MongoClient, ObjectId } from "mongodb";
+import { AllMetadataProps, DatabaseService, MetadataProps } from "./database";
 
 /**
  * MongoDB implementation of DatabaseService.
@@ -14,6 +14,7 @@ export class MongoService implements DatabaseService {
   private client: MongoClient;
   private db: Db;
   private collectionName = "puck-data";
+  private metadataCollectionName = "storage-metadata";
 
   constructor(connectionString: string, dbName: string) {
     this.client = new MongoClient(connectionString);
@@ -123,5 +124,49 @@ export class MongoService implements DatabaseService {
       .find({ type: "page" })
       .toArray();
     return pages.map((page) => page.path);
+  }
+
+  async saveMetadata(metadata: MetadataProps): Promise<string> {
+    const result = await this.db
+      .collection(this.metadataCollectionName)
+      .insertOne({ ...metadata });
+    return result.insertedId.toHexString();
+  }
+
+  async getMetadata(id: string): Promise<MetadataProps | undefined> {
+    const result = await this.db
+      .collection<MetadataProps>(this.metadataCollectionName)
+      .findOne({ _id: new ObjectId(id) }, { projection: { _id: 0 } });
+    return result ? result : undefined;
+  }
+
+  async updateMetadata(id: string, metadata: MetadataProps): Promise<string> {
+    const result = await this.db
+      .collection(this.metadataCollectionName)
+      .updateOne(
+        { _id: new ObjectId(id) },
+        { $set: { ...metadata, updatedAt: new Date() } }
+      );
+    if (result.modifiedCount === 0) {
+      throw new Error(`Metadata with id ${id} not found or not modified`);
+    }
+    return id;
+  }
+
+  async deleteMetadata(id: string): Promise<void> {
+    await this.db
+      .collection(this.metadataCollectionName)
+      .deleteOne({ _id: new ObjectId(id) });
+  }
+
+  async getAllMetadata(): Promise<AllMetadataProps[]> {
+    let result = await this.db
+      .collection<MetadataProps>(this.metadataCollectionName)
+      .find({})
+      .toArray();
+    return result.map((metadata) => {
+      const { _id, ...rest } = metadata;
+      return { ...rest, id: _id.toHexString() };
+    });
   }
 }

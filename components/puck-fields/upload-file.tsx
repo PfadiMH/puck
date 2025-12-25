@@ -1,5 +1,5 @@
-import { UploadFileSvg } from "@components/graphics/UploadFileSvg";
 import { CustomFieldRenderProps } from "@lib/custom-field-types";
+import { saveFile } from "@lib/storage/storage";
 import { CustomField } from "@measured/puck";
 
 type UploadFileProps = string | undefined;
@@ -9,42 +9,31 @@ function UploadFile({
   onChange,
   value,
 }: CustomFieldRenderProps<UploadFileProps>) {
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const uploadFiles = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      if (file.size > 900 * 1024) {
-        alert("File size exceeds 900KB");
-        return;
-      }
-      const reader = new FileReader();
-      reader.onload = () => {
-        onChange(reader.result as string);
-      };
-      reader.readAsDataURL(file);
+      const id = await saveFile(file, "a handsome image");
+      onChange(id);
     }
   };
 
   return (
-    <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 flex flex-col items-center justify-center cursor-pointer hover:border-gray-400">
-      <input type="file" className="hidden" id={id} onChange={handleChange} />
-      <label
-        htmlFor={id}
-        className="flex flex-col items-center justify-center w-full h-full"
-      >
-        <UploadFileSvg />
-        <span className="mt-2 text-sm text-gray-600">
-          Drag & drop or click to upload
-        </span>
-      </label>
-      {value && (
-        <div className="mt-4">
-          <img
-            src={value}
-            alt="Uploaded file"
-            className="max-w-full h-auto rounded-lg"
-          />
-        </div>
-      )}
+    <div className="p-[3px] relative">
+      <div className="absolute inset-0 bg-gradient-to-r from-[hsl(18,100%,50%)] to-[hsl(12,56%,54%)] rounded-lg" />
+      <div className="px-8 py-2 bg-black rounded-[6px]  relative group transition duration-200 text-white hover:bg-transparent">
+        <label className="text-white cursor-pointer" htmlFor="file-upload">
+          Upload Images
+        </label>
+        <input
+          id="file-upload"
+          type="file"
+          name="filefield"
+          accept=".jpg, .jpeg, .png"
+          multiple
+          onChange={uploadFiles}
+          className="hidden"
+        />
+      </div>
     </div>
   );
 }
