@@ -1,0 +1,20 @@
+{
+  "name": "Pfadipuck Dev",
+  "dockerComposeFile": "docker-compose.yml",
+  "service": "app",
+  "workspaceFolder": "/app",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "dbaeumer.vscode-eslint",
+        "bradlc.vscode-tailwindcss",
+        "mongodb.mongodb-vscode",
+        "esbenp.prettier-vscode",
+        "formulahendry.auto-rename-tag",
+        "dsznajder.es7-react-js-snippets"
+      ]
+    }
+  },
+  "postCreateCommand": "bun install",
+  "remoteUser": "root"
+}
