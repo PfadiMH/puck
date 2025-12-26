@@ -3,7 +3,6 @@
 import { FooterData } from "@lib/config/footer.config";
 import { NavbarData } from "@lib/config/navbar.config";
 import { PageData } from "@lib/config/page.config";
-import { JsonService } from "./json";
 import { MongoService } from "./mongo";
 
 export interface DatabaseService {
@@ -18,25 +17,16 @@ export interface DatabaseService {
 }
 
 function getDatabaseService(): DatabaseService {
-  const databaseType = process.env.DATABASE_TYPE;
+  const connectionString = process.env.MONGODB_CONNECTION_STRING;
+  const dbName = process.env.MONGODB_DB_NAME;
 
-  if (databaseType === "mongodb") {
-    const connectionString = process.env.MONGODB_CONNECTION_STRING;
-    const dbName = process.env.MONGODB_DB_NAME;
-
-    if (!connectionString || !dbName) {
-      console.warn(
-        "MONGODB_CONNECTION_STRING or MONGODB_DB_NAME environment variables not set. Defaulting to JSON storage."
-      );
-    } else {
-      console.log("Using MongoDB storage");
-      return new MongoService(connectionString, dbName);
-    }
+  if (!connectionString || !dbName) {
+    throw new Error(
+      "MONGODB_CONNECTION_STRING and MONGODB_DB_NAME must be set in the environment variables"
+    );
+  } else {
+    return new MongoService(connectionString, dbName);
   }
-
-  // Default to JSON storage
-  console.log("Using JSON storage");
-  return new JsonService("database.json");
 }
 
 const dbService = getDatabaseService();
