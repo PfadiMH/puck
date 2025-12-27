@@ -1,3 +1,4 @@
+import { auth } from "@lib/auth/auth-client";
 import cn from "@lib/cn";
 import { poppins, rockingsodaPlus } from "@lib/fonts";
 import { Providers } from "../components/Providers";
@@ -8,6 +9,8 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const session = await auth();
+
   return (
     <html lang="en">
       <body
@@ -17,7 +20,7 @@ export default async function RootLayout({
           "font-poppins bg-ground mud-theme"
         )}
       >
-        <Providers>{children}</Providers>
+        <Providers session={session}>{children}</Providers>
       </body>
     </html>
   );
