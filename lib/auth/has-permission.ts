@@ -1,16 +1,11 @@
 import { auth } from "./auth-client";
-import { hasAllPermissionsEvaluator, hasAnyPermissionEvaluator } from "./auth-functions";
+import { hasPermissionEvaluator } from "./auth-functions";
 import { Permission } from "./permissions";
 
 export async function hasPermission(
   permissions: Permission[],
-  requireAll: boolean = false
+  options: { requireAll?: boolean } = {}
 ): Promise<boolean> {
   const session = await auth();
-
-  if (!session) return false;
-
-  return requireAll
-    ? hasAllPermissionsEvaluator(session, ...permissions)
-    : hasAnyPermissionEvaluator(session, ...permissions);
+  return hasPermissionEvaluator(session, permissions, options);
 }

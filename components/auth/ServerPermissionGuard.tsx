@@ -13,7 +13,7 @@ export async function ServerPermissionGuard({
   requireAll = false,
   children,
 }: ServerPermissionGuardProps) {
-  const isAuthorized = await hasPermission(permissions, requireAll);
+  const isAuthorized = await hasPermission(permissions, { requireAll });
 
   if (!isAuthorized) return null;
 

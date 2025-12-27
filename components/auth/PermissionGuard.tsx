@@ -15,7 +15,7 @@ export function PermissionGuard({
   requireAll = false,
   children,
 }: PermissionGuardProps) {
-  const isAuthorized = useHasPermission(permissions, requireAll);
+  const isAuthorized = useHasPermission(permissions, { requireAll });
 
   if (!isAuthorized) return null;
 
