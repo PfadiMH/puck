@@ -3,6 +3,10 @@ import { auth, signIn, signOut } from "@lib/auth/auth-client";
 
 
 export default async function Page() {
+  if (process.env.NODE_ENV !== "development") {
+    return <div>Development only</div>;
+  }
+
   const session = await auth();
 
   const permissions = session?.user.permissions; /* await getPermissionsByRoles(
