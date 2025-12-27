@@ -15,7 +15,6 @@ import Header from "./Header";
 import RoleRow from "./RoleRow";
 
 function AccessPage() {
-  const [open, setOpen] = useState(false);
   const [search, setSearch] = useState("");
 
   const { data: securityConfig = { roles: {} }, isLoading } = useQuery({

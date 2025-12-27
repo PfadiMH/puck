@@ -10,6 +10,7 @@ export const assignablePermissions: Permission[] = [
   "role-permissions:update",
   "navbar:update",
   "footer:update",
+  "global-admin",
 ];
 
 // @keep-sorted

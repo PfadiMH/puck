@@ -22,7 +22,7 @@ function Header() {
             <DialogTrigger>
               <Button color="primary">Add Role</Button>
             </DialogTrigger>
-            <RoleModal isEditing={false} isAdding={true} />
+            <RoleModal isEditing={true} isAdding={true} />
           </DialogRoot>
         </PermissionGuard>
       </div>
