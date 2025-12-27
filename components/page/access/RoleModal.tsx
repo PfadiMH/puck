@@ -80,7 +80,7 @@ export function RoleModal({
           }
           placeholder="Description"
         />
-        <p>Perimissions</p>
+        <p>Permissions</p>
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-3">
           {assignablePermissions.map((permission) => {
             const isAssigned = roleMetadata.permissions.includes(permission);

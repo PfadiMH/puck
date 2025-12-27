@@ -1,4 +1,5 @@
 "use client";
+import Input from "@components/ui/Input";
 import Table, {
   TableBody,
   TableCell,
@@ -17,6 +18,7 @@ import RoleRow from "./RoleRow";
 function AccessPage() {
   const session = useSession().data;
   const [open, setOpen] = useState(false);
+  const [search, setSearch] = useState("");
 
   const { data: securityConfig = { roles: {} }, isLoading } = useQuery({
     queryKey: ["securityConfig"],
@@ -30,6 +32,13 @@ function AccessPage() {
   return (
     <div className="p-4">
       <Header />
+      <div className="mb-4">
+        <Input
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          placeholder="Search roles..."
+        />
+      </div>
       <Table>
         <TableHeader>
           <TableRow>
@@ -44,13 +53,17 @@ function AccessPage() {
               <TableCell colSpan={3}>Loading...</TableCell>
             </TableRow>
           ) : (
-            Object.entries(securityConfig.roles).map(([roleName, roleData]) => (
-              <RoleRow
-                key={roleName}
-                roleName={roleName}
-                roleMetadata={roleData}
-              />
-            ))
+            Object.entries(securityConfig.roles)
+              .filter(([roleName]) =>
+                roleName.toLowerCase().includes(search.toLowerCase())
+              )
+              .map(([roleName, roleData]) => (
+                <RoleRow
+                  key={roleName}
+                  roleName={roleName}
+                  roleMetadata={roleData}
+                />
+              ))
           )}
         </TableBody>
       </Table>

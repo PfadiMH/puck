@@ -1,4 +1,4 @@
-import { Permission, SecurityConfig } from "@lib/auth/permissions";
+import { defaultRoleConfig, Permission, SecurityConfig } from "@lib/auth/permissions";
 import { defaultFooterData, FooterData } from "@lib/config/footer.config";
 import { defaultNavbarData, NavbarData } from "@lib/config/navbar.config";
 import { PageData } from "@lib/config/page.config";
@@ -53,7 +53,14 @@ export class MongoService implements DatabaseService {
       await this.saveFooter(defaultFooterData);
     }
 
-    // TODO(@TeamBattino): Initialization for security config
+    // Ensure Security Config exists
+    const securityConfig = await this.db
+      .collection(this.securityCollectionName)
+      .findOne({ type: "roleConfig" });
+    if (!securityConfig) {
+      console.log("Security Config not found, creating with default data");
+      await this.saveSecurityConfig(defaultRoleConfig);
+    }
   }
 
   async connect(): Promise<void> {
@@ -156,7 +163,7 @@ export class MongoService implements DatabaseService {
     const result = await this.db
       .collection(this.securityCollectionName)
       .findOne({ type: "roleConfig" });
-    if (!result) throw new Error("Role config not found");
+    if (!result) return defaultRoleConfig;
     return result.data;
   }
 
@@ -167,6 +174,6 @@ export class MongoService implements DatabaseService {
         { type: "roleConfig" },
         { $set: { data: roleConfig, type: "roleConfig" } },
         { upsert: true }
-      ); // TODO(@TeamBattino): Fix Mongo Config request and save functions
+      );
   }
 }

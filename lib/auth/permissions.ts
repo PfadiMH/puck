@@ -8,6 +8,8 @@ export const assignablePermissions: Permission[] = [
   "asset:delete",
   "role-permissions:read",
   "role-permissions:update",
+  "navbar:update",
+  "footer:update",
 ];
 
 // @keep-sorted
@@ -19,6 +21,8 @@ export type Permission =
   | "asset:create"
   | "asset:update"
   | "asset:delete"
+  | "navbar:update"
+  | "footer:update"
   | "role-permissions:read"
   | "role-permissions:update"
   | "global-admin";
@@ -42,7 +46,7 @@ export const defaultRoleConfig: SecurityConfig = {
     },
     Leiter: {
       description: "Leiter role with limited permissions",
-      permissions: ["page:create", "page:update", "page:delete", "admin-ui:read"],
+      permissions: ["page:create", "page:update", "page:delete", "admin-ui:read", "navbar:update", "footer:update"],
     },
     JungLeiter: {
       description: "JungLeiter role with limited permissions",
