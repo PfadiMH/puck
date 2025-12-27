@@ -1,4 +1,4 @@
-export const assignablePermissions: Permission[] = [
+export const assignablePermissions = [
   "admin-ui:read",
   "page:create",
   "page:update",
@@ -14,19 +14,7 @@ export const assignablePermissions: Permission[] = [
 ];
 
 // @keep-sorted
-export type Permission =
-  | "admin-ui:read"
-  | "page:create"
-  | "page:update"
-  | "page:delete"
-  | "asset:create"
-  | "asset:update"
-  | "asset:delete"
-  | "navbar:update"
-  | "footer:update"
-  | "role-permissions:read"
-  | "role-permissions:update"
-  | "global-admin";
+export type Permission = typeof assignablePermissions[number];
 
 export interface SecurityConfig {
   roles: {
@@ -36,14 +24,14 @@ export interface SecurityConfig {
 
 export type RoleMetadata = {
   description: string;
-  permissions: Permission[]; // is Array for Database Compatibility
+  permissions: Permission[]
 };
 
 export const defaultRoleConfig: SecurityConfig = {
   roles: {
     Admin: {
       description: "Admin role with all permissions",
-      permissions: ["global-admin"],
+      permissions: assignablePermissions,
     },
     Leiter: {
       description: "Leiter role with limited permissions",

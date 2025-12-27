@@ -15,8 +15,6 @@ declare module "next-auth" {
 declare module "next-auth/jwt" {
   interface JWT {
     roles: string[];
-    permissions: Permission[]; //we currently cannot fill
-    // as its not possible to call the get permissions function
-    // in the jwt callback
+    permissions: Permission[];
   }
 }
