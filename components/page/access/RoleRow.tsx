@@ -1,11 +1,10 @@
+import { PermissionGuard } from "@components/auth/PermissionGuard";
 import Button from "@components/ui/Button";
 import { DialogRoot, DialogTrigger } from "@components/ui/Dialog";
 import { TableCell, TableRow } from "@components/ui/Table";
-import { hasAnyPermissionEvaluator } from "@lib/auth/auth-functions";
 import { RoleMetadata } from "@lib/auth/permissions";
 import { getSecurityConfig, saveSecurityConfig } from "@lib/db/database";
 import { queryClient } from "@lib/query-client";
-import { useSession } from "next-auth/react";
 import ConfirmModal from "../admin/ConfirmModal";
 import { RoleModal } from "./RoleModal";
 
@@ -15,7 +14,6 @@ type RoleRowProps = {
 };
 
 function RoleRow({ roleName, roleMetadata }: RoleRowProps) {
-  const { data: session } = useSession();
   const handleDelete = async () => {
     const securityConfig = await getSecurityConfig();
     delete securityConfig.roles[roleName];
@@ -28,7 +26,7 @@ function RoleRow({ roleName, roleMetadata }: RoleRowProps) {
       <TableCell>{roleName}</TableCell>
       <TableCell>{roleMetadata.description}</TableCell>
       <TableCell className="flex flex-wrap gap-3 justify-end">
-        {session && hasAnyPermissionEvaluator(session, "role-permissions:update") && (
+        <PermissionGuard permissions={["role-permissions:update"]}>
           <>
             <DialogRoot>
               <DialogTrigger>
@@ -51,7 +49,7 @@ function RoleRow({ roleName, roleMetadata }: RoleRowProps) {
               />
             </DialogRoot>
           </>
-        )}
+        </PermissionGuard>
         <DialogRoot>
           <DialogTrigger>
             <Button size="small" color="primary">

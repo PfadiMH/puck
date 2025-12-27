@@ -10,13 +10,11 @@ import Table, {
 import { getSecurityConfig } from "@lib/db/database";
 import { queryClient } from "@lib/query-client";
 import { useQuery } from "@tanstack/react-query";
-import { useSession } from "next-auth/react";
 import { useState } from "react";
 import Header from "./Header";
 import RoleRow from "./RoleRow";
 
 function AccessPage() {
-  const session = useSession().data;
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState("");
 

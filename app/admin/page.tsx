@@ -1,8 +1,8 @@
 import AdminPage from "@components/page/admin/AdminPage";
-import { hasAnyPermission, requirePageAuth } from "@lib/auth/auth-functions";
+import { requirePageAuth } from "@lib/auth/auth-functions";
 
 export default async function Page() {
-  const session = await requirePageAuth(hasAnyPermission("admin-ui:read"));
+  const session = await requirePageAuth(["admin-ui:read"]);
 
   return <AdminPage />;
 }

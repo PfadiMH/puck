@@ -1,7 +1,6 @@
 "use server";
 
 import {
-  hasAnyPermission,
   requireActionAuth,
 } from "@lib/auth/auth-functions";
 import { Permission, SecurityConfig } from "@lib/auth/permissions";
@@ -51,12 +50,12 @@ function getDatabaseService(): DatabaseService {
 const dbService = getDatabaseService();
 
 export async function savePage(path: string, data: PageData) {
-  await requireActionAuth(hasAnyPermission("page:create", "page:update"));
+  await requireActionAuth(["page:create", "page:update"]);
   return dbService.savePage(path, data);
 }
 
 export async function deletePage(path: string) {
-  await requireActionAuth(hasAnyPermission("page:delete"));
+  await requireActionAuth(["page:delete"]);
   return dbService.deletePage(path);
 }
 
@@ -65,7 +64,7 @@ export async function getPage(path: string): Promise<PageData | undefined> {
 }
 
 export async function saveNavbar(data: NavbarData) {
-  await requireActionAuth(hasAnyPermission("navbar:update"));
+  await requireActionAuth(["navbar:update"]);
   return dbService.saveNavbar(data);
 }
 
@@ -74,7 +73,7 @@ export async function getNavbar(): Promise<NavbarData> {
 }
 
 export async function saveFooter(data: FooterData) {
-  await requireActionAuth(hasAnyPermission("footer:update"));
+  await requireActionAuth(["footer:update"]);
   return dbService.saveFooter(data);
 }
 
@@ -94,10 +93,10 @@ export async function getPermissionsByRoles(roles: string[]) {
   return dbService.getPermissionsByRoles(roles);
 }
 export async function getSecurityConfig() {
-  await requireActionAuth(hasAnyPermission("role-permissions:read"));
+  await requireActionAuth(["role-permissions:read"]);
   return dbService.getSecurityConfig();
 }
 export async function saveSecurityConfig(permissions: SecurityConfig) {
-  await requireActionAuth(hasAnyPermission("role-permissions:update"));
+  await requireActionAuth(["role-permissions:update"]);
   return dbService.saveSecurityConfig(permissions);
 }
