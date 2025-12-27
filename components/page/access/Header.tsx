@@ -11,7 +11,7 @@ function Header() {
 
   return (
     <div className="flex flex-wrap gap-2 justify-between mb-4">
-      <h1>ACCESS MANAGMENT</h1>
+      <h1>ACCESS MANAGEMENT</h1>
       <div className="flex flex-wrap gap-4">
         <Button size="medium" onClick={() => router.push("/admin")}>
           Back to Admin
