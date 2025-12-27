@@ -1,6 +1,7 @@
 import { hasPermission } from "@lib/auth/has-permission";
 import { Permission } from "@lib/auth/permissions";
 import { ReactNode } from "react";
+import "server-only";
 
 interface ServerPermissionGuardProps {
   permissions: Permission[];

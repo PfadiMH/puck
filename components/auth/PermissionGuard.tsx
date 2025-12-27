@@ -1,5 +1,7 @@
 "use client";
 
+import "client-only";
+
 import { Permission } from "@lib/auth/permissions";
 import { useHasPermission } from "@lib/auth/use-has-permission";
 import { ReactNode } from "react";

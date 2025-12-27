@@ -1,3 +1,4 @@
+import "server-only";
 import { auth } from "./auth-client";
 import { hasPermissionEvaluator } from "./auth-functions";
 import { Permission } from "./permissions";
