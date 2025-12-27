@@ -40,5 +40,13 @@ export const defaultRoleConfig: SecurityConfig = {
       description: "Admin role with all permissions",
       permissions: ["global-admin"],
     },
+    Leiter: {
+      description: "Leiter role with limited permissions",
+      permissions: ["page:create", "page:update", "page:delete", "admin-ui:read"],
+    },
+    JungLeiter: {
+      description: "JungLeiter role with limited permissions",
+      permissions: ["page:update", "admin-ui:read"],
+    },
   },
 };

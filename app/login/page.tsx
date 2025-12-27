@@ -1,4 +1,6 @@
+import { DevelopmentLoginLink } from "@components/auth/DevelopmentLoginLink";
 import { auth, signIn, signOut } from "@lib/auth/auth-client";
+
 
 export default async function Page() {
   const session = await auth();
@@ -19,8 +21,9 @@ export default async function Page() {
           await signIn();
         }}
       >
-        <button type="submit">Signin with Keycloak</button>
+        <button type="submit" className="underline text-blue-600">Signin with Keycloak</button>
       </form>
+      <DevelopmentLoginLink />
       <form
         action={async () => {
           "use server";
