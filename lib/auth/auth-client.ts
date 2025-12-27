@@ -1,11 +1,13 @@
 import NextAuth from "next-auth";
 import Keycloak from "next-auth/providers/keycloak";
-import { getMockAuthProvider, getMockPermissions } from "./mock-auth-config";
+import { getMockAuthProvider } from "./mock-auth-config";
+
+const USE_MOCK_AUTH = process.env.MOCK_AUTH === "true" && process.env.NODE_ENV !== "production";
 
 const { handlers, signIn, signOut, auth } = NextAuth({
   basePath: "/auth",
   providers: [
-    ...(process.env.MOCK_AUTH
+    ...(USE_MOCK_AUTH
       ? [getMockAuthProvider()]
       : [
         Keycloak({
@@ -25,12 +27,6 @@ const { handlers, signIn, signOut, auth } = NextAuth({
 
       if (user) {
         token.roles = (user as any).roles || profile?.roles;
-      }
-
-      // If we are mocking auth, we can just use the local roles config
-      if (process.env.MOCK_AUTH && token.roles) {
-        token.permissions = getMockPermissions(token.roles as string[]);
-        return token;
       }
 
       if (token.roles && !token.permissions) {
@@ -92,5 +88,9 @@ async function fetchPermissions(roles: string[]) {
 }
 
 
-const signInWithKeycloak = () => signIn("keycloak");
-export { auth, handlers, signInWithKeycloak as signIn, signOut };
+const signInMethod =
+  USE_MOCK_AUTH
+    ? () => signIn("credentials")
+    : () => signIn("keycloak");
+
+export { auth, handlers, signInMethod as signIn, signOut };

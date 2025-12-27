@@ -1,6 +1,5 @@
 
 import Credentials from "next-auth/providers/credentials";
-import { defaultRoleConfig } from "./permissions";
 
 export const getMockAuthProvider = () => {
   return Credentials({
@@ -20,6 +19,3 @@ export const getMockAuthProvider = () => {
   });
 };
 
-export function getMockPermissions(roles: string[]) {
-  return roles.flatMap((role) => defaultRoleConfig.roles[role]?.permissions || []);
-}
