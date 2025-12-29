@@ -8,7 +8,6 @@ import Table, {
   TableRow,
 } from "@components/ui/Table";
 import { getSecurityConfig } from "@lib/db/database";
-import { queryClient } from "@lib/query-client";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import Header from "./Header";
@@ -17,18 +16,16 @@ import RoleRow from "./RoleRow";
 function AccessPage() {
   const [search, setSearch] = useState("");
 
-  const { data: securityConfig = { roles: {} }, isLoading } = useQuery({
+  const { data: securityConfig, isLoading } = useQuery({
     queryKey: ["securityConfig"],
     queryFn: getSecurityConfig,
   });
 
-  const handleRoleUpdate = () => {
-    queryClient.invalidateQueries({ queryKey: ["securityConfig"] });
-  };
-
-  const filteredRoles = Object.entries(securityConfig.roles).filter(([roleName]) =>
-    roleName.toLowerCase().includes(search.toLowerCase())
-  );
+  const filteredRoles = securityConfig
+    ? Object.entries(securityConfig.roles).filter(([roleName]) =>
+      roleName.toLowerCase().includes(search.toLowerCase())
+    )
+    : [];
 
   return (
     <div className="p-6 max-w-7xl mx-auto flex flex-col gap-6">
@@ -75,7 +72,7 @@ function AccessPage() {
             ) : (
               <TableRow>
                 <TableCell colSpan={3} className="h-32 text-center text-contrast-ground/40 italic">
-                  No roles found matching "{search}"
+                  No roles found matching &quot;{search}&quot;
                 </TableCell>
               </TableRow>
             )}
@@ -102,7 +99,7 @@ function AccessPage() {
           </div>
         ) : (
           <div className="h-32 flex items-center justify-center bg-elevated/10 rounded-xl border border-primary/10 text-contrast-ground/40 italic">
-            No roles found matching "{search}"
+            No roles found matching &quot;{search}&quot;
           </div>
         )}
       </div>
