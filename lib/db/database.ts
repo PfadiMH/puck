@@ -19,7 +19,6 @@ export interface DatabaseService {
   saveFooter(data: FooterData): Promise<void>;
   getFooter(): Promise<FooterData>;
   getAllPaths(): Promise<string[]>;
-  getPermissionsByRole(role: string): Promise<Permission[]>;
   getPermissionsByRoles(roles: string[]): Promise<Permission[]>;
   getSecurityConfig(): Promise<SecurityConfig>;
   saveSecurityConfig(RoleConfig: SecurityConfig): Promise<void>;
@@ -83,10 +82,6 @@ export async function getFooter(): Promise<FooterData> {
 
 export async function getAllPaths() {
   return dbService.getAllPaths();
-}
-
-export async function getPermissionsByRole(role: string) {
-  return dbService.getPermissionsByRole(role);
 }
 
 export async function getPermissionsByRoles(roles: string[]) {

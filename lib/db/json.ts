@@ -97,14 +97,6 @@ export class JsonService implements DatabaseService {
     return Object.keys(db.page);
   }
 
-  async getPermissionsByRole(role: string): Promise<Permission[]> {
-    const db = await this.getDatabase();
-    if (db.securityConfig.roles[role]) {
-      return db.securityConfig.roles[role].permissions;
-    }
-    return [];
-  }
-
   async getPermissionsByRoles(roles: string[]): Promise<Permission[]> {
     const db = await this.getDatabase();
     const permissions: Permission[] = [];

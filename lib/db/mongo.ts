@@ -138,22 +138,16 @@ export class MongoService implements DatabaseService {
     return pages.map((page) => page.path);
   }
 
-  async getPermissionsByRole(role: string): Promise<Permission[]> {
-    const result = await this.db
-      .collection(this.securityCollectionName)
-      .findOne({ type: "role", name: role });
-    if (!result) throw new Error(`Role ${role} not found`);
-    return result.permissions;
-  }
-
   async getPermissionsByRoles(roles: string[]): Promise<Permission[]> {
     const permissions: Permission[] = [];
-    for (const role of roles) {
-      const result = await this.db
-        .collection(this.securityCollectionName)
-        .findOne({ type: "role", name: role });
-      if (result) {
-        permissions.push(...result.permissions);
+    const result = await this.db
+      .collection(this.securityCollectionName)
+      .findOne({ type: "securityConfig" });
+    if (result?.roles) {
+      for (const role of roles) {
+        if (result.roles[role]?.permissions) {
+          permissions.push(...result.roles[role].permissions);
+        }
       }
     }
     return permissions;
@@ -162,7 +156,7 @@ export class MongoService implements DatabaseService {
   async getSecurityConfig(): Promise<SecurityConfig> {
     const result = await this.db
       .collection(this.securityCollectionName)
-      .findOne({ type: "roleConfig" });
+      .findOne({ type: "securityConfig" });
     if (!result) return defaultRoleConfig;
     return result.data;
   }
@@ -171,8 +165,8 @@ export class MongoService implements DatabaseService {
     await this.db
       .collection(this.securityCollectionName)
       .updateOne(
-        { type: "roleConfig" },
-        { $set: { data: roleConfig, type: "roleConfig" } },
+        { type: "securityConfig" },
+        { $set: { data: roleConfig, type: "securityConfig" } },
         { upsert: true }
       );
   }
