@@ -12,31 +12,9 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  let roles;
-  try {
-    roles = await request.json();
-  } catch (error) {
-    return NextResponse.json(
-      { error: "Invalid JSON payload." },
-      { status: 400 }
-    );
-  }
+  const roles = await request.json();
 
-  if (!Array.isArray(roles)) {
-    return NextResponse.json(
-      { error: 'Invalid input. "roles" must be an array.' },
-      { status: 400 }
-    );
-  }
 
-  try {
-    const permissions = await getPermissionsByRoles(roles);
-    return NextResponse.json({ permissions }, { status: 200 });
-  } catch (error) {
-    console.error("Error fetching permissions:", error);
-    return NextResponse.json(
-      { error: "An error occurred while fetching permissions." },
-      { status: 500 }
-    );
-  }
+  const permissions = await getPermissionsByRoles(roles);
+  return NextResponse.json({ permissions }, { status: 200 });
 }
