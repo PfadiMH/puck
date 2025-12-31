@@ -101,9 +101,10 @@ export class JsonService implements DatabaseService {
     const db = await this.getDatabase();
     const permissions: Permission[] = [];
     if (db.securityConfig && db.securityConfig.roles) {
-      for (const role of roles) {
-        if (db.securityConfig.roles[role]?.permissions) {
-          permissions.push(...db.securityConfig.roles[role].permissions);
+      for (const roleName of roles) {
+        const role = db.securityConfig.roles.find((r) => r.name === roleName);
+        if (role?.permissions) {
+          permissions.push(...role.permissions);
         }
       }
     }

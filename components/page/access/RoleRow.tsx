@@ -2,7 +2,7 @@ import { PermissionGuard } from "@components/auth/PermissionGuard";
 import Button from "@components/ui/Button";
 import { DialogRoot, DialogTrigger } from "@components/ui/Dialog";
 import { TableCell, TableRow } from "@components/ui/Table";
-import { RoleMetadata } from "@lib/auth/permissions";
+import { Role } from "@lib/auth/permissions";
 import { useHasPermission } from "@lib/auth/use-has-permission";
 import { getSecurityConfig, saveSecurityConfig } from "@lib/db/database";
 import { queryClient } from "@lib/query-client";
@@ -10,15 +10,14 @@ import ConfirmModal from "../admin/ConfirmModal";
 import { RoleModal } from "./RoleModal";
 
 type RoleRowProps = {
-  roleName: string;
-  roleMetadata: RoleMetadata;
+  role: Role;
   variant?: "table" | "card";
 };
 
-function RoleRow({ roleName, roleMetadata, variant = "table" }: RoleRowProps) {
+function RoleRow({ role, variant = "table" }: RoleRowProps) {
   const handleDelete = async () => {
     const securityConfig = await getSecurityConfig();
-    delete securityConfig.roles[roleName];
+    securityConfig.roles = securityConfig.roles.filter((r) => r.name !== role.name);
     await saveSecurityConfig(securityConfig);
     queryClient.invalidateQueries({ queryKey: ["securityConfig"] });
   };
@@ -27,12 +26,12 @@ function RoleRow({ roleName, roleMetadata, variant = "table" }: RoleRowProps) {
 
   if (variant === "table") {
     return (
-      <TableRow key={roleName}>
+      <TableRow key={role.name}>
         <TableCell className="font-bold text-lg text-primary">
-          {roleName}
+          {role.name}
         </TableCell>
         <TableCell className="max-w-md truncate opacity-80 text-sm">
-          {roleMetadata.description}
+          {role.description}
         </TableCell>
         <TableCell className="text-right">
           <div className="flex items-center justify-end gap-3">
@@ -44,8 +43,7 @@ function RoleRow({ roleName, roleMetadata, variant = "table" }: RoleRowProps) {
               </DialogTrigger>
               <RoleModal
                 isEditing={canEdit}
-                roleMetadata={roleMetadata}
-                roleName={roleName}
+                role={role}
               />
             </DialogRoot>
 
@@ -58,7 +56,7 @@ function RoleRow({ roleName, roleMetadata, variant = "table" }: RoleRowProps) {
                 </DialogTrigger>
                 <ConfirmModal
                   title="Delete Role"
-                  message={`Are you sure you want to delete the role "${roleName}"? This action cannot be undone.`}
+                  message={`Are you sure you want to delete the role "${role.name}"? This action cannot be undone.`}
                   onConfirm={handleDelete}
                 />
               </DialogRoot>
@@ -74,10 +72,10 @@ function RoleRow({ roleName, roleMetadata, variant = "table" }: RoleRowProps) {
       <div className="flex justify-between items-start gap-4">
         <div className="flex flex-col gap-1 min-w-0">
           <h3 className="font-bold text-xl text-primary truncate">
-            {roleName}
+            {role.name}
           </h3>
           <p className="text-sm opacity-70 line-clamp-2">
-            {roleMetadata.description}
+            {role.description}
           </p>
         </div>
       </div>
@@ -94,8 +92,7 @@ function RoleRow({ roleName, roleMetadata, variant = "table" }: RoleRowProps) {
           </DialogTrigger>
           <RoleModal
             isEditing={canEdit}
-            roleMetadata={roleMetadata}
-            roleName={roleName}
+            role={role}
           />
         </DialogRoot>
 
@@ -108,7 +105,7 @@ function RoleRow({ roleName, roleMetadata, variant = "table" }: RoleRowProps) {
             </DialogTrigger>
             <ConfirmModal
               title="Delete Role"
-              message={`Are you sure you want to delete the role "${roleName}"? This action cannot be undone.`}
+              message={`Are you sure you want to delete the role "${role.name}"? This action cannot be undone.`}
               onConfirm={handleDelete}
             />
           </DialogRoot>

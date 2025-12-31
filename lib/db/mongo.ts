@@ -143,10 +143,13 @@ export class MongoService implements DatabaseService {
     const result = await this.db
       .collection(this.securityCollectionName)
       .findOne({ type: "securityConfig" });
-    if (result?.roles) {
-      for (const role of roles) {
-        if (result.roles[role]?.permissions) {
-          permissions.push(...result.roles[role].permissions);
+
+    if (result?.data?.roles) {
+      const securityConfig = result.data as SecurityConfig;
+      for (const roleName of roles) {
+        const role = securityConfig.roles.find((r) => r.name === roleName);
+        if (role?.permissions) {
+          permissions.push(...role.permissions);
         }
       }
     }

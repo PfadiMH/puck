@@ -6,7 +6,6 @@ import { useState } from "react";
 
 export function DevSignInForm() {
   const [selectedRoles, setSelectedRoles] = useState<string[]>([]);
-  const roleKeys = Object.keys(defaultRoleConfig.roles);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -34,20 +33,20 @@ export function DevSignInForm() {
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="space-y-3">
-            {roleKeys.map((role) => (
+            {defaultRoleConfig.roles.map((role) => (
               <label
-                key={role}
+                key={role.name}
                 className="flex items-start space-x-3 rounded-md border p-3 hover:bg-gray-50 cursor-pointer"
               >
                 <input
                   type="checkbox"
-                  checked={selectedRoles.includes(role)}
-                  onChange={() => toggleRole(role)}
+                  checked={selectedRoles.includes(role.name)}
+                  onChange={() => toggleRole(role.name)}
                   className="mt-1 h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
                 />
                 <div>
-                  <div className="font-medium text-gray-900">{role}</div>
-                  <div className="text-xs text-gray-500">{defaultRoleConfig.roles[role].description}</div>
+                  <div className="font-medium text-gray-900">{role.name}</div>
+                  <div className="text-xs text-gray-500">{role.description}</div>
                 </div>
               </label>
             ))}

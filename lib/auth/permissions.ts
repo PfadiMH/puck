@@ -17,29 +17,38 @@ export const assignablePermissions = [
 export type Permission = typeof assignablePermissions[number];
 
 export interface SecurityConfig {
-  roles: {
-    [key: string]: RoleMetadata;
-  };
+  roles: Role[];
 }
 
-export type RoleMetadata = {
+export type Role = {
+  name: string;
   description: string;
-  permissions: Permission[]
+  permissions: Permission[];
 };
 
 export const defaultRoleConfig: SecurityConfig = {
-  roles: {
-    Admin: {
+  roles: [
+    {
+      name: "Admin",
       description: "Admin role with all permissions",
-      permissions: assignablePermissions,
+      permissions: assignablePermissions as Permission[],
     },
-    Leiter: {
+    {
+      name: "Leiter",
       description: "Leiter role with limited permissions",
-      permissions: ["page:create", "page:update", "page:delete", "admin-ui:read", "navbar:update", "footer:update"],
+      permissions: [
+        "page:create",
+        "page:update",
+        "page:delete",
+        "admin-ui:read",
+        "navbar:update",
+        "footer:update",
+      ],
     },
-    JungLeiter: {
+    {
+      name: "JungLeiter",
       description: "JungLeiter role with limited permissions",
       permissions: ["page:update", "admin-ui:read"],
     },
-  },
+  ],
 };

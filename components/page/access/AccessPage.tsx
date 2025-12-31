@@ -22,8 +22,8 @@ function AccessPage() {
   });
 
   const filteredRoles = securityConfig
-    ? Object.entries(securityConfig.roles).filter(([roleName]) =>
-      roleName.toLowerCase().includes(search.toLowerCase())
+    ? securityConfig.roles.filter((role) =>
+      role.name.toLowerCase().includes(search.toLowerCase())
     )
     : [];
 
@@ -61,11 +61,10 @@ function AccessPage() {
                 </TableCell>
               </TableRow>
             ) : filteredRoles.length > 0 ? (
-              filteredRoles.map(([roleName, roleData]) => (
+              filteredRoles.map((role) => (
                 <RoleRow
-                  key={roleName}
-                  roleName={roleName}
-                  roleMetadata={roleData}
+                  key={role.name}
+                  role={role}
                   variant="table"
                 />
               ))
@@ -88,11 +87,10 @@ function AccessPage() {
           </div>
         ) : filteredRoles.length > 0 ? (
           <div className="bg-elevated/10 rounded-xl border border-primary/10 overflow-hidden shadow-lg flex flex-col">
-            {filteredRoles.map(([roleName, roleData]) => (
+            {filteredRoles.map((role) => (
               <RoleRow
-                key={roleName}
-                roleName={roleName}
-                roleMetadata={roleData}
+                key={role.name}
+                role={role}
                 variant="card"
               />
             ))}

@@ -8,32 +8,29 @@ import {
 import Input from "@components/ui/Input";
 import {
   Permission,
-  RoleMetadata
+  Role
 } from "@lib/auth/permissions";
 import { getSecurityConfig, saveSecurityConfig } from "@lib/db/database";
 import { queryClient } from "@lib/query-client";
 import { useState } from "react";
 
 interface PermissionModalProps {
-  roleName?: string;
-  roleMetadata?: RoleMetadata;
+  role?: Role;
   isEditing: boolean;
   isAdding?: boolean;
 }
 
 export function RoleModal({
-  roleName: initialRoleName,
-  roleMetadata: initialRoleMetadata,
+  role: initialRole,
   isEditing,
   isAdding,
 }: PermissionModalProps) {
-  const [roleName, setRoleName] = useState(initialRoleName || "");
-  const [roleMetadata, setRoleMetadata] = useState(
-    initialRoleMetadata || { description: "", permissions: [] }
+  const [role, setRole] = useState<Role>(
+    initialRole || { name: "", description: "", permissions: [] }
   );
 
   const handlePermissionChange = (permission: Permission, checked: boolean) => {
-    setRoleMetadata((prev) => {
+    setRole((prev) => {
       const newPermissions = checked
         ? [...prev.permissions, permission]
         : prev.permissions.filter((p) => p !== permission);
@@ -43,11 +40,14 @@ export function RoleModal({
 
   const handleSave = async () => {
     const securityConfig = await getSecurityConfig();
-    if (isAdding && roleName) {
-      securityConfig.roles[roleName] = roleMetadata;
-    } else if (roleName) {
-      securityConfig.roles[roleName] = roleMetadata;
+    const existingIndex = securityConfig.roles.findIndex((r) => r.name === role.name);
+
+    if (existingIndex > -1) {
+      securityConfig.roles[existingIndex] = role;
+    } else {
+      securityConfig.roles.push(role);
     }
+
     await saveSecurityConfig(securityConfig);
     queryClient.invalidateQueries({ queryKey: ["securityConfig"] });
   };
@@ -62,7 +62,7 @@ export function RoleModal({
   } as const;
 
   const toggleGroup = (permissions: Permission[], checked: boolean) => {
-    setRoleMetadata((prev) => {
+    setRole((prev) => {
       let newPermissions = [...prev.permissions];
       if (checked) {
         permissions.forEach((p) => {
@@ -111,8 +111,8 @@ export function RoleModal({
             <Input
               disabled={!isEditing && !isAdding}
               className="disabled:bg-primary/10 disabled:border-0"
-              value={roleName}
-              onChange={(e) => setRoleName(e.target.value)}
+              value={role.name}
+              onChange={(e) => setRole((prev) => ({ ...prev, name: e.target.value }))}
               placeholder="OFI-Leiter"
             />
           </div>
@@ -122,9 +122,9 @@ export function RoleModal({
             <Input
               disabled={!isEditing && !isAdding}
               className="disabled:bg-primary/10 disabled:border-0"
-              value={roleMetadata.description}
+              value={role.description}
               onChange={(e) =>
-                setRoleMetadata((prev) => ({
+                setRole((prev) => ({
                   ...prev,
                   description: e.target.value,
                 }))
@@ -139,10 +139,10 @@ export function RoleModal({
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-8 gap-y-6">
             {Object.entries(permissionGroups).map(([group, permissions]) => {
               const allSelected = permissions.every((p) =>
-                roleMetadata.permissions.includes(p as Permission)
+                role.permissions.includes(p as Permission)
               );
               const someSelected = permissions.some((p) =>
-                roleMetadata.permissions.includes(p as Permission)
+                role.permissions.includes(p as Permission)
               );
 
               return (
@@ -166,7 +166,7 @@ export function RoleModal({
                   </div>
                   <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
                     {permissions.map((permission) => {
-                      const isAssigned = roleMetadata.permissions.includes(permission as Permission);
+                      const isAssigned = role.permissions.includes(permission as Permission);
                       return (
                         <label
                           key={permission}
