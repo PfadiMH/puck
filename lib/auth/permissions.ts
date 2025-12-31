@@ -26,7 +26,7 @@ export type Role = {
   permissions: Permission[];
 };
 
-export const defaultRoleConfig: SecurityConfig = {
+export const defaultSecurityConfig: SecurityConfig = {
   roles: [
     {
       name: "Admin",

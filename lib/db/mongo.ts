@@ -1,4 +1,4 @@
-import { defaultRoleConfig, Permission, SecurityConfig } from "@lib/auth/permissions";
+import { defaultSecurityConfig, Permission, SecurityConfig } from "@lib/auth/permissions";
 import { defaultFooterData, FooterData } from "@lib/config/footer.config";
 import { defaultNavbarData, NavbarData } from "@lib/config/navbar.config";
 import { PageData } from "@lib/config/page.config";
@@ -56,10 +56,10 @@ export class MongoService implements DatabaseService {
     // Ensure Security Config exists
     const securityConfig = await this.db
       .collection(this.securityCollectionName)
-      .findOne({ type: "roleConfig" });
+      .findOne({ type: "securityConfig" });
     if (!securityConfig) {
       console.log("Security Config not found, creating with default data");
-      await this.saveSecurityConfig(defaultRoleConfig);
+      await this.saveSecurityConfig(defaultSecurityConfig);
     }
   }
 
@@ -160,16 +160,16 @@ export class MongoService implements DatabaseService {
     const result = await this.db
       .collection(this.securityCollectionName)
       .findOne({ type: "securityConfig" });
-    if (!result) return defaultRoleConfig;
+    if (!result) return defaultSecurityConfig;
     return result.data;
   }
 
-  async saveSecurityConfig(roleConfig: SecurityConfig): Promise<void> {
+  async saveSecurityConfig(securityConfig: SecurityConfig): Promise<void> {
     await this.db
       .collection(this.securityCollectionName)
       .updateOne(
         { type: "securityConfig" },
-        { $set: { data: roleConfig, type: "securityConfig" } },
+        { $set: { data: securityConfig, type: "securityConfig" } },
         { upsert: true }
       );
   }

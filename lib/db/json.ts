@@ -1,5 +1,5 @@
 import {
-  defaultRoleConfig as defaultSecurityConfig,
+  defaultSecurityConfig,
   Permission,
   SecurityConfig,
 } from "@lib/auth/permissions";
@@ -120,9 +120,9 @@ export class JsonService implements DatabaseService {
     // If securityConfig is defined, return it
     return db.securityConfig;
   }
-  async saveSecurityConfig(roleConfig: SecurityConfig): Promise<void> {
+  async saveSecurityConfig(securityConfig: SecurityConfig): Promise<void> {
     const db = await this.getDatabase();
-    db.securityConfig = roleConfig;
+    db.securityConfig = securityConfig;
     await this.saveDatabase(db);
   }
 }
