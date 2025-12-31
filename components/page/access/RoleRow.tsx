@@ -35,17 +35,15 @@ function RoleRow({ role, variant = "table" }: RoleRowProps) {
         </TableCell>
         <TableCell className="text-right">
           <div className="flex items-center justify-end gap-3">
-            <DialogRoot>
-              <DialogTrigger>
+            <RoleModal
+              isEditing={canEdit}
+              role={role}
+              trigger={
                 <Button size="small" color={canEdit ? "primary" : "secondary"}>
                   {canEdit ? "Edit" : "View permissions"}
                 </Button>
-              </DialogTrigger>
-              <RoleModal
-                isEditing={canEdit}
-                role={role}
-              />
-            </DialogRoot>
+              }
+            />
 
             <PermissionGuard permissions={["role-permissions:update"]}>
               <DialogRoot>
@@ -80,8 +78,10 @@ function RoleRow({ role, variant = "table" }: RoleRowProps) {
         </div>
       </div>
       <div className="flex items-center gap-3 mt-2">
-        <DialogRoot>
-          <DialogTrigger>
+        <RoleModal
+          isEditing={canEdit}
+          role={role}
+          trigger={
             <Button
               size="small"
               color={canEdit ? "primary" : "secondary"}
@@ -89,12 +89,8 @@ function RoleRow({ role, variant = "table" }: RoleRowProps) {
             >
               {canEdit ? "Edit" : "View"}
             </Button>
-          </DialogTrigger>
-          <RoleModal
-            isEditing={canEdit}
-            role={role}
-          />
-        </DialogRoot>
+          }
+        />
 
         <PermissionGuard permissions={["role-permissions:update"]}>
           <DialogRoot>
