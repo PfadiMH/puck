@@ -62,13 +62,13 @@ async function fetchPermissions(roles: string[]) {
       throw new Error("INTERNAL_API_BASE_URL environment variable is not set.");
     }
 
+    apiUrl.searchParams.set("roles", JSON.stringify(roles));
+
     const response = await fetch(apiUrl.toString(), {
-      method: "POST",
+      method: "GET",
       headers: {
-        "Content-Type": "application/json",
         "x-secret-key": secretKey,
       },
-      body: JSON.stringify(roles),
     });
 
     if (response.ok) {
