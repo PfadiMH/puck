@@ -18,8 +18,7 @@ function Header() {
 
         <PermissionGuard permissions={["role-permissions:update"]}>
           <RoleModal
-            isEditing={true}
-            isAdding={true}
+            mode="add"
             trigger={<Button color="primary">Add Role</Button>}
           />
         </PermissionGuard>

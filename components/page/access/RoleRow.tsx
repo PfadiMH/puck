@@ -36,7 +36,7 @@ function RoleRow({ role, variant = "table" }: RoleRowProps) {
         <TableCell className="text-right">
           <div className="flex items-center justify-end gap-3">
             <RoleModal
-              isEditing={canEdit}
+              mode={canEdit ? "edit" : "view"}
               role={role}
               trigger={
                 <Button size="small" color={canEdit ? "primary" : "secondary"}>
@@ -79,7 +79,7 @@ function RoleRow({ role, variant = "table" }: RoleRowProps) {
       </div>
       <div className="flex items-center gap-3 mt-2">
         <RoleModal
-          isEditing={canEdit}
+          mode={canEdit ? "edit" : "view"}
           role={role}
           trigger={
             <Button

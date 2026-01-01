@@ -19,21 +19,42 @@ import { useEffect, useState } from "react";
 
 interface PermissionModalProps {
   role?: Role;
-  isEditing: boolean;
-  isAdding?: boolean;
+  mode: "add" | "edit" | "view";
   trigger: React.ReactNode;
 }
 
+const MODE_CONFIG = {
+  add: {
+    title: "Creator",
+    isReadOnly: false,
+    cancelLabel: "Cancel",
+    showSave: true,
+  },
+  edit: {
+    title: "Editor",
+    isReadOnly: false,
+    cancelLabel: "Cancel",
+    showSave: true,
+  },
+  view: {
+    title: "Viewer",
+    isReadOnly: true,
+    cancelLabel: "Close",
+    showSave: false,
+  },
+} as const;
+
 export function RoleModal({
   role: initialRole,
-  isEditing,
-  isAdding,
+  mode,
   trigger,
 }: PermissionModalProps) {
   const [open, setOpen] = useState(false);
   const [role, setRole] = useState<Role>(
     initialRole || { name: "", description: "", permissions: [] }
   );
+
+  const config = MODE_CONFIG[mode];
 
   useEffect(() => {
     if (open) {
@@ -102,7 +123,7 @@ export function RoleModal({
       <Dialog className="sm:max-w-4xl">
         <div className="flex justify-between items-center mb-4">
           <DialogTitle>
-            Role {isEditing ? "Editor" : isAdding ? "Creator" : "Viewer"}
+            Role {config.title}
           </DialogTitle>
           <DialogClose>
             <button className="text-contrast-ground/60 hover:text-contrast-ground transition-colors">
@@ -132,7 +153,7 @@ export function RoleModal({
             <div className="flex flex-col gap-1.5">
               <label className="text-sm font-bold uppercase opacity-60">Role Name</label>
               <Input
-                disabled={!isEditing && !isAdding}
+                disabled={config.isReadOnly}
                 className="disabled:bg-primary/10 disabled:border-0"
                 value={role.name}
                 onChange={(e) => setRole((prev) => ({ ...prev, name: e.target.value }))}
@@ -143,7 +164,7 @@ export function RoleModal({
             <div className="flex flex-col gap-1.5">
               <label className="text-sm font-bold uppercase opacity-60">Description</label>
               <Input
-                disabled={!isEditing && !isAdding}
+                disabled={config.isReadOnly}
                 className="disabled:bg-primary/10 disabled:border-0"
                 value={role.description}
                 onChange={(e) =>
@@ -172,7 +193,7 @@ export function RoleModal({
                   <div key={group} className="flex flex-col gap-2">
                     <div className="flex justify-between items-center bg-primary/10 px-3 py-1.5 rounded-t-lg border-b border-primary/20">
                       <span className="font-rockingsoda text-xl">{group}</span>
-                      {(isEditing || isAdding) && (
+                      {!config.isReadOnly && (
                         <label className="flex items-center gap-2 cursor-pointer text-xs font-semibold uppercase hover:text-primary transition-colors">
                           <input
                             type="checkbox"
@@ -194,11 +215,11 @@ export function RoleModal({
                           <label
                             key={permission}
                             className="flex items-center gap-2.5 rounded bg-primary/5 p-2 px-3 border border-primary/10 hover:bg-primary/10 transition-colors cursor-pointer data-[disabled=true]:cursor-default data-[disabled=true]:opacity-70"
-                            data-disabled={!isEditing && !isAdding}
+                            data-disabled={config.isReadOnly}
                           >
                             <input
                               type="checkbox"
-                              disabled={!isEditing && !isAdding}
+                              disabled={config.isReadOnly}
                               checked={isAssigned}
                               onChange={(e) =>
                                 handlePermissionChange(permission as Permission, e.target.checked)
@@ -218,9 +239,9 @@ export function RoleModal({
         </div>
         <DialogActions>
           <DialogClose>
-            <Button>{isEditing || isAdding ? "Cancel" : "Close"}</Button>
+            <Button>{config.cancelLabel}</Button>
           </DialogClose>
-          {(isEditing || isAdding) && (
+          {config.showSave && (
             <Button color="primary" onClick={handleSave}>
               Confirm
             </Button>

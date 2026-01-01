@@ -1,6 +1,6 @@
 "use client";
 
-import { defaultRoleConfig } from "@lib/auth/permissions";
+import { defaultSecurityConfig } from "@lib/auth/permissions";
 import { signIn } from "next-auth/react";
 import { useState } from "react";
 
@@ -33,7 +33,7 @@ export function DevSignInForm() {
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="space-y-3">
-            {defaultRoleConfig.roles.map((role) => (
+            {defaultSecurityConfig.roles.map((role) => (
               <label
                 key={role.name}
                 className="flex items-start space-x-3 rounded-md border p-3 hover:bg-gray-50 cursor-pointer"
