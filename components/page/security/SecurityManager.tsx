@@ -13,7 +13,7 @@ import { useState } from "react";
 import Header from "./Header";
 import RoleRow from "./RoleRow";
 
-function AccessPage() {
+function SecurityManager() {
   const [search, setSearch] = useState("");
 
   const { data: securityConfig, isLoading } = useQuery({
@@ -105,4 +105,4 @@ function AccessPage() {
   );
 }
 
-export default AccessPage;
+export default SecurityManager;

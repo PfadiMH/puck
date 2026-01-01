@@ -12,8 +12,8 @@ function Header() {
       <h1>Leitereberiich</h1>
       <div className="flex flex-wrap gap-4">
         <PermissionGuard permissions={["role-permissions:read"]}>
-          <Button size="medium" onClick={() => router.push("/admin/access")}>
-            Access Control
+          <Button size="medium" onClick={() => router.push("/admin/security")}>
+            Security Manager
           </Button>
         </PermissionGuard>
         <div className="grid grid-rows-2 gap-2">
