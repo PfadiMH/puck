@@ -1,7 +1,5 @@
 "use client";
 
-import "client-only";
-
 import { Permission } from "@lib/auth/permissions";
 import { useSession } from "next-auth/react";
 import { hasPermissionEvaluator } from "./auth-functions";
