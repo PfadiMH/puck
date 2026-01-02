@@ -1,4 +1,5 @@
 export const assignablePermissions = [
+  // @keep-sorted
   "admin-ui:read",
   "page:create",
   "page:update",
@@ -13,7 +14,6 @@ export const assignablePermissions = [
   "global-admin",
 ];
 
-// @keep-sorted
 export type Permission = typeof assignablePermissions[number];
 
 export interface SecurityConfig {
@@ -31,7 +31,7 @@ export const defaultSecurityConfig: SecurityConfig = {
     {
       name: "Admin",
       description: "Admin role with all permissions",
-      permissions: assignablePermissions as Permission[],
+      permissions: ["global-admin"],
     },
     {
       name: "Leiter",

@@ -1,6 +1,6 @@
 "use client";
 
-import { PermissionGuard } from "@components/auth/PermissionGuard";
+import { PermissionGuard } from "@components/security/PermissionGuard";
 import Button from "@components/ui/Button";
 import { useRouter } from "next/navigation";
 import { RoleModal } from "./RoleModal";

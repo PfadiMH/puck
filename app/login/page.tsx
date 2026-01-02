@@ -1,4 +1,4 @@
-import { DevelopmentLoginLink } from "@components/auth/DevelopmentLoginLink";
+import { DevelopmentLoginLink } from "@components/security/dev/DevSignInLink";
 import { auth, signIn, signOut } from "@lib/auth/auth-client";
 
 

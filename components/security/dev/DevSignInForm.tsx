@@ -11,7 +11,7 @@ export function DevSignInForm() {
     e.preventDefault();
     await signIn("credentials", {
       roles: JSON.stringify(selectedRoles),
-      callbackUrl: "/",
+      redirectTo: "/",
     });
   };
 
