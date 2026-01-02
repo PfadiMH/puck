@@ -3,7 +3,7 @@ import Button from "@components/ui/Button";
 import { DialogRoot, DialogTrigger } from "@components/ui/Dialog";
 import { TableCell, TableRow } from "@components/ui/Table";
 import { Role } from "@lib/auth/permissions";
-import { useHasPermission } from "@lib/auth/use-has-permission";
+import { useHasPermission } from "@lib/auth/use-has-permission-hook";
 import { getSecurityConfig, saveSecurityConfig } from "@lib/db/database";
 import { queryClient } from "@lib/query-client";
 import ConfirmModal from "../admin/ConfirmModal";

@@ -1,18 +1,17 @@
-import { hasPermission } from "@lib/auth/has-permission";
+import { hasPermission } from "@lib/auth/has-permission-hook";
 import { Permission } from "@lib/auth/permissions";
-import { ReactNode } from "react";
+import { PropsWithChildren } from "react";
 
-interface ServerPermissionGuardProps {
+type ServerPermissionGuardProps = {
   permissions: Permission[];
   requireAll?: boolean;
-  children: ReactNode;
-}
+};
 
 export async function ServerPermissionGuard({
   permissions,
   requireAll = false,
   children,
-}: ServerPermissionGuardProps) {
+}: PropsWithChildren<ServerPermissionGuardProps>) {
   const isAuthorized = await hasPermission(permissions, { requireAll });
 
   if (!isAuthorized) return null;

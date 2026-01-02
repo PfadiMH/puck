@@ -16,11 +16,9 @@ export function DevSignInForm() {
   };
 
   const toggleRole = (role: string) => {
-    if (selectedRoles.includes(role)) {
-      setSelectedRoles(selectedRoles.filter((r) => r !== role));
-    } else {
-      setSelectedRoles([...selectedRoles, role]);
-    }
+    setSelectedRoles((prev) =>
+      prev.includes(role) ? prev.filter((r) => r !== role) : [...prev, role]
+    );
   };
 
   return (

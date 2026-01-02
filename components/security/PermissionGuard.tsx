@@ -1,20 +1,19 @@
 "use client";
 
 import { Permission } from "@lib/auth/permissions";
-import { useHasPermission } from "@lib/auth/use-has-permission";
-import { ReactNode } from "react";
+import { useHasPermission } from "@lib/auth/use-has-permission-hook";
+import { PropsWithChildren } from "react";
 
-interface PermissionGuardProps {
+type PermissionGuardProps = {
   permissions: Permission[];
   requireAll?: boolean;
-  children: ReactNode;
-}
+};
 
 export function PermissionGuard({
   permissions,
   requireAll = false,
   children,
-}: PermissionGuardProps) {
+}: PropsWithChildren<PermissionGuardProps>) {
   const isAuthorized = useHasPermission(permissions, { requireAll });
 
   if (!isAuthorized) return null;
