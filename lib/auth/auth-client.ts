@@ -1,8 +1,9 @@
+import { env } from "@lib/env";
 import NextAuth from "next-auth";
 import Keycloak from "next-auth/providers/keycloak";
 import { getMockAuthProvider } from "./mock-auth-config";
 
-const USE_MOCK_AUTH = process.env.MOCK_AUTH === "true" && process.env.NODE_ENV !== "production";
+const USE_MOCK_AUTH = env.MOCK_AUTH === "true" && env.NODE_ENV !== "production";
 
 const { handlers, signIn, signOut, auth } = NextAuth({
   basePath: "/auth",
@@ -49,18 +50,13 @@ async function fetchPermissions(roles: string[]) {
   try {
     // Construct the absolute URL for the internal API endpoint
     // Ensure INTERNAL_API_BASE_URL is set in your environment variables
+    const internalApiBaseUrl = env.INTERNAL_API_BASE_URL;
+
     const apiUrl = new URL(
       "/auth/permissions",
-      process.env.INTERNAL_API_BASE_URL
+      internalApiBaseUrl
     );
-    const secretKey = process.env.AUTH_SECRET;
-
-    if (!secretKey) {
-      throw new Error("AUTH_SECRET environment variable is not set.");
-    }
-    if (!process.env.INTERNAL_API_BASE_URL) {
-      throw new Error("INTERNAL_API_BASE_URL environment variable is not set.");
-    }
+    const secretKey = env.AUTH_SECRET;
 
     apiUrl.searchParams.set("roles", JSON.stringify(roles));
 

@@ -1,5 +1,7 @@
+import { env } from "@lib/env";
+
 export const DevelopmentLoginLink = () => {
-  if (process.env.MOCK_AUTH !== "true" || process.env.NODE_ENV === "production") {
+  if (env.MOCK_AUTH !== "true" || env.NODE_ENV === "production") {
     return null;
   }
 

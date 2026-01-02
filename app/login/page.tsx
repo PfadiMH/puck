@@ -2,8 +2,10 @@ import { DevelopmentLoginLink } from "@components/auth/DevelopmentLoginLink";
 import { auth, signIn, signOut } from "@lib/auth/auth-client";
 
 
+import { env } from "@lib/env";
+
 export default async function Page() {
-  if (process.env.NODE_ENV !== "development") {
+  if (env.NODE_ENV !== "development") {
     return <div>Development only</div>;
   }
 

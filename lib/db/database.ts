@@ -10,6 +10,8 @@ import { PageData } from "@lib/config/page.config";
 import { JsonService } from "./json";
 import { MongoService } from "./mongo";
 
+import { env } from "@lib/env";
+
 export interface DatabaseService {
   savePage(path: string, data: PageData): Promise<void>;
   deletePage(path: string): Promise<void>;
@@ -25,11 +27,11 @@ export interface DatabaseService {
 }
 
 function getDatabaseService(): DatabaseService {
-  const databaseType = process.env.DATABASE_TYPE;
+  const databaseType = env.DATABASE_TYPE;
 
-  if (databaseType === "mongodb") {
-    const connectionString = process.env.MONGODB_CONNECTION_STRING;
-    const dbName = process.env.MONGODB_DB_NAME;
+  if (databaseType === "mongodb" || databaseType === "mongo") {
+    const connectionString = env.MONGODB_CONNECTION_STRING;
+    const dbName = env.MONGODB_DB_NAME;
 
     if (!connectionString || !dbName) {
       console.warn(
