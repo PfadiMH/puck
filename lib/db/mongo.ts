@@ -1,10 +1,10 @@
-import { defaultSecurityConfig, Permission, SecurityConfig } from "@lib/auth/permissions";
+import { defaultSecurityConfig, SecurityConfig } from "@lib/auth/permissions";
 import { defaultFooterData, FooterData } from "@lib/config/footer.config";
 import { defaultNavbarData, NavbarData } from "@lib/config/navbar.config";
 import { PageData } from "@lib/config/page.config";
 import { Data } from "@measured/puck";
 import { Db, MongoClient } from "mongodb";
-import { DatabaseService } from "./database";
+import { DatabaseService } from "./types";
 
 /**
  * MongoDB implementation of DatabaseService.
@@ -138,23 +138,6 @@ export class MongoService implements DatabaseService {
     return pages.map((page) => page.path);
   }
 
-  async getPermissionsByRoles(roles: string[]): Promise<Permission[]> {
-    const permissions: Permission[] = [];
-    const result = await this.db
-      .collection(this.securityCollectionName)
-      .findOne({ type: "securityConfig" });
-
-    if (result?.data?.roles) {
-      const securityConfig = result.data as SecurityConfig;
-      for (const roleName of roles) {
-        const role = securityConfig.roles.find((r) => r.name === roleName);
-        if (role?.permissions) {
-          permissions.push(...role.permissions);
-        }
-      }
-    }
-    return permissions;
-  }
 
   async getSecurityConfig(): Promise<SecurityConfig> {
     const result = await this.db

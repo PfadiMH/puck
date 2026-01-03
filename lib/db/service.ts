@@ -1,0 +1,19 @@
+import { env } from "@lib/env";
+import { MongoService } from "./mongo";
+import { DatabaseService } from "./types";
+
+/**
+ * Internal Database Service.
+ * DIRECT ACCESS - BYPASSES PERMISSION CHECKS.
+ * Use only in trusted server contexts (e.g. API routes with their own auth).
+ * For UI/Client access, use @lib/db/database.ts instead.
+ */
+function getDatabaseService(): DatabaseService {
+  const connectionString = env.MONGODB_CONNECTION_STRING;
+  const dbName = env.MONGODB_DB_NAME;
+
+  console.log("Using MongoDB storage");
+  return new MongoService(connectionString, dbName);
+}
+
+export const dbService = getDatabaseService();

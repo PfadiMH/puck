@@ -1,4 +1,4 @@
-import { getPermissionsByRoles } from "@lib/db/database";
+import { dbService } from "@lib/db/service";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
@@ -39,6 +39,12 @@ export async function GET(request: NextRequest) {
     }
   }
 
-  const permissions = await getPermissionsByRoles(roles);
+  const config = await dbService.getSecurityConfig();
+
+  const permissions =
+    config?.roles
+      ?.filter((r) => roles.includes(r.name))
+      .flatMap((r) => r.permissions || []) || [];
+
   return NextResponse.json({ permissions }, { status: 200 });
 }

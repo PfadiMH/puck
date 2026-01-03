@@ -1,54 +1,17 @@
 "use server";
 
-import {
-  requireServerPermission,
-} from "@lib/auth/auth-functions";
-import { Permission, SecurityConfig } from "@lib/auth/permissions";
+import { requireServerPermission } from "@lib/auth/auth-functions";
+import { SecurityConfig } from "@lib/auth/permissions";
 import { FooterData } from "@lib/config/footer.config";
 import { NavbarData } from "@lib/config/navbar.config";
 import { PageData } from "@lib/config/page.config";
-import { JsonService } from "./json";
-import { MongoService } from "./mongo";
+import { dbService } from "./service";
 
-import { env } from "@lib/env";
-
-export interface DatabaseService {
-  savePage(path: string, data: PageData): Promise<void>;
-  deletePage(path: string): Promise<void>;
-  getPage(path: string): Promise<PageData | undefined>;
-  saveNavbar(data: NavbarData): Promise<void>;
-  getNavbar(): Promise<NavbarData>;
-  saveFooter(data: FooterData): Promise<void>;
-  getFooter(): Promise<FooterData>;
-  getAllPaths(): Promise<string[]>;
-  getPermissionsByRoles(roles: string[]): Promise<Permission[]>;
-  getSecurityConfig(): Promise<SecurityConfig>;
-  saveSecurityConfig(RoleConfig: SecurityConfig): Promise<void>;
-}
-
-function getDatabaseService(): DatabaseService {
-  const databaseType = env.DATABASE_TYPE;
-
-  if (databaseType === "mongodb" || databaseType === "mongo") {
-    const connectionString = env.MONGODB_CONNECTION_STRING;
-    const dbName = env.MONGODB_DB_NAME;
-
-    if (!connectionString || !dbName) {
-      console.warn(
-        "MONGODB_CONNECTION_STRING or MONGODB_DB_NAME environment variables not set. Defaulting to JSON storage."
-      );
-    } else {
-      console.log("Using MongoDB storage");
-      return new MongoService(connectionString, dbName);
-    }
-  }
-
-  // Default to JSON storage
-  console.log("Using JSON storage");
-  return new JsonService("database.json");
-}
-
-const dbService = getDatabaseService();
+/**
+ * Public Database Actions.
+ * securely wraps internal service methods with permission checks.
+ * Use this for all Client Components and Server Actions.
+ */
 
 export async function savePage(path: string, data: PageData) {
   await requireServerPermission(["page:create", "page:update"]);
@@ -86,13 +49,11 @@ export async function getAllPaths() {
   return dbService.getAllPaths();
 }
 
-export async function getPermissionsByRoles(roles: string[]) {
-  return dbService.getPermissionsByRoles(roles);
-}
 export async function getSecurityConfig() {
   await requireServerPermission(["role-permissions:read"]);
   return dbService.getSecurityConfig();
 }
+
 export async function saveSecurityConfig(permissions: SecurityConfig) {
   await requireServerPermission(["role-permissions:update"]);
   return dbService.saveSecurityConfig(permissions);
