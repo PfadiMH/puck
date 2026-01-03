@@ -1,6 +1,6 @@
 import { Session } from "next-auth";
 import { forbidden, unauthorized } from "next/navigation";
-import { auth } from "./auth-client";
+import { auth } from "../auth/auth-client";
 import { Permission } from "./permissions";
 
 // its important to catch the errors thrown here by *components* who call them. (not the actions)

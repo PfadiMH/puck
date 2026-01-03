@@ -1,4 +1,4 @@
-import { defaultSecurityConfig, SecurityConfig } from "@lib/auth/permissions";
+import { defaultSecurityConfig, SecurityConfig } from "@lib/security/permissions";
 import { defaultFooterData, FooterData } from "@lib/config/footer.config";
 import { defaultNavbarData, NavbarData } from "@lib/config/navbar.config";
 import { PageData } from "@lib/config/page.config";

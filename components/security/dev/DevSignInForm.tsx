@@ -1,6 +1,6 @@
 "use client";
 
-import { defaultSecurityConfig } from "@lib/auth/permissions";
+import { defaultSecurityConfig } from "@lib/security/permissions";
 import { signIn } from "next-auth/react";
 import { useState } from "react";
 

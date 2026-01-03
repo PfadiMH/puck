@@ -12,7 +12,7 @@ import { toast } from "@components/ui/Toast";
 import {
   Permission,
   Role
-} from "@lib/auth/permissions";
+} from "@lib/security/permissions";
 import { getSecurityConfig, saveSecurityConfig } from "@lib/db/database";
 import { queryClient } from "@lib/query-client";
 import { useEffect, useState } from "react";

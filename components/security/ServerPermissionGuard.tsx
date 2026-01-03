@@ -1,5 +1,5 @@
-import { hasPermission } from "@lib/auth/has-permission-hook";
-import { Permission } from "@lib/auth/permissions";
+import { hasPermission } from "@lib/security/has-permission";
+import { Permission } from "@lib/security/permissions";
 import { PropsWithChildren } from "react";
 
 type ServerPermissionGuardProps = {

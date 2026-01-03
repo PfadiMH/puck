@@ -1,8 +1,8 @@
 "use client";
 
-import { Permission } from "@lib/auth/permissions";
+import { Permission } from "@lib/security/permissions";
 import { useSession } from "next-auth/react";
-import { hasPermissionEvaluator } from "./auth-functions";
+import { hasPermissionEvaluator } from "./server-guard";
 
 export function useHasPermission(
   permissions: Permission[],

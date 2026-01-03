@@ -50,7 +50,7 @@ async function fetchPermissions(roles: string[]) {
     const internalApiBaseUrl = env.INTERNAL_API_BASE_URL;
 
     const apiUrl = new URL(
-      "/auth/permissions",
+      "/api/security/permissions",
       internalApiBaseUrl
     );
     const secretKey = env.AUTH_SECRET;
