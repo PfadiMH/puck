@@ -1,11 +1,12 @@
+import cn from "@lib/cn";
 import { Dialog as RDialog } from "radix-ui";
 import { PropsWithChildren } from "react";
 
-export function Dialog({ children }: PropsWithChildren) {
+export function Dialog({ children, className }: PropsWithChildren<{ className?: string }>) {
   return (
     <RDialog.Portal>
       <RDialog.Overlay className="fixed inset-0 bg-black/50" />
-      <RDialog.Content className="fixed top-1/2 left-1/2 -translate-1/2 w-[90vw] max-w-[500px] rounded-xl p-4 bg-elevated text-contrast-ground">
+      <RDialog.Content className={cn("fixed top-1/2 left-1/2 -translate-1/2 w-[90vw] max-w-[500px] rounded-xl p-4 bg-elevated text-contrast-ground overflow-hidden", className)}>
         {children}
       </RDialog.Content>
     </RDialog.Portal>
