@@ -1,6 +1,6 @@
 import { auth } from "../auth/auth-client";
+import { hasPermissionEvaluator } from "./permission-utils";
 import { Permission } from "./permissions";
-import { hasPermissionEvaluator } from "./server-guard";
 
 /**
  * Server-side/Universal helper to check permissions.
