@@ -1,26 +1,26 @@
+import { createEnv } from "@t3-oss/env-nextjs";
 import { z } from "zod";
 
-const envSchema = z.object({
-  AUTH_SECRET: z.string().min(1),
-  INTERNAL_API_BASE_URL: z.url().min(1),
-  MONGODB_CONNECTION_STRING: z.string().min(1),
-  MONGODB_DB_NAME: z.string().min(1),
-  MOCK_AUTH: z.string().optional(),
-  NODE_ENV: z.enum(["development", "production", "test"]).optional(),
+export const env = createEnv({
+  server: {
+    AUTH_SECRET: z.string().min(1),
+    INTERNAL_API_BASE_URL: z.url().min(1),
+    MONGODB_CONNECTION_STRING: z.string().min(1),
+    MONGODB_DB_NAME: z.string().min(1),
+    MOCK_AUTH: z.string().optional(),
+    NODE_ENV: z.enum(["development", "production", "test"]).optional(),
+  },
+  client: {
+    // Add NEXT_PUBLIC_ variables here
+  },
+  runtimeEnv: {
+    AUTH_SECRET: process.env.AUTH_SECRET,
+    INTERNAL_API_BASE_URL: process.env.INTERNAL_API_BASE_URL,
+    MONGODB_CONNECTION_STRING: process.env.MONGODB_CONNECTION_STRING,
+    MONGODB_DB_NAME: process.env.MONGODB_DB_NAME,
+    MOCK_AUTH: process.env.MOCK_AUTH,
+    NODE_ENV: process.env.NODE_ENV,
+  },
+  skipValidation: !!process.env.SKIP_ENV_VALIDATION,
+  emptyStringAsUndefined: true,
 });
-
-const skipValidation = !!process.env.SKIP_ENV_VALIDATION;
-
-// If we are skipping validation (e.g. during build), we provide these defaults
-// to satisfy TypeScript and strict Zod checks without requiring real secrets.
-// We use a valid-looking mongo URI to prevent MongoClient from throwing immediately.
-const buildRequiredDefaults = {
-  AUTH_SECRET: "build_secret_placeholder",
-  INTERNAL_API_BASE_URL: "http://localhost:3000",
-  MONGODB_CONNECTION_STRING: "mongodb://localhost:27017/build_placeholder",
-  MONGODB_DB_NAME: "build_placeholder",
-};
-
-export const env = skipValidation
-  ? { ...buildRequiredDefaults, ...process.env } as z.infer<typeof envSchema>
-  : envSchema.parse(process.env);

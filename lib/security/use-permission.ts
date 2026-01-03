@@ -2,7 +2,7 @@
 
 import { Permission } from "@lib/security/permissions";
 import { useSession } from "next-auth/react";
-import { hasPermissionEvaluator } from "./server-guard";
+import { hasPermissionEvaluator } from "./permission-utils";
 
 export function useHasPermission(
   permissions: Permission[],

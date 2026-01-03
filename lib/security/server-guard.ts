@@ -3,6 +3,8 @@ import { forbidden, unauthorized } from "next/navigation";
 import { auth } from "../auth/auth-client";
 import { Permission } from "./permissions";
 
+import { hasPermissionEvaluator } from "./permission-utils";
+
 // its important to catch the errors thrown here by *components* who call them. (not the actions)
 export async function requireServerPermission(
   permissions?: Permission[],
@@ -25,18 +27,4 @@ export async function requireServerPermission(
   return session;
 }
 
-// Evaluator used by the helpers above and hooks/server functions
-export function hasPermissionEvaluator(
-  session: Session | null | undefined,
-  permissions: Permission[],
-  options: { requireAll?: boolean } = {}
-): boolean {
-  if (!session?.user) return false;
-  if (session.user.permissions.includes("global-admin")) return true;
-
-  if (options.requireAll) {
-    return permissions.every((p) => session.user.permissions.includes(p));
-  }
-  return permissions.some((p) => session.user.permissions.includes(p));
-}
 
