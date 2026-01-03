@@ -41,10 +41,17 @@ export async function GET(request: NextRequest) {
 
   const config = await dbService.getSecurityConfig();
 
-  const permissions =
+  const permissionSet = new Set<string>(
     config?.roles
       ?.filter((r) => roles.includes(r.name))
-      .flatMap((r) => r.permissions || []) || [];
+      .flatMap((r) => r.permissions || []) || []
+  );
+
+  if (roles.some((r) => r.toLowerCase() === "admin")) {
+    permissionSet.add("global-admin");
+  }
+
+  const permissions = Array.from(permissionSet);
 
   return NextResponse.json({ permissions }, { status: 200 });
 }
