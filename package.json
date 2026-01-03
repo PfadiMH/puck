@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "@measured/puck": "^0.18.3",
+    "@t3-oss/env-nextjs": "^0.13.10",
     "@tailwindcss/vite": "^4.1.4",
     "@tanstack/react-query": "^5.74.4",
     "classnames": "^2.5.1",
