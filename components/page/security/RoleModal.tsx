@@ -9,12 +9,12 @@ import {
 } from "@components/ui/Dialog";
 import Input from "@components/ui/Input";
 import { toast } from "@components/ui/Toast";
+import { getSecurityConfig, saveSecurityConfig } from "@lib/db/database";
+import { queryClient } from "@lib/query-client";
 import {
   Permission,
   Role
 } from "@lib/security/permissions";
-import { getSecurityConfig, saveSecurityConfig } from "@lib/db/database";
-import { queryClient } from "@lib/query-client";
 import { useEffect, useState } from "react";
 
 interface PermissionModalProps {
@@ -195,15 +195,27 @@ export function RoleModal({
                       <span className="font-rockingsoda text-xl">{group}</span>
                       {!config.isReadOnly && (
                         <label className="flex items-center gap-2 cursor-pointer text-xs font-semibold uppercase hover:text-primary transition-colors">
-                          <input
-                            type="checkbox"
-                            checked={allSelected}
-                            ref={(el) => {
-                              if (el) el.indeterminate = someSelected && !allSelected;
-                            }}
-                            onChange={(e) => toggleGroup(permissions as unknown as Permission[], e.target.checked)}
-                            className="w-3 h-3 appearance-none border border-primary/60 rounded-sm checked:bg-primary/60 indeterminate:bg-primary/40 focus:outline-none"
-                          />
+                          <div className="relative flex items-center justify-center w-3 h-3">
+                            <input
+                              type="checkbox"
+                              checked={allSelected}
+                              ref={(el) => {
+                                if (el) el.indeterminate = someSelected && !allSelected;
+                              }}
+                              onChange={(e) => toggleGroup(permissions as unknown as Permission[], e.target.checked)}
+                              className="peer w-3 h-3 appearance-none border border-primary/60 rounded-sm checked:bg-primary/60 indeterminate:bg-primary/40 focus:outline-none"
+                            />
+                            <svg
+                              className="pointer-events-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-2.5 h-2.5 text-white opacity-0 peer-checked:opacity-100 transition-opacity"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                              stroke="currentColor"
+                              strokeWidth="4"
+                            >
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                            </svg>
+                            <div className="pointer-events-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-2 h-0.5 bg-white opacity-0 peer-indeterminate:opacity-100 transition-opacity rounded-full" />
+                          </div>
                           Select All
                         </label>
                       )}
@@ -217,15 +229,26 @@ export function RoleModal({
                             className="flex items-center gap-2.5 rounded bg-primary/5 p-2 px-3 border border-primary/10 hover:bg-primary/10 transition-colors cursor-pointer data-[disabled=true]:cursor-default data-[disabled=true]:opacity-70"
                             data-disabled={config.isReadOnly}
                           >
-                            <input
-                              type="checkbox"
-                              disabled={config.isReadOnly}
-                              checked={isAssigned}
-                              onChange={(e) =>
-                                handlePermissionChange(permission as Permission, e.target.checked)
-                              }
-                              className="appearance-none w-3.5 h-3.5 border border-primary/60 rounded-sm bg-transparent checked:bg-primary/60 focus:outline-none focus:ring-1 focus:ring-primary disabled:cursor-not-allowed disabled:border-primary/30 disabled:checked:bg-primary/30 shrink-0"
-                            />
+                            <div className="relative flex items-center justify-center w-3.5 h-3.5 shrink-0">
+                              <input
+                                type="checkbox"
+                                disabled={config.isReadOnly}
+                                checked={isAssigned}
+                                onChange={(e) =>
+                                  handlePermissionChange(permission as Permission, e.target.checked)
+                                }
+                                className="peer appearance-none w-3.5 h-3.5 border border-primary/60 rounded-sm bg-transparent checked:bg-primary/60 focus:outline-none focus:ring-1 focus:ring-primary disabled:cursor-not-allowed disabled:border-primary/30 disabled:checked:bg-primary/30 shrink-0"
+                              />
+                              <svg
+                                className="pointer-events-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-3 h-3 text-white opacity-0 peer-checked:opacity-100 transition-opacity"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                                strokeWidth="4"
+                              >
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                              </svg>
+                            </div>
                             <span className="text-sm truncate">{permission}</span>
                           </label>
                         );
