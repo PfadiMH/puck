@@ -8,17 +8,14 @@ const USE_MOCK_AUTH = env.MOCK_AUTH === "true" && env.NODE_ENV !== "production";
 const { handlers, signIn, signOut, auth } = NextAuth({
   basePath: "/auth",
   providers: [
-    ...(USE_MOCK_AUTH
-      ? [getMockAuthProvider()]
-      : [
-        Keycloak({
-          authorization: {
-            params: {
-              scope: "openid profile email with_roles",
-            },
-          },
-        }),
-      ]),
+    ...(USE_MOCK_AUTH ? [getMockAuthProvider()] : []),
+    Keycloak({
+      authorization: {
+        params: {
+          scope: "openid profile email with_roles",
+        },
+      },
+    }),
   ],
   callbacks: {
     async jwt({ token, profile, user, trigger, session }) {
@@ -83,10 +80,4 @@ async function fetchPermissions(roles: string[]) {
   }
 }
 
-
-const signInMethod =
-  USE_MOCK_AUTH
-    ? () => signIn("credentials")
-    : () => signIn("keycloak");
-
-export { auth, handlers, signInMethod as signIn, signOut };
+export { auth, handlers, signIn, signOut };
