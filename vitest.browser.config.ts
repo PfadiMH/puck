@@ -5,6 +5,7 @@ import { defineConfig } from "vitest/config";
 
 export default defineConfig({
   plugins: [react(), tsconfigPaths()],
+
   test: {
     browser: {
       enabled: true,
@@ -12,5 +13,16 @@ export default defineConfig({
       // https://vitest.dev/config/browser/playwright
       instances: [{ browser: "chromium" }],
     },
+    setupFiles: "./vitest.setup.ts",
+  },
+  optimizeDeps: {
+    include: [
+      "vitest-browser-react",
+      "@tanstack/react-query",
+      "react-scroll-parallax",
+      "sonner",
+      "clsx",
+      "tailwind-merge",
+    ],
   },
 });
