@@ -1,5 +1,5 @@
 import { describe, expect, test } from "vitest";
-import { applySectionTheming, Theme } from "./section-theming";
+import { applySectionTheming } from "./section-theming";
 import { PageData } from "./config/page.config";
 
 describe("applySectionTheming", () => {
