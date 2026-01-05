@@ -30,6 +30,11 @@ jobs:
   start:
     needs: build
     runs-on: ubuntu-latest
+    services:
+      mongodb:
+        image: mongo:latest
+        ports:
+          - 27017:27017
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -43,13 +48,18 @@ jobs:
         run: bun install
 
       - name: Build
-        run: bun run build
+        run: SKIP_ENV_VALIDATION=true bun run build
 
       - name: Start
+        env:
+          AUTH_SECRET: "ci_secret_placeholder"
+          INTERNAL_API_BASE_URL: "http://localhost:3000"
+          MONGODB_CONNECTION_STRING: "mongodb://localhost:27017/puck_ci"
+          MONGODB_DB_NAME: "puck_ci"
         run: bun run start &
 
       - name: Wait for application to start
         run: sleep 20
 
       - name: Check health
-        run: curl -f http://localhost:3000
+        run: curl -f http://localhost:3000/login

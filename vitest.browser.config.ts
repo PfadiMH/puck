@@ -5,6 +5,9 @@ import { defineConfig } from "vitest/config";
 
 export default defineConfig({
   plugins: [react(), tsconfigPaths()],
+  define: {
+    "process.env": JSON.stringify(process.env),
+  },
 
   test: {
     browser: {
