@@ -13,6 +13,7 @@
     "test:unit": "vitest --config=vitest.config.ts"
   },
   "dependencies": {
+    "@azure/storage-blob": "^12.27.0",
     "@measured/puck": "^0.18.3",
     "@tailwindcss/vite": "^4.1.4",
     "@tanstack/react-query": "^5.74.4",

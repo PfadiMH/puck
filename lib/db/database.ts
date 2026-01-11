@@ -15,6 +15,25 @@ export interface DatabaseService {
   saveFooter(data: FooterData): Promise<void>;
   getFooter(): Promise<FooterData>;
   getAllPaths(): Promise<string[]>;
+
+  saveMetadata(metadata: MetadataProps): Promise<string>;
+  getMetadata(id: string): Promise<MetadataProps | undefined>;
+  updateMetadata(id: string, metadata: MetadataProps): Promise<string>;
+  deleteMetadata(id: string): Promise<void>;
+  getAllMetadata(): Promise<AllMetadataProps[]>;
+}
+
+export interface MetadataProps {
+  description: string;
+  provider: string;
+  filename: string;
+  createdAt: Date;
+  updatedAt: Date;
+  size: number;
+  contentType: string;
+}
+export interface AllMetadataProps extends MetadataProps {
+  id: string;
 }
 
 function getDatabaseService(): DatabaseService {
@@ -71,4 +90,29 @@ export async function getFooter(): Promise<FooterData> {
 
 export async function getAllPaths() {
   return dbService.getAllPaths();
+}
+
+export async function saveMetadata(metadata: MetadataProps): Promise<string> {
+  return dbService.saveMetadata(metadata);
+}
+
+export async function getMetadata(
+  id: string
+): Promise<MetadataProps | undefined> {
+  return dbService.getMetadata(id);
+}
+
+export async function updateMetadata(
+  id: string,
+  metadata: MetadataProps
+): Promise<string> {
+  return dbService.updateMetadata(id, metadata);
+}
+
+export async function deleteMetadata(id: string): Promise<void> {
+  return dbService.deleteMetadata(id);
+}
+
+export async function getAllMetadata(): Promise<AllMetadataProps[]> {
+  return dbService.getAllMetadata();
 }
