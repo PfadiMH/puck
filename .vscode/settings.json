@@ -7,9 +7,11 @@
   },
   "editor.formatOnSave": true,
   "editor.tabSize": 2,
+  "prettier.tabWidth": 2,
   "editor.indentSize": "tabSize",
   "editor.detectIndentation": false,
   "tailwindCSS.experimental.classRegex": [
     "class:\\s*?[\"'`]([^\"'`]*).*?,"
-  ]
+  ],
+  "editor.defaultFormatter": "esbenp.prettier-vscode"
 }
