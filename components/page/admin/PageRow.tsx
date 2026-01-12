@@ -1,3 +1,4 @@
+import { PermissionGuard } from "@components/security/PermissionGuard";
 import Button from "@components/ui/Button";
 import { DialogRoot, DialogTrigger } from "@components/ui/Dialog";
 import { TableCell, TableRow } from "@components/ui/Table";
@@ -30,20 +31,24 @@ function PageRow({ page }: PageRowProps) {
     <TableRow>
       <TableCell>{page}</TableCell>
       <TableCell className="flex flex-wrap gap-3 justify-end">
-        <DialogRoot>
-          <DialogTrigger>
-            <Button size="small">Delete</Button>
-          </DialogTrigger>
+        <PermissionGuard permissions={["page:delete"]}>
+          <DialogRoot>
+            <DialogTrigger>
+              <Button size="small">Delete</Button>
+            </DialogTrigger>
 
-          <ConfirmModal
-            title="Delete Page"
-            message="Are you sure you want to delete this page?"
-            onConfirm={handleDelete}
-          />
-        </DialogRoot>
-        <Button size="small" onClick={handleEdit}>
-          Edit
-        </Button>
+            <ConfirmModal
+              title="Delete Page"
+              message="Are you sure you want to delete this page?"
+              onConfirm={handleDelete}
+            />
+          </DialogRoot>
+        </PermissionGuard>
+        <PermissionGuard permissions={["page:update"]}>
+          <Button size="small" onClick={handleEdit}>
+            Edit
+          </Button>
+        </PermissionGuard>
         <Button size="small" color="primary" onClick={handleView}>
           View
         </Button>
