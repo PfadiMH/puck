@@ -59,7 +59,7 @@ function Parallax() {
   };
 
   return (
-    <div className="relative">
+    <div className="relative full">
       {/* MOBILE */}
       <div className="block md:hidden">
         <img src={Mobile.src} alt="Mobile" className="w-full" />
