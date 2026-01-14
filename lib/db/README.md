@@ -4,27 +4,27 @@ This project uses a layered architecture for database access to ensure security 
 
 ## Architecture Overview
 
-1.  **Public Layer (`lib/db/database.ts`)**: The secure entry point. All methods here are Server Actions marked with `"use server"` and enforce permission checks.
-2.  **Internal Layer (`lib/db/service.ts`)**: The raw service singleton. It provides direct access to the database without permission checks. Use **only** in trusted contexts.
-3.  **Implementation (`lib/db/mongo.ts`)**: The actual MongoDB logic.
-4.  **Interface (`lib/db/types.ts`)**: Shared type definitions.
+1.  **Public Actions Layer (`lib/db/db-actions.ts`)**: The secure entry point. All methods here are Server Actions marked with `"use server"` and enforce permission checks.
+2.  **Service Layer (`lib/db/db.ts`)**: Defines the `DatabaseService` interface and provides the `dbService` singleton. The `dbService` offers direct access to the database without permission checks. Use **only** in trusted contexts.
+3.  **Implementations (`lib/db/db-mongo-impl.ts`, `lib/db/db-mock-impl.ts`)**: Contains the actual MongoDB logic and a mock implementation for development/testing.
 
 ---
 
 ## 1. How to Query the Database
 
 ### A. In UI Components or Server Actions (Standard)
+
 **Use Case**: Fetching data for a page, submitting a form, or performing any action on behalf of a user.
 
-Always import from `@lib/db/database`. These methods automatically check for the required permissions.
+Always import from `@lib/db/db-actions`. These methods automatically check for the required permissions.
 
 ```typescript
-import { getSecurityConfig, saveSecurityConfig } from "@lib/db/database";
+import { getSecurityConfig, saveSecurityConfig } from "@lib/db/db-actions";
 
 // In a React Server Component
 export default async function SecurityPage() {
   // Safe: Checks 'role-permissions:read' internally
-  const config = await getSecurityConfig(); 
+  const config = await getSecurityConfig();
   return <SecurityManager config={config} />;
 }
 
@@ -32,30 +32,47 @@ export default async function SecurityPage() {
 export async function updateRoles(config) {
   "use server";
   // Safe: Throws 'Forbidden' if user lacks 'role-permissions:update' permission
-  await saveSecurityConfig(config); 
+  await saveSecurityConfig(config);
 }
 ```
 
-### B. In System Internals (Advanced)
-**Use Case**: API Routes using API Keys, background jobs, or authentication logic where no user session exists.
+### B. In Client Components (TanStack Query)
 
-Import `dbService` from `@lib/db/service`. **WARNING**: You must manually handle authorization.
+**Use Case**: Fetching data in components that need to be interactive or handle loading/error states explicitly.
+
+Import the actions from `@lib/db/db-actions` and use them with `useQuery` or `useMutation`.
 
 ```typescript
-import { dbService } from "@lib/db/service";
-import { env } from "@lib/env";
-import { NextResponse } from "next/server";
+"use client";
 
-export async function GET(req) {
-  // 1. Validate API Key/Secret manually
-  if (req.headers.get("x-secret-key") !== env.AUTH_SECRET) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
+import { useQuery } from "@tanstack/react-query";
+import { getSecurityConfig } from "@lib/db/db-actions";
 
-  // 2. Fetch data directly (Bypasses PermissionGuard)
-  const config = await dbService.getSecurityConfig(); 
-  return NextResponse.json(config);
+export function SecurityManager() {
+  const { data, isLoading } = useQuery({
+    queryKey: ["securityConfig"],
+    queryFn: getSecurityConfig,
+  });
+
+  if (isLoading) return <div>Loading...</div>;
+  return <SecurityForm initialData={data} />;
 }
+```
+
+For mutations (saving data):
+
+```typescript
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { savePage } from "@lib/db/db-actions";
+
+// Inside your component
+const queryClient = useQueryClient();
+const { mutate } = useMutation({
+  mutationFn: async () => savePage(path, data),
+  onSuccess: () => {
+    queryClient.invalidateQueries({ queryKey: ["pages"] });
+  },
+});
 ```
 
 ---
@@ -65,10 +82,11 @@ export async function GET(req) {
 Follow these steps to add a new entity (e.g., `Products`).
 
 ### Step 1: Update the Interface
-Modify `lib/db/types.ts` to include the new methods.
+
+Modify `lib/db/db.ts` to include the new methods in the `DatabaseService` interface.
 
 ```typescript
-// lib/db/types.ts
+// lib/db/db.ts
 export interface DatabaseService {
   // ... existing methods
   getProducts(): Promise<Product[]>;
@@ -77,10 +95,11 @@ export interface DatabaseService {
 ```
 
 ### Step 2: Implement Logic
-Update `lib/db/mongo.ts` to implement the new methods.
+
+Update `lib/db/db-mongo-impl.ts` to implement the new methods.
 
 ```typescript
-// lib/db/mongo.ts
+// lib/db/db-mongo-impl.ts
 export class MongoService implements DatabaseService {
   // ...
   async getProducts() {
@@ -90,17 +109,18 @@ export class MongoService implements DatabaseService {
 ```
 
 ### Step 3: Expose Securely
-Export a wrapper in `lib/db/database.ts` with appropriate permission checks.
+
+Export a wrapper in `lib/db/db-actions.ts` with appropriate permission checks.
 
 ```typescript
-// lib/db/database.ts
-import { requireServerPermission } from "@lib/auth/auth-functions";
+// lib/db/db-actions.ts
+import { requireServerPermission } from "@lib/security/server-guard";
 
 // ...
 
 export async function getProducts() {
   // Optional: Add 'product:read' check if needed, or leave public
-  // await requireServerPermission(["product:read"]); 
+  // await requireServerPermission(["product:read"]);
   return dbService.getProducts();
 }
 

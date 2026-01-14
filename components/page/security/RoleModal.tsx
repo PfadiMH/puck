@@ -9,12 +9,9 @@ import {
 } from "@components/ui/Dialog";
 import Input from "@components/ui/Input";
 import { toast } from "@components/ui/Toast";
-import { getSecurityConfig, saveSecurityConfig } from "@lib/db/database";
+import { getSecurityConfig, saveSecurityConfig } from "@lib/db/db-actions";
 import { queryClient } from "@lib/query-client";
-import {
-  Permission,
-  Role
-} from "@lib/security/permissions";
+import { Permission, Role } from "@lib/security/permissions";
 import { useEffect, useState } from "react";
 
 interface PermissionModalProps {
@@ -74,7 +71,9 @@ export function RoleModal({
   const handleSave = async () => {
     try {
       const securityConfig = await getSecurityConfig();
-      const existingIndex = securityConfig.roles.findIndex((r) => r.name === role.name);
+      const existingIndex = securityConfig.roles.findIndex(
+        (r) => r.name === role.name
+      );
 
       if (existingIndex > -1) {
         securityConfig.roles[existingIndex] = role;
@@ -117,14 +116,10 @@ export function RoleModal({
 
   return (
     <DialogRoot open={open} onOpenChange={setOpen}>
-      <DialogTrigger>
-        {trigger}
-      </DialogTrigger>
+      <DialogTrigger>{trigger}</DialogTrigger>
       <Dialog className="sm:max-w-4xl">
         <div className="flex justify-between items-center mb-4">
-          <DialogTitle>
-            Role {config.title}
-          </DialogTitle>
+          <DialogTitle>Role {config.title}</DialogTitle>
           <DialogClose>
             <button className="text-contrast-ground/60 hover:text-contrast-ground transition-colors">
               <svg
@@ -145,24 +140,31 @@ export function RoleModal({
           </DialogClose>
         </div>
 
-        <div className="flex-col flex gap-4 max-h-[70vh] overflow-y-auto pr-2 
+        <div
+          className="flex-col flex gap-4 max-h-[70vh] overflow-y-auto pr-2 
           scrollbar-thin scrollbar-thumb-primary/40 scrollbar-track-transparent 
-          hover:scrollbar-thumb-primary/60 transition-colors">
-
+          hover:scrollbar-thumb-primary/60 transition-colors"
+        >
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="flex flex-col gap-1.5">
-              <label className="text-sm font-bold uppercase opacity-60">Role Name</label>
+              <label className="text-sm font-bold uppercase opacity-60">
+                Role Name
+              </label>
               <Input
                 disabled={config.isReadOnly}
                 className="disabled:bg-primary/10 disabled:border-0"
                 value={role.name}
-                onChange={(e) => setRole((prev) => ({ ...prev, name: e.target.value }))}
+                onChange={(e) =>
+                  setRole((prev) => ({ ...prev, name: e.target.value }))
+                }
                 placeholder="OFI-Leiter"
               />
             </div>
 
             <div className="flex flex-col gap-1.5">
-              <label className="text-sm font-bold uppercase opacity-60">Description</label>
+              <label className="text-sm font-bold uppercase opacity-60">
+                Description
+              </label>
               <Input
                 disabled={config.isReadOnly}
                 className="disabled:bg-primary/10 disabled:border-0"
@@ -179,7 +181,9 @@ export function RoleModal({
           </div>
 
           <div className="flex flex-col gap-4">
-            <label className="text-sm font-bold uppercase opacity-60 border-b border-primary/20 pb-1">Permissions</label>
+            <label className="text-sm font-bold uppercase opacity-60 border-b border-primary/20 pb-1">
+              Permissions
+            </label>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-8 gap-y-6">
               {Object.entries(permissionGroups).map(([group, permissions]) => {
                 const allSelected = permissions.every((p) =>
@@ -200,9 +204,16 @@ export function RoleModal({
                               type="checkbox"
                               checked={allSelected}
                               ref={(el) => {
-                                if (el) el.indeterminate = someSelected && !allSelected;
+                                if (el)
+                                  el.indeterminate =
+                                    someSelected && !allSelected;
                               }}
-                              onChange={(e) => toggleGroup(permissions as unknown as Permission[], e.target.checked)}
+                              onChange={(e) =>
+                                toggleGroup(
+                                  permissions as unknown as Permission[],
+                                  e.target.checked
+                                )
+                              }
                               className="peer w-3 h-3 appearance-none border border-primary/60 rounded-sm checked:bg-primary/60 indeterminate:bg-primary/40 focus:outline-none"
                             />
                             <svg
@@ -212,7 +223,11 @@ export function RoleModal({
                               stroke="currentColor"
                               strokeWidth="4"
                             >
-                              <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                d="M5 13l4 4L19 7"
+                              />
                             </svg>
                             <div className="pointer-events-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-2 h-0.5 bg-white opacity-0 peer-indeterminate:opacity-100 transition-opacity rounded-full" />
                           </div>
@@ -222,7 +237,9 @@ export function RoleModal({
                     </div>
                     <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
                       {permissions.map((permission) => {
-                        const isAssigned = role.permissions.includes(permission as Permission);
+                        const isAssigned = role.permissions.includes(
+                          permission as Permission
+                        );
                         return (
                           <label
                             key={permission}
@@ -235,7 +252,10 @@ export function RoleModal({
                                 disabled={config.isReadOnly}
                                 checked={isAssigned}
                                 onChange={(e) =>
-                                  handlePermissionChange(permission as Permission, e.target.checked)
+                                  handlePermissionChange(
+                                    permission as Permission,
+                                    e.target.checked
+                                  )
                                 }
                                 className="peer appearance-none w-3.5 h-3.5 border border-primary/60 rounded-sm bg-transparent checked:bg-primary/60 focus:outline-none focus:ring-1 focus:ring-primary disabled:cursor-not-allowed disabled:border-primary/30 disabled:checked:bg-primary/30 shrink-0"
                               />
@@ -246,10 +266,16 @@ export function RoleModal({
                                 stroke="currentColor"
                                 strokeWidth="4"
                               >
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  d="M5 13l4 4L19 7"
+                                />
                               </svg>
                             </div>
-                            <span className="text-sm truncate">{permission}</span>
+                            <span className="text-sm truncate">
+                              {permission}
+                            </span>
                           </label>
                         );
                       })}

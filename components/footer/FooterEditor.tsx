@@ -6,7 +6,7 @@ import {
   footerConfig,
   FooterData,
 } from "@lib/config/footer.config";
-import { saveFooter } from "@lib/db/database";
+import { saveFooter } from "@lib/db/db-actions";
 import { Puck } from "@measured/puck";
 
 export function FooterEditor({ data }: { data: FooterData }) {

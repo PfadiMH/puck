@@ -6,7 +6,7 @@ import {
   navbarConfig,
   NavbarData,
 } from "@lib/config/navbar.config";
-import { saveNavbar } from "@lib/db/database";
+import { saveNavbar } from "@lib/db/db-actions";
 import { Puck } from "@measured/puck";
 
 export function NavbarEditor({ data }: { data: NavbarData }) {

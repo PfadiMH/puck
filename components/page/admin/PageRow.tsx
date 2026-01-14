@@ -2,7 +2,7 @@ import { PermissionGuard } from "@components/security/PermissionGuard";
 import Button from "@components/ui/Button";
 import { DialogRoot, DialogTrigger } from "@components/ui/Dialog";
 import { TableCell, TableRow } from "@components/ui/Table";
-import { deletePage } from "@lib/db/database";
+import { deletePage } from "@lib/db/db-actions";
 import { queryClient } from "@lib/query-client";
 import { useRouter } from "next/navigation";
 import ConfirmModal from "./ConfirmModal";

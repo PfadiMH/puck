@@ -1,19 +1,19 @@
 import { defaultFooterData } from "@lib/config/footer.config";
 import { defaultNavbarData } from "@lib/config/navbar.config";
 import { defaultSecurityConfig } from "@lib/security/permissions";
-import { DatabaseService } from "./types";
+import type { DatabaseService } from "./db";
 
 export class MockDatabaseService implements DatabaseService {
-  async savePage() { }
-  async deletePage() { }
+  async savePage() {}
+  async deletePage() {}
   async getPage() {
     return undefined;
   }
-  async saveNavbar() { }
+  async saveNavbar() {}
   async getNavbar() {
     return defaultNavbarData;
   }
-  async saveFooter() { }
+  async saveFooter() {}
   async getFooter() {
     return defaultFooterData;
   }
@@ -23,5 +23,5 @@ export class MockDatabaseService implements DatabaseService {
   async getSecurityConfig() {
     return defaultSecurityConfig;
   }
-  async saveSecurityConfig() { }
+  async saveSecurityConfig() {}
 }
