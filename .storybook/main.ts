@@ -1,21 +1,9 @@
-import type { StorybookConfig } from "@storybook/nextjs";
+import type { StorybookConfig } from "@storybook/nextjs-vite";
 
 const config: StorybookConfig = {
-  stories: [
-    "../components/**/*.mdx",
-    "../components/**/*.stories.@(js|jsx|mjs|ts|tsx)",
-  ],
-  addons: [
-    "@storybook/addon-essentials",
-    "@storybook/addon-onboarding",
-    "@storybook/addon-interactions",
-    "@storybook/addon-styling-webpack",
-    "@storybook/addon-themes",
-  ],
-  framework: {
-    name: "@storybook/experimental-nextjs-vite",
-    options: {},
-  },
+  stories: ["../components/ui/**/*.stories.@(js|jsx|mjs|ts|tsx)"],
+  addons: ["@storybook/addon-themes"],
+  framework: "@storybook/nextjs-vite",
   features: {
     experimentalRSC: true,
   },
