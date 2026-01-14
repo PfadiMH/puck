@@ -1,6 +1,5 @@
 import { NavbarEditor } from "@components/navbar/NavbarEditor";
 import { getNavbar } from "@lib/db/db-actions";
-import "@measured/puck/puck.css";
 import { Metadata } from "next";
 
 export async function generateMetadata(): Promise<Metadata> {
