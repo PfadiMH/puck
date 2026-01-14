@@ -1,5 +1,4 @@
-import { hasPermission } from "@lib/security/has-permission";
-import { Permission } from "@lib/security/permissions";
+import { Permission, hasPermission } from "@lib/security/permissions";
 import { PropsWithChildren } from "react";
 
 type ServerPermissionGuardProps = {
@@ -9,7 +8,7 @@ type ServerPermissionGuardProps = {
 
 export async function ServerPermissionGuard({
   permissions,
-  requireAll = false,
+  requireAll,
   children,
 }: PropsWithChildren<ServerPermissionGuardProps>) {
   const isAuthorized = await hasPermission(permissions, { requireAll });

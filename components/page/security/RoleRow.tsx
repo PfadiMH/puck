@@ -4,8 +4,8 @@ import { DialogRoot, DialogTrigger } from "@components/ui/Dialog";
 import { TableCell, TableRow } from "@components/ui/Table";
 import { getSecurityConfig, saveSecurityConfig } from "@lib/db/db-actions";
 import { queryClient } from "@lib/query-client";
+import { useHasPermission } from "@lib/security/hooks/has-permission";
 import { Role } from "@lib/security/permissions";
-import { useHasPermission } from "@lib/security/use-permission";
 import ConfirmModal from "../admin/ConfirmModal";
 import { RoleModal } from "./RoleModal";
 

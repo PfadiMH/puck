@@ -1,14 +1,12 @@
 import { Session } from "next-auth";
 import { forbidden, unauthorized } from "next/navigation";
 import { auth } from "../auth/auth-client";
-import { Permission } from "./permissions";
-
-import { hasPermissionEvaluator } from "./permission-utils";
+import { Permission, checkPermission } from "./permissions";
 
 // its important to catch the errors thrown here by *components* who call them. (not the actions)
 export async function requireServerPermission(
   permissions?: Permission[],
-  options: { requireAll?: boolean } = {}
+  options?: { requireAll?: boolean }
 ): Promise<Session> {
   const session = await auth();
 
@@ -19,12 +17,10 @@ export async function requireServerPermission(
 
   // 2. Authorization Check
   if (permissions && permissions.length > 0) {
-    if (!hasPermissionEvaluator(session, permissions, options)) {
+    if (!checkPermission(session, permissions, options)) {
       forbidden();
     }
   }
 
   return session;
 }
-
-

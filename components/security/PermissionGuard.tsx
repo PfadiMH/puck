@@ -1,7 +1,7 @@
 "use client";
 
+import { useHasPermission } from "@lib/security/hooks/has-permission";
 import { Permission } from "@lib/security/permissions";
-import { useHasPermission } from "@lib/security/use-permission";
 import { PropsWithChildren } from "react";
 
 type PermissionGuardProps = {
@@ -11,7 +11,7 @@ type PermissionGuardProps = {
 
 export function PermissionGuard({
   permissions,
-  requireAll = false,
+  requireAll,
   children,
 }: PropsWithChildren<PermissionGuardProps>) {
   const isAuthorized = useHasPermission(permissions, { requireAll });
