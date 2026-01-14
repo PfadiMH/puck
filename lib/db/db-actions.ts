@@ -1,11 +1,11 @@
 "use server";
 
-import { SecurityConfig } from "@lib/security/permissions";
-import { requireServerPermission } from "@lib/security/server-guard";
 import { FooterData } from "@lib/config/footer.config";
 import { NavbarData } from "@lib/config/navbar.config";
 import { PageData } from "@lib/config/page.config";
-import { dbService } from "./service";
+import { SecurityConfig } from "@lib/security/permissions";
+import { requireServerPermission } from "@lib/security/server-guard";
+import { dbService } from "./db";
 
 /**
  * Public Database Actions.

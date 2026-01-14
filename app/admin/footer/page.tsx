@@ -1,5 +1,5 @@
 import { FooterEditor } from "@components/footer/FooterEditor";
-import { getFooter } from "@lib/db/database";
+import { getFooter } from "@lib/db/db-actions";
 import "@measured/puck/puck.css";
 import { Metadata } from "next";
 

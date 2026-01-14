@@ -1,4 +1,4 @@
-import { dbService } from "@lib/db/service";
+import { dbService } from "@lib/db/db";
 import { env } from "@lib/env";
 import NextAuth from "next-auth";
 import Keycloak from "next-auth/providers/keycloak";

@@ -2,10 +2,10 @@ import { PermissionGuard } from "@components/security/PermissionGuard";
 import Button from "@components/ui/Button";
 import { DialogRoot, DialogTrigger } from "@components/ui/Dialog";
 import { TableCell, TableRow } from "@components/ui/Table";
+import { getSecurityConfig, saveSecurityConfig } from "@lib/db/db-actions";
+import { queryClient } from "@lib/query-client";
 import { Role } from "@lib/security/permissions";
 import { useHasPermission } from "@lib/security/use-permission";
-import { getSecurityConfig, saveSecurityConfig } from "@lib/db/database";
-import { queryClient } from "@lib/query-client";
 import ConfirmModal from "../admin/ConfirmModal";
 import { RoleModal } from "./RoleModal";
 
@@ -17,7 +17,9 @@ type RoleRowProps = {
 function RoleRow({ role, variant = "table" }: RoleRowProps) {
   const handleDelete = async () => {
     const securityConfig = await getSecurityConfig();
-    securityConfig.roles = securityConfig.roles.filter((r) => r.name !== role.name);
+    securityConfig.roles = securityConfig.roles.filter(
+      (r) => r.name !== role.name
+    );
     await saveSecurityConfig(securityConfig);
     queryClient.invalidateQueries({ queryKey: ["securityConfig"] });
   };
@@ -72,9 +74,7 @@ function RoleRow({ role, variant = "table" }: RoleRowProps) {
           <h3 className="font-bold text-xl text-primary truncate">
             {role.name}
           </h3>
-          <p className="text-sm opacity-70 line-clamp-2">
-            {role.description}
-          </p>
+          <p className="text-sm opacity-70 line-clamp-2">{role.description}</p>
         </div>
       </div>
       <div className="flex items-center gap-3 mt-2">
