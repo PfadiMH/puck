@@ -53,10 +53,6 @@ async function fetchPermissions(roles: string[]) {
       .flatMap((r) => r.permissions || []) || []
   );
 
-  if (roles.some((r) => r.toLowerCase() === "admin")) {
-    permissionSet.add("global-admin");
-  }
-
   const permissions = Array.from(permissionSet);
   return permissions;
 }
