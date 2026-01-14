@@ -1,6 +1,6 @@
 import { defaultFooterData } from "@lib/config/footer.config";
 import { defaultNavbarData } from "@lib/config/navbar.config";
-import { defaultSecurityConfig } from "@lib/security/permissions";
+import { defaultSecurityConfig } from "@lib/security/security-config";
 import type { DatabaseService } from "./db";
 
 export class MockDatabaseService implements DatabaseService {

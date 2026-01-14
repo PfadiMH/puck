@@ -126,7 +126,7 @@ export async function getProducts() {
 
 export async function saveProduct(product: Product) {
   // Mandatory: Protect write operations
-  await requireServerPermission(["product:update"]);
+  await requireServerPermission({ all: ["product:update"] });
   return dbService.saveProduct(product);
 }
 ```

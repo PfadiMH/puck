@@ -1,6 +1,3 @@
-import { Session } from "next-auth";
-import { auth } from "../auth/auth-client";
-
 export const assignablePermissions = [
   // @keep-sorted
   "admin-ui:read",
@@ -58,31 +55,3 @@ export const defaultSecurityConfig: SecurityConfig = {
     },
   ],
 };
-
-/**
- * Evaluates if a session has the required permissions.
- */
-export function checkPermission(
-  session: Session | null | undefined,
-  permissions: Permission[],
-  options?: { requireAll?: boolean }
-): boolean {
-  if (!session?.user) return false;
-  if (session.user.permissions.includes("global-admin")) return true;
-
-  if (options?.requireAll) {
-    return permissions.every((p) => session.user.permissions.includes(p));
-  }
-  return permissions.some((p) => session.user.permissions.includes(p));
-}
-
-/**
- * Async helper to check permissions for the current session.
- */
-export async function hasPermission(
-  permissions: Permission[],
-  options?: { requireAll?: boolean }
-): Promise<boolean> {
-  const session = await auth();
-  return checkPermission(session, permissions, options);
-}

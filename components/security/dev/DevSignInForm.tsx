@@ -1,6 +1,6 @@
 "use client";
 
-import { defaultSecurityConfig } from "@lib/security/permissions";
+import { defaultSecurityConfig } from "@lib/security/security-config";
 import { signIn } from "next-auth/react";
 import { useState } from "react";
 
@@ -24,9 +24,12 @@ export function DevSignInForm() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-gray-50 p-4">
       <div className="w-full max-w-md rounded-lg bg-white p-8 shadow-lg">
-        <h1 className="mb-6 text-2xl font-bold text-gray-900">Developer Login</h1>
+        <h1 className="mb-6 text-2xl font-bold text-gray-900">
+          Developer Login
+        </h1>
         <p className="mb-4 text-sm text-gray-600">
-          Select roles to simulate for your session. This is only available in development mode.
+          Select roles to simulate for your session. This is only available in
+          development mode.
         </p>
 
         <form onSubmit={handleSubmit} className="space-y-6">
@@ -44,7 +47,9 @@ export function DevSignInForm() {
                 />
                 <div>
                   <div className="font-medium text-gray-900">{role.name}</div>
-                  <div className="text-xs text-gray-500">{role.description}</div>
+                  <div className="text-xs text-gray-500">
+                    {role.description}
+                  </div>
                 </div>
               </label>
             ))}
