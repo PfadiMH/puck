@@ -1,11 +1,10 @@
-import { PermissionGuard } from "@components/security/PermissionGuard";
 import Button from "@components/ui/Button";
 import { DialogRoot, DialogTrigger } from "@components/ui/Dialog";
 import { TableCell, TableRow } from "@components/ui/Table";
 import { getSecurityConfig, saveSecurityConfig } from "@lib/db/db-actions";
 import { queryClient } from "@lib/query-client";
 import { useHasPermission } from "@lib/security/hooks/has-permission";
-import { Role } from "@lib/security/permissions";
+import { Role } from "@lib/security/security-config";
 import ConfirmModal from "../admin/ConfirmModal";
 import { RoleModal } from "./RoleModal";
 
@@ -24,7 +23,7 @@ function RoleRow({ role, variant = "table" }: RoleRowProps) {
     queryClient.invalidateQueries({ queryKey: ["securityConfig"] });
   };
 
-  const canEdit = useHasPermission(["role-permissions:update"]);
+  const canEdit = useHasPermission({ any: ["role-permissions:update"] });
 
   if (variant === "table") {
     return (
@@ -47,7 +46,7 @@ function RoleRow({ role, variant = "table" }: RoleRowProps) {
               }
             />
 
-            <PermissionGuard permissions={["role-permissions:update"]}>
+            {canEdit && (
               <DialogRoot>
                 <DialogTrigger>
                   <button className="p-1 px-3 text-xs font-bold uppercase rounded border border-red-500/40 text-red-500/80 hover:bg-red-500/10 transition-colors">
@@ -60,7 +59,7 @@ function RoleRow({ role, variant = "table" }: RoleRowProps) {
                   onConfirm={handleDelete}
                 />
               </DialogRoot>
-            </PermissionGuard>
+            )}
           </div>
         </TableCell>
       </TableRow>
@@ -92,7 +91,7 @@ function RoleRow({ role, variant = "table" }: RoleRowProps) {
           }
         />
 
-        <PermissionGuard permissions={["role-permissions:update"]}>
+        {canEdit && (
           <DialogRoot>
             <DialogTrigger>
               <button className="h-8 px-4 text-xs font-bold uppercase rounded border border-red-500/40 text-red-500/80 hover:bg-red-500/10 transition-colors">
@@ -105,7 +104,7 @@ function RoleRow({ role, variant = "table" }: RoleRowProps) {
               onConfirm={handleDelete}
             />
           </DialogRoot>
-        </PermissionGuard>
+        )}
       </div>
     </div>
   );

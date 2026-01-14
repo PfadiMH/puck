@@ -11,7 +11,7 @@ import Input from "@components/ui/Input";
 import { toast } from "@components/ui/Toast";
 import { getSecurityConfig, saveSecurityConfig } from "@lib/db/db-actions";
 import { queryClient } from "@lib/query-client";
-import type { Permission, Role } from "@lib/security/permissions";
+import type { Permission, Role } from "@lib/security/security-config";
 import { useEffect, useState } from "react";
 
 interface PermissionModalProps {

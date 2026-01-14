@@ -31,7 +31,7 @@ function PageRow({ page }: PageRowProps) {
     <TableRow>
       <TableCell>{page}</TableCell>
       <TableCell className="flex flex-wrap gap-3 justify-end">
-        <PermissionGuard permissions={["page:delete"]}>
+        <PermissionGuard policy={{ all: ["page:delete"] }}>
           <DialogRoot>
             <DialogTrigger>
               <Button size="small">Delete</Button>
@@ -44,7 +44,7 @@ function PageRow({ page }: PageRowProps) {
             />
           </DialogRoot>
         </PermissionGuard>
-        <PermissionGuard permissions={["page:update"]}>
+        <PermissionGuard policy={{ all: ["page:update"] }}>
           <Button size="small" onClick={handleEdit}>
             Edit
           </Button>

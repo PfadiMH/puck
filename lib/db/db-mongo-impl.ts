@@ -4,7 +4,7 @@ import { PageData } from "@lib/config/page.config";
 import {
   defaultSecurityConfig,
   SecurityConfig,
-} from "@lib/security/permissions";
+} from "@lib/security/security-config";
 import { Data } from "@measured/puck";
 import { Db, MongoClient } from "mongodb";
 import { DatabaseService } from "./db";
