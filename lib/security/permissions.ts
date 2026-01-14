@@ -15,7 +15,7 @@ export const assignablePermissions = [
   "page:update",
   "role-permissions:read",
   "role-permissions:update",
-];
+] as const;
 
 /**
  * Represents a specific resource permission that can be assigned to roles.
