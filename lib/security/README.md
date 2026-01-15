@@ -15,7 +15,7 @@ This directory contains the core logic for authorization and access control with
 
 ### A. In Server Actions or API Routes
 
-Use `requireServerPermission` to enforce access control. It automatically handles authentication (redirects to login) and authorization (throws forbidden).
+Use `requireServerPermission` to enforce access control. It automatically redirects to unauthorized/forbidden if the check fails.
 
 ```typescript
 import { requireServerPermission } from "@lib/security/server-guard";
@@ -23,7 +23,7 @@ import { requireServerPermission } from "@lib/security/server-guard";
 export async function deletePage(path: string) {
   "use server";
 
-  // Mandatory: Throws 'Forbidden' if user lacks 'page:delete'
+  // Mandatory: Redirects if user lacks 'page:delete'
   await requireServerPermission({ all: ["page:delete"] });
 
   // Logic to delete the page...
