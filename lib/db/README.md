@@ -120,7 +120,7 @@ import { requireServerPermission } from "@lib/security/server-guard";
 
 export async function getProducts() {
   // Optional: Add 'product:read' check if needed, or leave public
-  // await requireServerPermission(["product:read"]);
+  // await requireServerPermission({ all: ["product:read"] });
   return dbService.getProducts();
 }
 
