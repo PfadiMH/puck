@@ -11,6 +11,16 @@ type PageRowProps = {
   page: string;
 };
 
+/**
+ * Render a table row showing a page identifier with actions to view, edit, or delete it.
+ *
+ * The Edit and Delete actions are conditionally rendered based on permissions. The Delete
+ * action presents a confirmation modal and, when confirmed, removes the page and refreshes
+ * the pages cache.
+ *
+ * @param page - The page path or identifier shown in the row and used for navigation/deletion
+ * @returns The table row element containing the page label and action buttons
+ */
 function PageRow({ page }: PageRowProps) {
   const router = useRouter();
 

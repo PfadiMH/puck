@@ -6,6 +6,13 @@ import { defaultSecurityConfig } from "@lib/security/security-config";
 import { signIn } from "next-auth/react";
 import { useState } from "react";
 
+/**
+ * Renders a developer-only sign-in form that lets a user select one or more roles and submit them for authentication.
+ *
+ * The form displays checkboxes for each role defined in the security configuration, tracks selected roles in component state, and submits the selected roles to the credentials sign-in flow.
+ *
+ * @returns The rendered sign-in form element.
+ */
 export function DevSignInForm() {
   const [selectedRoles, setSelectedRoles] = useState<string[]>([]);
 

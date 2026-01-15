@@ -7,7 +7,11 @@ export type Policy = {
 };
 
 /**
- * Evaluates if a session has the required permissions.
+ * Determines whether a session satisfies the provided permission policy.
+ *
+ * @param session - The NextAuth session to evaluate; returns `false` if missing or if `session.user` is absent.
+ * @param policy - Policy describing required permissions. `any` lists permissions where at least one must be present; `all` lists permissions where every entry must be present.
+ * @returns `true` if the session contains `"global-admin"` or meets the policy requirements, `false` otherwise.
  */
 export function hasPermission(
   session: Session | null | undefined,

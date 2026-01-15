@@ -13,6 +13,15 @@ import { useState } from "react";
 import Header from "./Header";
 import RoleRow from "./RoleRow";
 
+/**
+ * Display a searchable list of security roles and their details using a responsive layout.
+ *
+ * Fetches the security configuration, filters roles by the search input (case-insensitive),
+ * and renders a table view on desktop and a card view on mobile. Shows loading and empty-state
+ * placeholders when data is loading or no roles match the query.
+ *
+ * @returns A React element containing the security roles management UI
+ */
 function SecurityManager() {
   const [search, setSearch] = useState("");
 

@@ -44,6 +44,12 @@ const { handlers, signIn, signOut, auth } = NextAuth({
   },
 });
 
+/**
+ * Derives the set of unique permissions associated with the given role names from the security configuration.
+ *
+ * @param roles - An array of role names to resolve permissions for
+ * @returns An array of unique permission strings that correspond to the provided roles
+ */
 async function fetchPermissions(roles: string[]) {
   const config = await dbService.getSecurityConfig();
 

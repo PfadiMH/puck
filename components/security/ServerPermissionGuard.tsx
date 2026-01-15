@@ -6,6 +6,12 @@ type ServerPermissionGuardProps = {
   policy: Policy;
 };
 
+/**
+ * Renders children only when there is an authenticated user and that session satisfies the provided policy.
+ *
+ * @param policy - Authorization policy to evaluate against the current session.
+ * @returns The `children` fragment if authorization succeeds, `null` otherwise.
+ */
 export async function ServerPermissionGuard({
   policy,
   children,

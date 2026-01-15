@@ -4,6 +4,16 @@ import { DialogRoot, DialogTrigger } from "@components/ui/Dialog";
 import { useRouter } from "next/navigation";
 import AddPageModal from "./AddPageModal";
 
+/**
+ * Render the admin header with title and permission-protected action controls.
+ *
+ * The header displays the application title and a right-aligned action area that
+ * conditionally renders controls based on permission policies. Actions include
+ * navigation to security, navbar, and footer administration pages, and a dialog
+ * trigger to add a page.
+ *
+ * @returns A JSX element containing the header layout with title and permission-guarded action buttons and modal trigger.
+ */
 function Header() {
   const router = useRouter();
 

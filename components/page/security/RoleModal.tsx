@@ -41,6 +41,15 @@ const MODE_CONFIG = {
   },
 } as const;
 
+/**
+ * Render a modal dialog for viewing, creating, or editing a Role and its permissions.
+ *
+ * The modal shows inputs for name and description, grouped permission selectors (with group-level select-all),
+ * and actions to cancel or save. Saving persists the role to the security configuration and refreshes related queries;
+ * in read-only mode inputs are disabled and the save action is hidden.
+ *
+ * @returns The Dialog element that manages role editing/viewing UI and persistence behavior.
+ */
 export function RoleModal({
   role: initialRole,
   mode,

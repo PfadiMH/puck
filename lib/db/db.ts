@@ -20,6 +20,11 @@ export interface DatabaseService {
   saveSecurityConfig(RoleConfig: SecurityConfig): Promise<void>;
 }
 
+/**
+ * Selects and returns a DatabaseService implementation based on environment configuration.
+ *
+ * @returns A `DatabaseService` instance: a `MongoService` configured with `MONGODB_CONNECTION_STRING` and `MONGODB_DB_NAME` when both are present; otherwise a `MockDatabaseService`.
+ */
 function getDatabaseService(): DatabaseService {
   const connectionString = env.MONGODB_CONNECTION_STRING;
   const dbName = env.MONGODB_DB_NAME;

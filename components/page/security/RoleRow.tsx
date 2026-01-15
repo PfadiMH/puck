@@ -13,6 +13,15 @@ type RoleRowProps = {
   variant?: "table" | "card";
 };
 
+/**
+ * Render a role as either a table row or a card, including actions to view, edit, or delete the role.
+ *
+ * The delete action removes the role from the persisted security configuration and invalidates the "securityConfig" query.
+ *
+ * @param role - The role object to display (name, description, etc.).
+ * @param variant - Layout style to use: `"table"` for a table row, `"card"` for a card-style block. Defaults to `"table"`.
+ * @returns The JSX element representing the role in the chosen layout with appropriate action controls.
+ */
 function RoleRow({ role, variant = "table" }: RoleRowProps) {
   const handleDelete = async () => {
     const securityConfig = await getSecurityConfig();

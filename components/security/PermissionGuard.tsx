@@ -8,6 +8,12 @@ type PermissionGuardProps = {
   policy: Policy;
 };
 
+/**
+ * Conditionally renders children when the given permission policy grants access.
+ *
+ * @param policy - Permission evaluation policy that determines whether the children are rendered
+ * @returns The component's children if the policy grants access, otherwise `null`
+ */
 export function PermissionGuard({
   policy,
   children,
