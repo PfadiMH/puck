@@ -1,20 +1,23 @@
 export const assignablePermissions = [
   // @keep-sorted
   "admin-ui:read",
-  "page:create",
-  "page:update",
-  "page:delete",
   "asset:create",
-  "asset:update",
   "asset:delete",
-  "role-permissions:read",
-  "role-permissions:update",
-  "navbar:update",
+  "asset:update",
   "footer:update",
   "global-admin",
-];
+  "navbar:update",
+  "page:create",
+  "page:delete",
+  "page:update",
+  "role-permissions:read",
+  "role-permissions:update",
+] as const;
 
-export type Permission = typeof assignablePermissions[number];
+/**
+ * Represents a specific resource permission that can be assigned to roles.
+ */
+export type Permission = (typeof assignablePermissions)[number];
 
 export interface SecurityConfig {
   roles: Role[];

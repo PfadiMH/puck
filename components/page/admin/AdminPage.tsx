@@ -6,7 +6,7 @@ import Table, {
   TableHeader,
   TableRow,
 } from "@components/ui/Table";
-import { getAllPaths } from "@lib/db/database";
+import { getAllPaths } from "@lib/db/db-actions";
 import { useQuery } from "@tanstack/react-query";
 import Header from "./Header";
 import PageRow from "./PageRow";

@@ -4,7 +4,7 @@ import Button from "@components/ui/Button";
 import { DialogRoot, DialogTrigger } from "@components/ui/Dialog";
 import { toast } from "@components/ui/Toast";
 import { PageConfig } from "@lib/config/page.config";
-import { deletePage, savePage } from "@lib/db/database";
+import { deletePage, savePage } from "@lib/db/db-actions";
 import { queryClient } from "@lib/query-client";
 import { usePuck } from "@measured/puck";
 import { useMutation } from "@tanstack/react-query";

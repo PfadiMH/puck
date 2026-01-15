@@ -1,3 +1,4 @@
+import { dbService } from "@lib/db/db";
 import { env } from "@lib/env";
 import NextAuth from "next-auth";
 import Keycloak from "next-auth/providers/keycloak";
@@ -44,40 +45,16 @@ const { handlers, signIn, signOut, auth } = NextAuth({
 });
 
 async function fetchPermissions(roles: string[]) {
-  try {
-    // Construct the absolute URL for the internal API endpoint
-    // Ensure INTERNAL_API_BASE_URL is set in your environment variables
-    const internalApiBaseUrl = env.INTERNAL_API_BASE_URL;
+  const config = await dbService.getSecurityConfig();
 
-    const apiUrl = new URL(
-      "/api/security/permissions",
-      internalApiBaseUrl
-    );
-    const secretKey = env.AUTH_SECRET;
+  const permissionSet = new Set<string>(
+    config?.roles
+      ?.filter((r) => roles.includes(r.name))
+      .flatMap((r) => r.permissions || []) || []
+  );
 
-    apiUrl.searchParams.set("roles", JSON.stringify(roles));
-
-    const response = await fetch(apiUrl.toString(), {
-      method: "GET",
-      headers: {
-        "x-secret-key": secretKey,
-      },
-    });
-
-    if (response.ok) {
-      const data = await response.json();
-      return data.permissions;
-    } else {
-      console.error(
-        `Failed to fetch permissions: ${response.status} ${response.statusText
-        }. Body: ${await response.text()}`
-      );
-      return [];
-    }
-  } catch (error) {
-    console.error("Error calling permissions API:", error);
-    return [];
-  }
+  const permissions = Array.from(permissionSet);
+  return permissions;
 }
 
 export { auth, handlers, signIn, signOut };

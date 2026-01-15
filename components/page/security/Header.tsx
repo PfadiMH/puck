@@ -16,7 +16,7 @@ function Header() {
           Back to Admin
         </Button>
 
-        <PermissionGuard permissions={["role-permissions:update"]}>
+        <PermissionGuard policy={{ all: ["role-permissions:update"] }}>
           <RoleModal
             mode="add"
             trigger={<Button color="primary">Add Role</Button>}
