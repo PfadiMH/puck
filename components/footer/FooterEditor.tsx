@@ -18,7 +18,7 @@ export function FooterEditor({ data }: { data: FooterData }) {
       overrides={{
         header: () => (
           <PuckHeader
-            headerTitle="Editing Navbar"
+            headerTitle="Editing Footer"
             headerActions={
               <OtherHeaderActions<FooterConfig> saveData={saveFooter} />
             }
