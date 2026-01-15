@@ -39,8 +39,8 @@
     "@types/node": "^20.17.30",
     "@types/react": "^19.1.2",
     "@types/react-dom": "^19.1.2",
-    "@vitejs/plugin-react": "^5.1.1",
-    "@vitest/browser-playwright": "^4.0.13",
+    "@vitejs/plugin-react": "^5.1.2",
+    "@vitest/browser-playwright": "^4.0.17",
     "@vitest/coverage-v8": "^4.0.13",
     "eslint": "^9.24.0",
     "eslint-config-next": "^16.1.1-canary.10",
@@ -51,7 +51,7 @@
     "tailwindcss": "^4.1.4",
     "typescript": "^5.8.3",
     "vite": "^7.3.1",
-    "vitest": "^4.0.13",
+    "vitest": "^4.0.17",
     "vitest-browser-react": "^2.0.2"
   },
   "peerDependencies": {
