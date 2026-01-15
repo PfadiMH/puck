@@ -46,6 +46,6 @@ function getDatabaseService(): DatabaseService {
  * Internal Database Service.
  * DIRECT ACCESS - BYPASSES PERMISSION CHECKS.
  * Use only in trusted server contexts (e.g. API routes with their own auth).
- * For UI/Client access, use @lib/db/database.ts instead.
+ * For UI/Client access, use @lib/db/db-actions.ts instead.
  */
 export const dbService = getDatabaseService();
