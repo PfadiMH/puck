@@ -18,10 +18,18 @@ export function hasPermission(
 
   const sessionPermissions = session.user.permissions;
 
-  if (!(policy.any ?? []).some((perm) => sessionPermissions.includes(perm)))
+  const anyPerms = policy.any ?? [];
+  if (
+    anyPerms.length > 0 &&
+    !anyPerms.some((perm) => sessionPermissions.includes(perm))
+  )
     return false;
 
-  if (!(policy.all ?? []).every((perm) => sessionPermissions.includes(perm)))
+  const allPerms = policy.all ?? [];
+  if (
+    allPerms.length > 0 &&
+    !allPerms.every((perm) => sessionPermissions.includes(perm))
+  )
     return false;
 
   return true;
