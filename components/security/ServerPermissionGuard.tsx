@@ -1,20 +1,22 @@
-import { hasPermission } from "@lib/security/has-permission";
-import { Permission } from "@lib/security/permissions";
+import { auth } from "@lib/auth/auth-client";
+import { hasPermission, Policy } from "@lib/security/permission-evaluator";
 import { PropsWithChildren } from "react";
 
 type ServerPermissionGuardProps = {
-  permissions: Permission[];
-  requireAll?: boolean;
+  policy: Policy;
 };
 
 export async function ServerPermissionGuard({
-  permissions,
-  requireAll = false,
+  policy,
   children,
 }: PropsWithChildren<ServerPermissionGuardProps>) {
-  const isAuthorized = await hasPermission(permissions, { requireAll });
+  const session = await auth();
 
-  if (!isAuthorized) return null;
+  // 1. Authentication Check
+  if (!session?.user) return null;
+
+  // 2. Authorization Check
+  if (!hasPermission(session, policy)) return null;
 
   return <>{children}</>;
 }

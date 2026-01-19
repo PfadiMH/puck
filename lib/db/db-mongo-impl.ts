@@ -1,10 +1,13 @@
-import { defaultSecurityConfig, SecurityConfig } from "@lib/security/permissions";
 import { defaultFooterData, FooterData } from "@lib/config/footer.config";
 import { defaultNavbarData, NavbarData } from "@lib/config/navbar.config";
 import { PageData } from "@lib/config/page.config";
+import {
+  defaultSecurityConfig,
+  SecurityConfig,
+} from "@lib/security/security-config";
 import { Data } from "@measured/puck";
 import { Db, MongoClient } from "mongodb";
-import { DatabaseService } from "./types";
+import { DatabaseService } from "./db";
 
 /**
  * MongoDB implementation of DatabaseService.
@@ -137,7 +140,6 @@ export class MongoService implements DatabaseService {
       .toArray();
     return pages.map((page) => page.path);
   }
-
 
   async getSecurityConfig(): Promise<SecurityConfig> {
     const result = await this.db

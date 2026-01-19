@@ -11,26 +11,26 @@ function Header() {
     <div className="flex flex-wrap gap-2 justify-between mb-4">
       <h1>Leitereberiich</h1>
       <div className="flex flex-wrap gap-4">
-        <PermissionGuard permissions={["role-permissions:read"]}>
+        <PermissionGuard policy={{ all: ["role-permissions:read"] }}>
           <Button size="medium" onClick={() => router.push("/admin/security")}>
             Security Manager
           </Button>
         </PermissionGuard>
         <div className="grid grid-rows-2 gap-2">
-          <PermissionGuard permissions={["navbar:update"]}>
+          <PermissionGuard policy={{ all: ["navbar:update"] }}>
             <Button size="small" onClick={() => router.push("/admin/navbar")}>
               Navbar
             </Button>
           </PermissionGuard>
 
-          <PermissionGuard permissions={["footer:update"]}>
+          <PermissionGuard policy={{ all: ["footer:update"] }}>
             <Button size="small" onClick={() => router.push("/admin/footer")}>
               Footer
             </Button>
           </PermissionGuard>
         </div>
 
-        <PermissionGuard permissions={["page:create"]}>
+        <PermissionGuard policy={{ all: ["page:create"] }}>
           <DialogRoot>
             <DialogTrigger>
               <Button color="primary">Add Page</Button>

@@ -1,11 +1,10 @@
-import { PermissionGuard } from "@components/security/PermissionGuard";
 import Button from "@components/ui/Button";
 import { DialogRoot, DialogTrigger } from "@components/ui/Dialog";
 import { TableCell, TableRow } from "@components/ui/Table";
-import { Role } from "@lib/security/permissions";
-import { useHasPermission } from "@lib/security/use-permission";
-import { getSecurityConfig, saveSecurityConfig } from "@lib/db/database";
+import { getSecurityConfig, saveSecurityConfig } from "@lib/db/db-actions";
 import { queryClient } from "@lib/query-client";
+import { useHasPermission } from "@lib/security/hooks/has-permission";
+import { Role } from "@lib/security/security-config";
 import ConfirmModal from "../admin/ConfirmModal";
 import { RoleModal } from "./RoleModal";
 
@@ -17,12 +16,14 @@ type RoleRowProps = {
 function RoleRow({ role, variant = "table" }: RoleRowProps) {
   const handleDelete = async () => {
     const securityConfig = await getSecurityConfig();
-    securityConfig.roles = securityConfig.roles.filter((r) => r.name !== role.name);
+    securityConfig.roles = securityConfig.roles.filter(
+      (r) => r.name !== role.name
+    );
     await saveSecurityConfig(securityConfig);
     queryClient.invalidateQueries({ queryKey: ["securityConfig"] });
   };
 
-  const canEdit = useHasPermission(["role-permissions:update"]);
+  const canEdit = useHasPermission({ any: ["role-permissions:update"] });
 
   if (variant === "table") {
     return (
@@ -45,7 +46,7 @@ function RoleRow({ role, variant = "table" }: RoleRowProps) {
               }
             />
 
-            <PermissionGuard permissions={["role-permissions:update"]}>
+            {canEdit && (
               <DialogRoot>
                 <DialogTrigger>
                   <button className="p-1 px-3 text-xs font-bold uppercase rounded border border-red-500/40 text-red-500/80 hover:bg-red-500/10 transition-colors">
@@ -58,7 +59,7 @@ function RoleRow({ role, variant = "table" }: RoleRowProps) {
                   onConfirm={handleDelete}
                 />
               </DialogRoot>
-            </PermissionGuard>
+            )}
           </div>
         </TableCell>
       </TableRow>
@@ -72,9 +73,7 @@ function RoleRow({ role, variant = "table" }: RoleRowProps) {
           <h3 className="font-bold text-xl text-primary truncate">
             {role.name}
           </h3>
-          <p className="text-sm opacity-70 line-clamp-2">
-            {role.description}
-          </p>
+          <p className="text-sm opacity-70 line-clamp-2">{role.description}</p>
         </div>
       </div>
       <div className="flex items-center gap-3 mt-2">
@@ -92,7 +91,7 @@ function RoleRow({ role, variant = "table" }: RoleRowProps) {
           }
         />
 
-        <PermissionGuard permissions={["role-permissions:update"]}>
+        {canEdit && (
           <DialogRoot>
             <DialogTrigger>
               <button className="h-8 px-4 text-xs font-bold uppercase rounded border border-red-500/40 text-red-500/80 hover:bg-red-500/10 transition-colors">
@@ -105,7 +104,7 @@ function RoleRow({ role, variant = "table" }: RoleRowProps) {
               onConfirm={handleDelete}
             />
           </DialogRoot>
-        </PermissionGuard>
+        )}
       </div>
     </div>
   );

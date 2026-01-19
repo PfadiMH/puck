@@ -1,22 +1,21 @@
 "use client";
 
-import { Permission } from "@lib/security/permissions";
-import { useHasPermission } from "@lib/security/use-permission";
+import { useHasPermission } from "@lib/security/hooks/has-permission";
+import { Policy } from "@lib/security/permission-evaluator";
 import { PropsWithChildren } from "react";
 
 type PermissionGuardProps = {
-  permissions: Permission[];
-  requireAll?: boolean;
+  policy: Policy;
 };
 
 export function PermissionGuard({
-  permissions,
-  requireAll = false,
+  policy,
   children,
 }: PropsWithChildren<PermissionGuardProps>) {
-  const isAuthorized = useHasPermission(permissions, { requireAll });
+  const hasAccess = useHasPermission(policy);
 
-  if (!isAuthorized) return null;
+  // Not authenticated or not authorized
+  if (!hasAccess) return null;
 
   return <>{children}</>;
 }
