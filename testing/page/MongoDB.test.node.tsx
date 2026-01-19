@@ -15,6 +15,7 @@ describe("MongoService Integration", () => {
     await service.connect();
   
     let retries = 0;
+    let lastError: any;
     while (retries < 20) {
       try {
         await service.getNavbar();
@@ -22,9 +23,13 @@ describe("MongoService Integration", () => {
         await service.getSecurityConfig();
         break;
       } catch (e) {
+        lastError = e;
         await new Promise((r) => setTimeout(r, 100));
         retries++;
       }
+    }
+    if (retries >= 20) {
+      throw lastError || new Error("Failed to initialize MongoService readiness check after 20 retries");
     }
   });
 
