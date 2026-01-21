@@ -98,7 +98,7 @@ function ButtonGroup({ alignment, buttons }: ButtonGroupProps) {
         }
 
         return (
-          <button key={idx} className={buttonClasses}>
+          <button key={idx} type="button" className={buttonClasses}>
             {buttonContent}
           </button>
         );
