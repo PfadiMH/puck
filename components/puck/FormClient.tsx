@@ -74,17 +74,35 @@ export function FormClient({
 
     for (let i = 0; i < fields.length; i++) {
       const field = fields[i];
-      if (!field.required) continue;
       const name = `field_${i}`;
       const value = formData[name];
-      if (field.type === "checkbox") {
-        if (!value || (value as string[]).length === 0) {
+
+      if (field.required) {
+        if (field.type === "checkbox") {
+          if (!value || (value as string[]).length === 0) {
+            setErrorMessage("Bitte alle Pflichtfelder ausfüllen.");
+            return;
+          }
+        } else if (!value || (typeof value === "string" && !value.trim())) {
           setErrorMessage("Bitte alle Pflichtfelder ausfüllen.");
           return;
         }
-      } else if (!value || (typeof value === "string" && !value.trim())) {
-        setErrorMessage("Bitte alle Pflichtfelder ausfüllen.");
-        return;
+      }
+
+      if (field.type === "number" && (field.minLength || field.maxLength)) {
+        const strValue = typeof value === "string" ? value : "";
+        if (strValue) {
+          const digitsOnly = strValue.replace(/[^0-9]/g, "");
+          const digitLength = digitsOnly.length;
+          if (field.minLength && digitLength < field.minLength) {
+            setErrorMessage(`${field.label}: Mindestens ${field.minLength} Ziffern erforderlich.`);
+            return;
+          }
+          if (field.maxLength && digitLength > field.maxLength) {
+            setErrorMessage(`${field.label}: Maximal ${field.maxLength} Ziffern erlaubt.`);
+            return;
+          }
+        }
       }
     }
 
@@ -195,8 +213,6 @@ export function FormClient({
                       className={inputCls}
                       placeholder={field.placeholder}
                       required={field.required}
-                      min={field.minLength}
-                      max={field.maxLength}
                       value={val as string}
                       onChange={(e) => setFormData((p) => ({ ...p, [name]: e.target.value }))}
                       disabled={editMode}
