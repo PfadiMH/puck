@@ -16,6 +16,7 @@ export const env = createEnv({
     SMTP_FROM: z.string().optional(),
     ALTCHA_HMAC_KEY: z.string().optional(),
     FORM_ALLOWED_RECIPIENT_DOMAINS: z.string().optional(),
+    FORM_ALLOWED_RECIPIENT_EMAILS: z.string().optional(),
   },
   client: {
     // Add NEXT_PUBLIC_ variables here
@@ -34,6 +35,7 @@ export const env = createEnv({
     SMTP_FROM: process.env.SMTP_FROM,
     ALTCHA_HMAC_KEY: process.env.ALTCHA_HMAC_KEY,
     FORM_ALLOWED_RECIPIENT_DOMAINS: process.env.FORM_ALLOWED_RECIPIENT_DOMAINS,
+    FORM_ALLOWED_RECIPIENT_EMAILS: process.env.FORM_ALLOWED_RECIPIENT_EMAILS,
   },
   skipValidation: !!process.env.SKIP_ENV_VALIDATION,
   emptyStringAsUndefined: true,

@@ -1,17 +1,18 @@
 import { SectionThemeProvider } from "@components/contexts/SectionThemeProvider";
-import { FormClient, FormProps } from "@components/puck/FormClient";
+import { FormClient, FormClientProps } from "@components/puck/FormClient";
 import { describe, expect, test } from "vitest";
 import { render } from "vitest-browser-react";
 
-const defaultProps: FormProps = {
-  recipientEmail: "Pfadi@Meilen.com",
+const defaultProps: FormClientProps = {
+  recipientEmail: "pfadi@meilen.com",
+  recipientToken: "test-token",
   formTitle: "Test Formular",
   submitButtonText: "Absenden",
   successMessage: "Danke!",
   fields: [],
 };
 
-function renderForm(props: Partial<FormProps> = {}) {
+function renderForm(props: Partial<FormClientProps> = {}) {
   return render(
     <SectionThemeProvider theme="sun">
       <FormClient {...defaultProps} {...props} />

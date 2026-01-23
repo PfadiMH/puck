@@ -19,8 +19,9 @@ export interface FormField {
   options?: string;
 }
 
-export interface FormProps {
+export interface FormClientProps {
   recipientEmail: string;
+  recipientToken: string;
   formTitle: string;
   submitButtonText: string;
   successMessage: string;
@@ -28,15 +29,15 @@ export interface FormProps {
   editMode?: boolean;
 }
 
-
 export function FormClient({
   recipientEmail,
+  recipientToken,
   formTitle,
   submitButtonText,
   successMessage,
   fields,
   editMode,
-}: FormProps) {
+}: FormClientProps) {
   const theme = useSectionTheme();
   const [formData, setFormData] = useState<Record<string, string | string[]>>({});
   const [status, setStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
@@ -77,7 +78,14 @@ export function FormClient({
       const res = await fetch("/api/forms", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ recipientEmail, formTitle, fields, formData, altchaPayload }),
+        body: JSON.stringify({
+          recipientEmail,
+          recipientToken,
+          formTitle,
+          fields,
+          formData,
+          altchaPayload,
+        }),
       });
       if (!res.ok) throw new Error((await res.json()).error || "Fehler");
       setStatus("success");

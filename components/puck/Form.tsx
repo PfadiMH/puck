@@ -1,7 +1,17 @@
 import { ComponentConfig } from "@measured/puck";
-import { FormClient, FormProps } from "./FormClient";
+import { createRecipientToken } from "@lib/form-token";
+import { FormClient, FormField } from "./FormClient";
 
-export type { FormField, FormFieldType, FormProps } from "./FormClient";
+export type { FormField, FormFieldType } from "./FormClient";
+
+export interface FormProps {
+  recipientEmail: string;
+  formTitle: string;
+  submitButtonText: string;
+  successMessage: string;
+  fields: FormField[];
+  editMode?: boolean;
+}
 
 function Form({
   recipientEmail,
@@ -11,9 +21,12 @@ function Form({
   fields,
   editMode,
 }: FormProps) {
+  const recipientToken = recipientEmail ? createRecipientToken(recipientEmail) : "";
+
   return (
     <FormClient
       recipientEmail={recipientEmail}
+      recipientToken={recipientToken}
       formTitle={formTitle}
       submitButtonText={submitButtonText}
       successMessage={successMessage}

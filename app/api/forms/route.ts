@@ -1,5 +1,6 @@
 import { FormField } from "@components/puck/Form";
 import { env } from "@lib/env";
+import { verifyRecipientToken } from "@lib/form-token";
 import { verifySolution } from "altcha-lib";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -30,15 +31,27 @@ function isValidEmail(email: string): boolean {
 }
 
 function isAllowedRecipient(email: string): boolean {
-  const allowedDomains = env.FORM_ALLOWED_RECIPIENT_DOMAINS;
-  if (!allowedDomains) {
-    return true;
+  const normalizedEmail = email.toLowerCase().trim();
+
+  const allowedEmails = env.FORM_ALLOWED_RECIPIENT_EMAILS;
+  if (allowedEmails) {
+    const emails = allowedEmails.split(",").map((e) => e.trim().toLowerCase());
+    return emails.includes(normalizedEmail);
   }
 
-  const domains = allowedDomains.split(",").map((d) => d.trim().toLowerCase());
-  const emailDomain = email.split("@")[1]?.toLowerCase();
+  const allowedDomains = env.FORM_ALLOWED_RECIPIENT_DOMAINS;
+  if (allowedDomains) {
+    const domains = allowedDomains.split(",").map((d) => d.trim().toLowerCase());
+    const emailDomain = normalizedEmail.split("@")[1];
+    return emailDomain ? domains.includes(emailDomain) : false;
+  }
 
-  return emailDomain ? domains.includes(emailDomain) : false;
+  if (process.env.NODE_ENV === "production") {
+    console.error("FORM_ALLOWED_RECIPIENT_EMAILS or FORM_ALLOWED_RECIPIENT_DOMAINS must be set in production");
+    return false;
+  }
+
+  return true;
 }
 
 function isRateLimited(ip: string): boolean {
@@ -59,6 +72,7 @@ function isRateLimited(ip: string): boolean {
 
 interface FormSubmission {
   recipientEmail: string;
+  recipientToken: string;
   formTitle: string;
   fields: FormField[];
   formData: Record<string, string | string[]>;
@@ -210,12 +224,19 @@ export async function POST(request: NextRequest) {
     }
 
     const body: FormSubmission = await request.json();
-    const { recipientEmail, formTitle, fields, formData, altchaPayload } = body;
+    const { recipientEmail, recipientToken, formTitle, fields, formData, altchaPayload } = body;
 
-    if (!recipientEmail || !formTitle || !fields || !formData) {
+    if (!recipientEmail || !recipientToken || !formTitle || !fields || !formData) {
       return NextResponse.json(
         { error: "Fehlende Pflichtfelder" },
         { status: 400 }
+      );
+    }
+
+    if (!verifyRecipientToken(recipientEmail, recipientToken)) {
+      return NextResponse.json(
+        { error: "Ungültiger Empfänger-Token" },
+        { status: 403 }
       );
     }
 
