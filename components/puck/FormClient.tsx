@@ -122,7 +122,17 @@ export function FormClient({
           altchaPayload,
         }),
       });
-      if (!res.ok) throw new Error((await res.json()).error || "Fehler");
+      if (!res.ok) {
+        let errorMsg = `Fehler ${res.status}`;
+        try {
+          const data = await res.json();
+          errorMsg = data.error || errorMsg;
+        } catch {
+          const text = await res.text().catch(() => "");
+          if (text) errorMsg = `${errorMsg}: ${text.slice(0, 100)}`;
+        }
+        throw new Error(errorMsg);
+      }
       setStatus("success");
       setFormData({});
       setAltchaPayload(null);
