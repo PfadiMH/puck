@@ -277,21 +277,39 @@ export async function POST(request: NextRequest) {
       }
 
       if (typeof value === "string" && value) {
-        if (field.minLength && value.length < field.minLength) {
-          return NextResponse.json(
-            {
-              error: `Feld "${field.label}" muss mindestens ${field.minLength} Zeichen haben`,
-            },
-            { status: 400 }
-          );
-        }
-        if (field.maxLength && value.length > field.maxLength) {
-          return NextResponse.json(
-            {
-              error: `Feld "${field.label}" darf maximal ${field.maxLength} Zeichen haben`,
-            },
-            { status: 400 }
-          );
+        if (field.type === "number") {
+          const num = Number(value);
+          if (isNaN(num)) {
+            return NextResponse.json(
+              { error: `Feld "${field.label}" muss eine gültige Zahl sein` },
+              { status: 400 }
+            );
+          }
+          if (field.minLength !== undefined && num < field.minLength) {
+            return NextResponse.json(
+              { error: `Feld "${field.label}" muss mindestens ${field.minLength} sein` },
+              { status: 400 }
+            );
+          }
+          if (field.maxLength !== undefined && num > field.maxLength) {
+            return NextResponse.json(
+              { error: `Feld "${field.label}" darf maximal ${field.maxLength} sein` },
+              { status: 400 }
+            );
+          }
+        } else {
+          if (field.minLength && value.length < field.minLength) {
+            return NextResponse.json(
+              { error: `Feld "${field.label}" muss mindestens ${field.minLength} Zeichen haben` },
+              { status: 400 }
+            );
+          }
+          if (field.maxLength && value.length > field.maxLength) {
+            return NextResponse.json(
+              { error: `Feld "${field.label}" darf maximal ${field.maxLength} Zeichen haben` },
+              { status: 400 }
+            );
+          }
         }
       }
     }
