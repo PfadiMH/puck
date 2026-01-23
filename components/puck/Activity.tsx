@@ -27,21 +27,35 @@ export type ActivityProps = {
 
 function formatDate(dateString: string): string {
   if (!dateString) return "";
-  const date = new Date(dateString);
+  // Parse YYYY-MM-DD without timezone shift by using component parts
+  const [year, month, day] = dateString.split("-").map(Number);
+  const date = new Date(year, month - 1, day);
   const days = ["Sonntag", "Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag"];
   const months = ["Januar", "Februar", "März", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember"];
   return `${days[date.getDay()]}, ${date.getDate()}. ${months[date.getMonth()]} ${date.getFullYear()}`;
 }
 
+function isValidHttpUrl(url: string): boolean {
+  if (!url) return false;
+  try {
+    const parsed = new URL(url);
+    return ["http:", "https:"].includes(parsed.protocol);
+  } catch {
+    return false;
+  }
+}
+
 function LocationDisplay({ label, location }: { label: string; location: LocationInfo }) {
   if (!location?.name) return null;
+  
+  const hasValidLink = isValidHttpUrl(location.mapsLink || "");
   
   return (
     <div className="flex items-start gap-2">
       <MapPin className="w-5 h-5 mt-0.5 flex-shrink-0 text-primary" />
       <div>
         <span className="font-semibold">{label}: </span>
-        {location.mapsLink ? (
+        {hasValidLink ? (
           <a 
             href={location.mapsLink} 
             target="_blank" 

@@ -14,6 +14,7 @@ function TimePicker({
   id,
   onChange,
   value,
+  readOnly,
 }: CustomFieldRenderProps<TimePickerProps>) {
   const [hour, minute] = (value || "14:00").split(":");
 
@@ -34,6 +35,7 @@ function TimePicker({
         value={hour || "14"}
         onChange={(e) => handleHourChange(e.target.value)}
         className={selectStyles}
+        disabled={readOnly}
       >
         {hours.map((h) => (
           <option key={h} value={h}>
@@ -46,6 +48,7 @@ function TimePicker({
         value={minute || "00"}
         onChange={(e) => handleMinuteChange(e.target.value)}
         className={selectStyles}
+        disabled={readOnly}
       >
         {minutes.map((m) => (
           <option key={m} value={m}>

@@ -35,6 +35,7 @@ function DatePicker({
   id,
   onChange,
   value,
+  readOnly,
 }: CustomFieldRenderProps<DatePickerProps>) {
   // Parse value (YYYY-MM-DD) or use defaults
   const today = new Date();
@@ -48,9 +49,10 @@ function DatePicker({
 
   const days = getDaysInMonth(month, year);
 
-  // Check if selected date is a Saturday
-  const selectedDate = value ? new Date(value) : null;
-  const isSaturday = selectedDate?.getDay() === 6;
+  // Check if selected date is a Saturday (parse without timezone shift)
+  const isSaturday = value
+    ? new Date(parseInt(year), parseInt(month) - 1, parseInt(day)).getDay() === 6
+    : false;
 
   const handleChange = (newDay: string, newMonth: string, newYear: string) => {
     // Validate day for new month/year
@@ -72,6 +74,7 @@ function DatePicker({
           value={day}
           onChange={(e) => handleChange(e.target.value, month, year)}
           className={selectStyles}
+          disabled={readOnly}
         >
           {days.map((d) => (
             <option key={d} value={d}>
@@ -85,6 +88,7 @@ function DatePicker({
           value={month}
           onChange={(e) => handleChange(day, e.target.value, year)}
           className={`${selectStyles} flex-1`}
+          disabled={readOnly}
         >
           {months.map((m) => (
             <option key={m.value} value={m.value}>
@@ -97,6 +101,7 @@ function DatePicker({
           value={year}
           onChange={(e) => handleChange(day, month, e.target.value)}
           className={selectStyles}
+          disabled={readOnly}
         >
           {years.map((y) => (
             <option key={y} value={y}>
