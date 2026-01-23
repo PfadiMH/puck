@@ -1,4 +1,4 @@
-import { createHmac } from "crypto";
+import { createHmac, timingSafeEqual } from "crypto";
 
 const DEFAULT_KEY = "form-token-default-key-change-in-production";
 
@@ -14,5 +14,10 @@ export function createRecipientToken(email: string): string {
 
 export function verifyRecipientToken(email: string, token: string): boolean {
   const expectedToken = createRecipientToken(email);
-  return expectedToken === token;
+  const expectedBuf = Buffer.from(expectedToken);
+  const tokenBuf = Buffer.from(token);
+  if (expectedBuf.length !== tokenBuf.length) {
+    return false;
+  }
+  return timingSafeEqual(expectedBuf, tokenBuf);
 }

@@ -71,6 +71,23 @@ export function FormClient({
       setErrorMessage("Bitte Captcha bestätigen.");
       return;
     }
+
+    for (let i = 0; i < fields.length; i++) {
+      const field = fields[i];
+      if (!field.required) continue;
+      const name = `field_${i}`;
+      const value = formData[name];
+      if (field.type === "checkbox") {
+        if (!value || (value as string[]).length === 0) {
+          setErrorMessage("Bitte alle Pflichtfelder ausfüllen.");
+          return;
+        }
+      } else if (!value || (typeof value === "string" && !value.trim())) {
+        setErrorMessage("Bitte alle Pflichtfelder ausfüllen.");
+        return;
+      }
+    }
+
     setStatus("submitting");
     setErrorMessage("");
 
@@ -91,6 +108,7 @@ export function FormClient({
       setStatus("success");
       setFormData({});
       setAltchaPayload(null);
+      (altchaRef.current as HTMLElement & { reset?: () => void })?.reset?.();
     } catch (err) {
       setStatus("error");
       setErrorMessage(err instanceof Error ? err.message : "Fehler");
