@@ -37,6 +37,21 @@ export function applySectionTheming(data: PageData): {
   return { data: { ...data, content: newContent }, didChange };
 }
 
+/**
+ * Calculates the theme of the last section on the page by counting
+ * SectionDivider components. Used to determine the footer's theme
+ * (which should be the opposite).
+ */
+export function getLastSectionTheme(data: PageData): Theme {
+  let theme: Theme = "mud";
+  for (const item of data.content) {
+    if (item.type === "SectionDivider") {
+      theme = theme === "sun" ? "mud" : "sun";
+    }
+  }
+  return theme;
+}
+
 function RootRender<Props extends PropsWithChildren>({
   children,
   puck: { isEditing },
