@@ -13,9 +13,8 @@ describe("MongoService Integration", () => {
 
     service = new MongoService(uri, dbName);
     await service.connect();
-  
+
     let retries = 0;
-    let lastError: any;
     while (retries < 20) {
       try {
         await service.getNavbar();
@@ -23,13 +22,14 @@ describe("MongoService Integration", () => {
         await service.getSecurityConfig();
         break;
       } catch (e) {
-        lastError = e;
-        await new Promise((r) => setTimeout(r, 100));
         retries++;
+        if (retries >= 20) {
+          throw new Error(
+            "Failed to initialize MongoService readiness check after 20 retries",
+          );
+        }
+        await new Promise((r) => setTimeout(r, 100));
       }
-    }
-    if (retries >= 20) {
-      throw lastError || new Error("Failed to initialize MongoService readiness check after 20 retries");
     }
   });
 
@@ -41,6 +41,7 @@ describe("MongoService Integration", () => {
       await mongod.stop();
     }
   });
+
   it("should save and retrieve a page", async () => {
     const path = "/test-page";
     const pageData = {
@@ -48,22 +49,33 @@ describe("MongoService Integration", () => {
       root: { props: { title: "Test Page" } },
       zones: {},
     };
+
     await service.savePage(path, pageData);
     const retrieved = await service.getPage(path);
-    expect(retrieved).toBeDefined();
+
     expect(retrieved).toEqual(pageData);
   });
-  it("should update an existing page", async () => {
+
+  it("should update a page", async () => {
     const path = "/test-page";
+    const initialData = {
+      content: [],
+      root: { props: { title: "Test Page" } },
+      zones: {},
+    };
+    await service.savePage(path, initialData);
     const updatedData = {
       content: [],
       root: { props: { title: "Updated Test Page" } },
       zones: {},
     };
+
     await service.savePage(path, updatedData);
     const retrieved = await service.getPage(path);
+
     expect(retrieved).toEqual(updatedData);
   });
+
   it("should delete a page", async () => {
     const path = "/test-page-delete";
     const pageData = {
@@ -71,14 +83,23 @@ describe("MongoService Integration", () => {
       root: { props: { title: "To Delete" } },
       zones: {},
     };
+
     await service.savePage(path, pageData);
     await service.deletePage(path);
-
     const retrieved = await service.getPage(path);
+
     expect(retrieved).toBeUndefined();
   });
+
   it("should retrieve default navbar", async () => {
     const navbar = await service.getNavbar();
+
     expect(navbar).toBeDefined();
+  });
+
+  it("should retrieve default footer", async () => {
+    const footer = await service.getFooter();
+
+    expect(footer).toBeDefined();
   });
 });
