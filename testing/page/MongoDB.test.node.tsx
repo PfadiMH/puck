@@ -24,9 +24,7 @@ describe("MongoService Integration", () => {
       } catch (e) {
         retries++;
         if (retries >= 20) {
-          throw new Error(
-            "Failed to initialize MongoService readiness check after 20 retries",
-          );
+          throw e;
         }
         await new Promise((r) => setTimeout(r, 100));
       }
@@ -57,7 +55,7 @@ describe("MongoService Integration", () => {
   });
 
   it("should update a page", async () => {
-    const path = "/test-page";
+    const path = "/test-page-update";
     const initialData = {
       content: [],
       root: { props: { title: "Test Page" } },
