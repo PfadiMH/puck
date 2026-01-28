@@ -26,6 +26,12 @@ const iconSizeClasses = {
   large: "w-6 h-6",
 };
 
+const iconSizes = {
+  small: "16px",
+  medium: "20px",
+  large: "24px",
+};
+
 const gapClasses = {
   none: "gap-0",
   small: "gap-2",
@@ -42,7 +48,7 @@ const alignmentClasses = {
 function ButtonGroup({ alignment, size, spacing, icon, iconPosition, buttons }: ButtonGroupProps) {
   const renderIcon = () => (
     <span className={cn("relative shrink-0", iconSizeClasses[size])}>
-      <Image src={icon!} alt="" fill className="object-contain" />
+      <Image src={icon!} alt="" fill sizes={iconSizes[size]} className="object-contain" />
     </span>
   );
 
@@ -61,14 +67,26 @@ function ButtonGroup({ alignment, size, spacing, icon, iconPosition, buttons }: 
 
         if (button.url) {
           return (
-            <Link key={idx} href={button.url} className={buttonClasses}>
+            <Link
+              key={idx}
+              href={button.url}
+              className={buttonClasses}
+              aria-label={button.content || "Button"}
+            >
               {renderButtonContent(button)}
             </Link>
           );
         }
 
         return (
-          <Button key={idx} type="button" size={size} color={button.color} className="inline-flex items-center gap-2">
+          <Button
+            key={idx}
+            type="button"
+            size={size}
+            color={button.color}
+            className="inline-flex items-center gap-2"
+            aria-label={button.content || "Button"}
+          >
             {renderButtonContent(button)}
           </Button>
         );
