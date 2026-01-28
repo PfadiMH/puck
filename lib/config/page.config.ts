@@ -21,7 +21,7 @@ import type { Config, Data } from "@measured/puck";
 
 // @keep-sorted
 export type PageProps = {
-  Button: ButtonGroupProps;
+  ButtonGroup: ButtonGroupProps;
   Flex: FlexProps;
   Graphic: GraphicProps;
   Heading: HeadingProps;
@@ -40,7 +40,7 @@ export type PageData = Data<PageProps, PageRootProps>;
 export const pageConfig: PageConfig = sectionThemedConfig({
   // @keep-sorted
   components: {
-    Button: buttonGroupConfig,
+    ButtonGroup: buttonGroupConfig,
     Flex: flexConfig,
     Graphic: graphicConfig,
     Heading: headingConfig,
