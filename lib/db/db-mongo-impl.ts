@@ -5,6 +5,7 @@ import {
   defaultSecurityConfig,
   SecurityConfig,
 } from "@lib/security/security-config";
+import type { FileRecord, FileRecordInput } from "@lib/storage/file-record";
 import { Data } from "@measured/puck";
 import { Db, MongoClient } from "mongodb";
 import { DatabaseService } from "./db";
@@ -19,6 +20,7 @@ export class MongoService implements DatabaseService {
   private db: Db;
   private puckDataCollectionName = "puck-data";
   private securityCollectionName = "security";
+  private filesCollectionName = "files";
 
   constructor(connectionString: string, dbName: string) {
     this.client = new MongoClient(connectionString);
@@ -157,5 +159,39 @@ export class MongoService implements DatabaseService {
         { $set: { data: securityConfig, type: "securityConfig" } },
         { upsert: true }
       );
+  }
+
+  async saveFile(file: FileRecordInput): Promise<FileRecord> {
+    const record: FileRecord = {
+      ...file,
+      _id: crypto.randomUUID(),
+      createdAt: new Date(),
+    };
+    await this.db
+      .collection(this.filesCollectionName)
+      .insertOne(record as unknown as Document);
+    return record;
+  }
+
+  async getFile(id: string): Promise<FileRecord | null> {
+    const result = await this.db
+      .collection(this.filesCollectionName)
+      .findOne({ _id: id } as Record<string, unknown>);
+    return (result as unknown as FileRecord) || null;
+  }
+
+  async getAllFiles(): Promise<FileRecord[]> {
+    const results = await this.db
+      .collection(this.filesCollectionName)
+      .find()
+      .sort({ createdAt: -1 })
+      .toArray();
+    return results as unknown as FileRecord[];
+  }
+
+  async deleteFile(id: string): Promise<void> {
+    await this.db
+      .collection(this.filesCollectionName)
+      .deleteOne({ _id: id } as Record<string, unknown>);
   }
 }
