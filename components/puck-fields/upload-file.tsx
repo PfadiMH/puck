@@ -1,6 +1,6 @@
 import { UploadFileSvg } from "@components/graphics/UploadFileSvg";
 import { CustomFieldRenderProps } from "@lib/custom-field-types";
-import { CustomField } from "@measured/puck";
+import { CustomField } from "@puckeditor/core";
 
 type UploadFileProps = string | undefined;
 

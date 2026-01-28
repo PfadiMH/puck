@@ -6,7 +6,7 @@ import { toast } from "@components/ui/Toast";
 import { PageConfig } from "@lib/config/page.config";
 import { deletePage, savePage } from "@lib/db/db-actions";
 import { queryClient } from "@lib/query-client";
-import { usePuck } from "@measured/puck";
+import { usePuck } from "@puckeditor/core";
 import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import ConfirmModal from "../page/admin/ConfirmModal";

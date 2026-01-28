@@ -2,7 +2,7 @@
 import SpinnerSvg from "@components/graphics/SpinnerSvg";
 import Button from "@components/ui/Button";
 import { toast } from "@components/ui/Toast";
-import { Config, usePuck, UserGenerics } from "@measured/puck";
+import { Config, usePuck, UserGenerics } from "@puckeditor/core";
 import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import UndoRedoButtons from "./UndoRedoButtons";

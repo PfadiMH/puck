@@ -1,7 +1,7 @@
 import { NavbarItemsDesktop } from "@components/navbar/NavbarItemsDesktop";
 import { NavbarItemsMobile } from "@components/navbar/NavbarItemsMobile";
 import { navbarConfig, NavbarData } from "@lib/config/navbar.config";
-import { Render } from "@measured/puck";
+import { Render } from "@puckeditor/core";
 
 type NavbarRenderProps = {
   data: NavbarData;
