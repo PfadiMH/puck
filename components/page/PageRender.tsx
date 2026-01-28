@@ -2,7 +2,7 @@ import { NavbarRender } from "@components/navbar/NavbarRender";
 import { footerConfig, FooterData } from "@lib/config/footer.config";
 import { NavbarData } from "@lib/config/navbar.config";
 import { pageConfig, PageData } from "@lib/config/page.config";
-import { Render } from "@measured/puck";
+import { Render } from "@puckeditor/core";
 
 export interface PageRenderProps {
   navbarData: NavbarData;

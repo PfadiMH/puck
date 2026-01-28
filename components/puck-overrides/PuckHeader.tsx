@@ -4,7 +4,7 @@ import LeftSideBarSvg from "@components/graphics/LeftSideBarSvg";
 import RightSideBarSvg from "@components/graphics/RightSideBarSvg";
 import cn from "@lib/cn";
 import { PageConfig } from "@lib/config/page.config";
-import { usePuck } from "@measured/puck";
+import { usePuck } from "@puckeditor/core";
 import { ReactNode, useState } from "react";
 import styles from "./PuckHeader.module.css";
 
