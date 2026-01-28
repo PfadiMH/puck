@@ -9,14 +9,14 @@ type ButtonItem = {
   content: string;
   url?: string;
   color: "primary" | "secondary";
-  icon?: string;
-  iconPosition: "left" | "right";
 };
 
 export type ButtonGroupProps = {
   alignment: "left" | "center" | "right";
   size: "small" | "medium" | "large";
   spacing: "none" | "small" | "medium" | "large";
+  icon?: string;
+  iconPosition: "left" | "right";
   buttons: ButtonItem[];
 };
 
@@ -39,18 +39,18 @@ const alignmentClasses = {
   right: "justify-end",
 };
 
-function ButtonGroup({ alignment, size, spacing, buttons }: ButtonGroupProps) {
-  const renderIcon = (icon: string) => (
+function ButtonGroup({ alignment, size, spacing, icon, iconPosition, buttons }: ButtonGroupProps) {
+  const renderIcon = () => (
     <span className={cn("relative shrink-0", iconSizeClasses[size])}>
-      <Image src={icon} alt="" fill className="object-contain" />
+      <Image src={icon!} alt="" fill className="object-contain" />
     </span>
   );
 
   const renderButtonContent = (button: ButtonItem) => (
     <>
-      {button.icon && button.iconPosition === "left" && renderIcon(button.icon)}
+      {icon && iconPosition === "left" && renderIcon()}
       <span>{button.content}</span>
-      {button.icon && button.iconPosition === "right" && renderIcon(button.icon)}
+      {icon && iconPosition === "right" && renderIcon()}
     </>
   );
 
@@ -108,6 +108,18 @@ export const buttonGroupConfig: ComponentConfig<ButtonGroupProps> = {
         { label: "L", value: "large" },
       ],
     },
+    icon: {
+      ...uploadFileField,
+      label: "Icon (optional)",
+    },
+    iconPosition: {
+      type: "radio",
+      label: "Icon Position",
+      options: [
+        { label: "Left", value: "left" },
+        { label: "Right", value: "right" },
+      ],
+    },
     buttons: {
       type: "array",
       label: "Buttons",
@@ -129,23 +141,10 @@ export const buttonGroupConfig: ComponentConfig<ButtonGroupProps> = {
             { label: "Secondary", value: "secondary" },
           ],
         },
-        icon: {
-          ...uploadFileField,
-          label: "Icon (optional)",
-        },
-        iconPosition: {
-          type: "radio",
-          label: "Icon Position",
-          options: [
-            { label: "Left", value: "left" },
-            { label: "Right", value: "right" },
-          ],
-        },
       },
       defaultItemProps: {
         content: "Button",
         color: "primary",
-        iconPosition: "left",
       },
     },
   },
@@ -153,11 +152,11 @@ export const buttonGroupConfig: ComponentConfig<ButtonGroupProps> = {
     alignment: "left",
     size: "medium",
     spacing: "medium",
+    iconPosition: "left",
     buttons: [
       {
         content: "Button",
         color: "primary",
-        iconPosition: "left",
       },
     ],
   },
