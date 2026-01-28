@@ -18,6 +18,12 @@ const ALLOWED_TYPES = [
 export async function GET() {
   try {
     await requireServerPermission({ all: ["files:read"] });
+    if (!isStorageConfigured()) {
+      return NextResponse.json(
+        { error: "Storage not configured" },
+        { status: 503 }
+      );
+    }
     const files = await dbService.getAllFiles();
     const withUrls = files.map((f) => ({
       ...f,
@@ -36,7 +42,7 @@ export async function GET() {
 // POST /api/files - Upload a file
 export async function POST(request: NextRequest) {
   try {
-    await requireServerPermission({ all: ["files:create"] });
+    const session = await requireServerPermission({ all: ["files:create"] });
     if (!isStorageConfigured()) {
       return NextResponse.json(
         { error: "Storage not configured" },
@@ -105,7 +111,11 @@ export async function POST(request: NextRequest) {
       width,
       height,
       blurhash,
-      uploadedBy: "anonymous", // TODO: Get from auth
+      uploadedBy:
+        (session.user as any)?.id ||
+        (session.user as any)?.email ||
+        (session.user as any)?.name ||
+        "unknown",
     });
 
     return NextResponse.json({

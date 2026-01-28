@@ -1,11 +1,15 @@
 import { defaultFooterData } from "@lib/config/footer.config";
 import { defaultNavbarData } from "@lib/config/navbar.config";
 import { defaultSecurityConfig } from "@lib/security/security-config";
-import type { FileRecord, FileRecordInput } from "@lib/storage/file-record";
+import type {
+  FileRecord,
+  FileRecordDb,
+  FileRecordInput,
+} from "@lib/storage/file-record";
 import type { DatabaseService } from "./db";
 
 export class MockDatabaseService implements DatabaseService {
-  private files: FileRecord[] = [];
+  private files: FileRecordDb[] = [];
 
   async savePage() {}
   async deletePage() {}
@@ -29,21 +33,24 @@ export class MockDatabaseService implements DatabaseService {
   async saveSecurityConfig() {}
 
   async saveFile(file: FileRecordInput): Promise<FileRecord> {
-    const record: FileRecord = {
+    const record: FileRecordDb = {
       ...file,
       _id: crypto.randomUUID(),
       createdAt: new Date(),
     };
     this.files.push(record);
-    return record;
+    return { ...record, createdAt: record.createdAt.toISOString() };
   }
 
   async getFile(id: string): Promise<FileRecord | null> {
-    return this.files.find((f) => f._id === id) || null;
+    const found = this.files.find((f) => f._id === id);
+    return found ? { ...found, createdAt: found.createdAt.toISOString() } : null;
   }
 
   async getAllFiles(): Promise<FileRecord[]> {
-    return this.files;
+    return [...this.files]
+      .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
+      .map((f) => ({ ...f, createdAt: f.createdAt.toISOString() }));
   }
 
   async deleteFile(id: string): Promise<void> {

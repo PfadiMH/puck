@@ -71,26 +71,24 @@ export function FileManager({
   const handleSelect = useCallback(
     (id: string) => {
       setSelectedIds((prev) => {
-        let next: string[];
         if (multiple) {
-          next = prev.includes(id)
+          return prev.includes(id)
             ? prev.filter((i) => i !== id)
             : [...prev, id];
-        } else {
-          next = prev.includes(id) ? [] : [id];
         }
-
-        // Notify parent of selection
-        if (onSelect) {
-          const selectedFiles = files.filter((f) => next.includes(f._id));
-          onSelect(selectedFiles);
-        }
-
-        return next;
+        return prev.includes(id) ? [] : [id];
       });
     },
-    [multiple, onSelect, files]
+    [multiple]
   );
+
+  // Notify parent when selection changes
+  useEffect(() => {
+    if (onSelect) {
+      const selectedFiles = files.filter((f) => selectedIds.includes(f._id));
+      onSelect(selectedFiles);
+    }
+  }, [selectedIds, files, onSelect]);
 
   const handleDelete = useCallback(
     async (id: string) => {

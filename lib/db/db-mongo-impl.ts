@@ -5,7 +5,11 @@ import {
   defaultSecurityConfig,
   SecurityConfig,
 } from "@lib/security/security-config";
-import type { FileRecord, FileRecordInput } from "@lib/storage/file-record";
+import type {
+  FileRecord,
+  FileRecordDb,
+  FileRecordInput,
+} from "@lib/storage/file-record";
 import { Data } from "@measured/puck";
 import { Db, MongoClient } from "mongodb";
 import { DatabaseService } from "./db";
@@ -162,7 +166,7 @@ export class MongoService implements DatabaseService {
   }
 
   async saveFile(file: FileRecordInput): Promise<FileRecord> {
-    const record: FileRecord = {
+    const record: FileRecordDb = {
       ...file,
       _id: crypto.randomUUID(),
       createdAt: new Date(),
@@ -170,14 +174,19 @@ export class MongoService implements DatabaseService {
     await this.db
       .collection(this.filesCollectionName)
       .insertOne(record as unknown as Document);
-    return record;
+    return {
+      ...record,
+      createdAt: record.createdAt.toISOString(),
+    };
   }
 
   async getFile(id: string): Promise<FileRecord | null> {
     const result = await this.db
       .collection(this.filesCollectionName)
       .findOne({ _id: id } as Record<string, unknown>);
-    return (result as unknown as FileRecord) || null;
+    if (!result) return null;
+    const r = result as unknown as FileRecordDb;
+    return { ...r, createdAt: r.createdAt.toISOString() };
   }
 
   async getAllFiles(): Promise<FileRecord[]> {
@@ -186,7 +195,10 @@ export class MongoService implements DatabaseService {
       .find()
       .sort({ createdAt: -1 })
       .toArray();
-    return results as unknown as FileRecord[];
+    return (results as unknown as FileRecordDb[]).map((r) => ({
+      ...r,
+      createdAt: r.createdAt.toISOString(),
+    }));
   }
 
   async deleteFile(id: string): Promise<void> {

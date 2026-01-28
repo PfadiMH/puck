@@ -23,10 +23,13 @@ export async function DELETE(
       await deleteS3File(file.s3Key);
     } catch (err) {
       console.error("Failed to delete from S3:", err);
-      // Continue to delete metadata even if S3 fails
+      return NextResponse.json(
+        { error: "Failed to delete file from storage" },
+        { status: 502 }
+      );
     }
 
-    // Delete metadata
+    // Delete metadata only after S3 deletion succeeds
     await dbService.deleteFile(id);
 
     return NextResponse.json({ success: true });

@@ -25,7 +25,7 @@ function getS3Client(): S3Client | null {
 const s3Client = getS3Client();
 
 export function isStorageConfigured(): boolean {
-  return s3Client !== null && !!env.S3_BUCKET;
+  return s3Client !== null && !!env.S3_BUCKET && !!env.S3_PUBLIC_URL;
 }
 
 export async function uploadFile(

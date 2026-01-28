@@ -17,8 +17,9 @@ function FilePicker({
 }: CustomFieldRenderProps<FilePickerProps>) {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const handleSelect = (url: string) => {
-    onChange(url);
+  const handleSelect = (urls: string[] | string) => {
+    const first = Array.isArray(urls) ? urls[0] : urls;
+    onChange(first);
     setIsModalOpen(false);
   };
 

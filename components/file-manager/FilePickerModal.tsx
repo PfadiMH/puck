@@ -3,13 +3,13 @@
 import Button from "@components/ui/Button";
 import type { FileRecord } from "@lib/storage/file-record";
 import { X } from "lucide-react";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { FileManager } from "./FileManager";
 
 interface FilePickerModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSelect: (url: string) => void;
+  onSelect: (urls: string[] | string) => void;
   multiple?: boolean;
 }
 
@@ -21,18 +21,28 @@ export function FilePickerModal({
 }: FilePickerModalProps) {
   const [selectedFiles, setSelectedFiles] = useState<FileRecord[]>([]);
 
+  useEffect(() => {
+    if (isOpen) {
+      setSelectedFiles([]);
+    }
+  }, [isOpen]);
+
   const handleSelect = useCallback((files: FileRecord[]) => {
     setSelectedFiles(files);
   }, []);
 
   const handleConfirm = useCallback(() => {
     if (selectedFiles.length > 0) {
-      const file = selectedFiles[0];
-      const url = file.url || file.s3Key;
-      onSelect(url);
+      if (multiple) {
+        const urls = selectedFiles.map((f) => f.url || f.s3Key);
+        onSelect(urls);
+      } else {
+        const file = selectedFiles[0];
+        onSelect(file.url || file.s3Key);
+      }
       onClose();
     }
-  }, [selectedFiles, onSelect, onClose]);
+  }, [selectedFiles, onSelect, onClose, multiple]);
 
   if (!isOpen) return null;
 

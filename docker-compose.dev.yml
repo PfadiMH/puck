@@ -29,11 +29,11 @@ services:
       - minio
     entrypoint: >
       /bin/sh -c "
-      sleep 5;
-      mc alias set myminio http://minio:9000 minioadmin minioadmin;
+      until mc alias set myminio http://minio:9000 minioadmin minioadmin; do
+        sleep 1;
+      done;
       mc mb myminio/puck-files --ignore-existing;
       mc anonymous set public myminio/puck-files;
-      exit 0;
       "
 
 volumes:

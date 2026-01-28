@@ -2,7 +2,7 @@ import { FileManager } from "@components/file-manager";
 import { requireServerPermission } from "@lib/security/server-guard";
 
 export default async function AdminFilesPage() {
-  await requireServerPermission({ all: ["files:read"] });
+  await requireServerPermission({ all: ["files:read", "files:create", "files:delete"] });
 
   return (
     <main className="max-w-6xl mx-auto p-6">

@@ -15,11 +15,31 @@ export function FileUploader({
   const [isDragging, setIsDragging] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
 
+  const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
+  const allowedTypes = [
+    "image/jpeg",
+    "image/png",
+    "image/webp",
+    "image/gif",
+    "image/svg+xml",
+    "application/pdf",
+  ];
+
   const handleFile = useCallback(
     async (file: File) => {
+      if (file.size > MAX_FILE_SIZE) {
+        alert("File too large. Maximum size is 10MB.");
+        return;
+      }
+      if (!allowedTypes.includes(file.type)) {
+        alert("Invalid file type. Allowed: images and PDFs.");
+        return;
+      }
       setIsUploading(true);
       try {
         await onUpload(file);
+      } catch (err) {
+        alert(err instanceof Error ? err.message : "Upload failed");
       } finally {
         setIsUploading(false);
       }

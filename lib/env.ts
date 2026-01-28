@@ -37,4 +37,20 @@ export const env = createEnv({
   },
   skipValidation: !!process.env.SKIP_ENV_VALIDATION,
   emptyStringAsUndefined: true,
+  createFinalSchema: (shape) =>
+    z.object(shape).superRefine((v, ctx) => {
+      const s3Configured = [
+        v.S3_BUCKET,
+        v.S3_ENDPOINT,
+        v.S3_ACCESS_KEY_ID,
+        v.S3_SECRET_ACCESS_KEY,
+      ].some(Boolean);
+
+      if (s3Configured && !v.S3_PUBLIC_URL) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "S3_PUBLIC_URL is required when S3 storage is configured",
+        });
+      }
+    }),
 });
