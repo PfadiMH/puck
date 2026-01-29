@@ -56,7 +56,33 @@ test("renders empty content fallback", async () => {
     <richTextConfig.render {...createPuckProps()} content="" />
   );
 
-  expect(screen.container).toBeTruthy();
+  const richTextDiv = screen.container.querySelector(".rich-text");
+  expect(richTextDiv).toBeTruthy();
+  expect(richTextDiv?.innerHTML).toBe("");
+});
+
+test("sanitizes dangerous javascript: URLs", async () => {
+  const screen = await render(
+    <richTextConfig.render
+      {...createPuckProps()}
+      content='<p><a href="javascript:alert(1)">Click me</a></p>'
+    />
+  );
+
+  const link = screen.container.querySelector("a");
+  expect(link?.getAttribute("href")).not.toBe("javascript:alert(1)");
+});
+
+test("allows safe https URLs", async () => {
+  const screen = await render(
+    <richTextConfig.render
+      {...createPuckProps()}
+      content='<p><a href="https://example.com">Safe link</a></p>'
+    />
+  );
+
+  const link = screen.container.querySelector("a");
+  expect(link?.getAttribute("href")).toBe("https://example.com");
 });
 
 test("renders blockquote", async () => {
