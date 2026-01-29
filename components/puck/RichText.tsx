@@ -1,5 +1,6 @@
 import { richTextEditorField } from "@components/puck-fields/rich-text-editor";
 import { ComponentConfig } from "@measured/puck";
+import DOMPurify from "isomorphic-dompurify";
 
 export type RichTextProps = {
   content: string;
@@ -23,10 +24,37 @@ const richTextStyles = `
 `;
 
 function RichText({ content }: RichTextProps) {
+  const sanitizedContent = content
+    ? DOMPurify.sanitize(content, {
+        ALLOWED_TAGS: [
+          "p",
+          "br",
+          "strong",
+          "em",
+          "u",
+          "s",
+          "a",
+          "h2",
+          "h3",
+          "h4",
+          "ul",
+          "ol",
+          "li",
+          "blockquote",
+        ],
+        ALLOWED_ATTR: ["href", "target", "rel", "class"],
+        ALLOWED_URI_REGEXP:
+          /^(?:(?:https?|mailto|tel):|[^a-z]|[a-z+.\-]+(?:[^a-z+.\-:]|$))/i,
+      })
+    : "";
+
   return (
     <>
       <style>{richTextStyles}</style>
-      <div className="rich-text" dangerouslySetInnerHTML={{ __html: content }} />
+      <div
+        className="rich-text"
+        dangerouslySetInnerHTML={{ __html: sanitizedContent }}
+      />
     </>
   );
 }

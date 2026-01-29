@@ -91,7 +91,39 @@ function RichTextEditor({
       return;
     }
 
-    editor.chain().focus().extendMarkRange("link").setLink({ href: url }).run();
+    const trimmedUrl = url.trim();
+    const allowedProtocols = ["http:", "https:", "mailto:", "tel:"];
+
+    try {
+      const urlObj = new URL(trimmedUrl, window.location.origin);
+      const protocol = urlObj.protocol.toLowerCase();
+
+      if (!allowedProtocols.includes(protocol)) {
+        window.alert(
+          "Ungültiges URL-Protokoll. Erlaubt sind: http, https, mailto, tel"
+        );
+        return;
+      }
+    } catch {
+      if (
+        trimmedUrl.startsWith("/") ||
+        trimmedUrl.startsWith("./") ||
+        trimmedUrl.startsWith("../")
+      ) {
+      } else if (trimmedUrl.includes(":")) {
+        window.alert(
+          "Ungültiges URL-Protokoll. Erlaubt sind: http, https, mailto, tel"
+        );
+        return;
+      }
+    }
+
+    editor
+      .chain()
+      .focus()
+      .extendMarkRange("link")
+      .setLink({ href: trimmedUrl })
+      .run();
   };
 
   return (
