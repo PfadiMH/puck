@@ -1,9 +1,9 @@
 "use client";
-import SpinnerSvg from "@components/graphics/SpinnerSvg";
 import Button from "@components/ui/Button";
 import { toast } from "@components/ui/Toast";
 import { Config, usePuck, UserGenerics } from "@measured/puck";
 import { useMutation } from "@tanstack/react-query";
+import { Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import UndoRedoButtons from "./UndoRedoButtons";
 
@@ -45,7 +45,7 @@ function OtherHeaderActions<UserConfig extends Config>({
         disabled={isPending}
       >
         Save Changes
-        {isPending && <SpinnerSvg className="w-4 h-4" />}
+        {isPending && <Loader2 className="w-4 h-4 animate-spin" />}
       </Button>
     </div>
   );

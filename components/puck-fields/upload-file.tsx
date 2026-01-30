@@ -1,5 +1,5 @@
-import { UploadFileSvg } from "@components/graphics/UploadFileSvg";
 import { CustomFieldRenderProps } from "@lib/custom-field-types";
+import { Upload } from "lucide-react";
 import { CustomField } from "@measured/puck";
 
 type UploadFileProps = string | undefined;
@@ -31,7 +31,7 @@ function UploadFile({
         htmlFor={id}
         className="flex flex-col items-center justify-center w-full h-full"
       >
-        <UploadFileSvg />
+        <Upload className="w-12 h-12 text-gray-400" />
         <span className="mt-2 text-sm text-gray-600">
           Drag & drop or click to upload
         </span>

@@ -13,7 +13,8 @@ const { handlers, signIn, signOut, auth } = NextAuth({
     Keycloak({
       authorization: {
         params: {
-          scope: "openid profile email with_roles",
+          scope: "openid profile email roles",
+          ...(env.AUTH_KEYCLOAK_IDP_HINT && { kc_idp_hint: env.AUTH_KEYCLOAK_IDP_HINT }),
         },
       },
     }),

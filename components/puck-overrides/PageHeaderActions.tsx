@@ -1,5 +1,4 @@
 "use client";
-import SpinnerSvg from "@components/graphics/SpinnerSvg";
 import Button from "@components/ui/Button";
 import { DialogRoot, DialogTrigger } from "@components/ui/Dialog";
 import { toast } from "@components/ui/Toast";
@@ -8,6 +7,7 @@ import { deletePage, savePage } from "@lib/db/db-actions";
 import { queryClient } from "@lib/query-client";
 import { usePuck } from "@measured/puck";
 import { useMutation } from "@tanstack/react-query";
+import { Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import ConfirmModal from "../page/admin/ConfirmModal";
 import UndoRedoButtons from "./UndoRedoButtons";
@@ -77,7 +77,7 @@ function PageHeaderActions({ path }: PageHeaderActionsProps) {
         disabled={isPending}
       >
         Save Changes
-        {isPending && <SpinnerSvg className="w-4 h-4" />}
+        {isPending && <Loader2 className="w-4 h-4 animate-spin" />}
       </Button>
     </div>
   );
