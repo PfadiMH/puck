@@ -3,6 +3,7 @@ import type { NavbarData } from "@lib/config/navbar.config";
 import type { PageData } from "@lib/config/page.config";
 import { env } from "@lib/env";
 import type { SecurityConfig } from "@lib/security/security-config";
+import type { FileRecord, FileRecordInput } from "@lib/storage/file-record";
 import type { Data } from "@measured/puck";
 import { MockDatabaseService } from "./db-mock-impl";
 import { MongoService } from "./db-mongo-impl";
@@ -18,6 +19,11 @@ export interface DatabaseService {
   getAllPaths(): Promise<string[]>;
   getSecurityConfig(): Promise<SecurityConfig>;
   saveSecurityConfig(RoleConfig: SecurityConfig): Promise<void>;
+  // File management
+  saveFile(file: FileRecordInput): Promise<FileRecord>;
+  getFile(id: string): Promise<FileRecord | null>;
+  getAllFiles(): Promise<FileRecord[]>;
+  deleteFile(id: string): Promise<void>;
 }
 
 function getDatabaseService(): DatabaseService {
