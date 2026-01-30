@@ -3,8 +3,10 @@ import { createContext, useContext } from "react";
 
 export const SectionThemeContext = createContext<{
   theme: Theme;
+  isNested: boolean;
 }>({
   theme: "mud",
+  isNested: false,
 });
 
 /**
@@ -12,3 +14,4 @@ export const SectionThemeContext = createContext<{
  * client components with the `"use client"` pragma.
  */
 export const useSectionTheme = () => useContext(SectionThemeContext).theme;
+export const useIsNestedTheme = () => useContext(SectionThemeContext).isNested;
