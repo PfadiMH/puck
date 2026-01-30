@@ -4,6 +4,10 @@ import { HeadingProps, headingConfig } from "@components/puck/Heading";
 import { HeroProps, heroConfig } from "@components/puck/Hero";
 import { IFrameProps, iframeConfig } from "@components/puck/IFrame";
 import {
+  MultiColumnProps,
+  multiColumnConfig,
+} from "@components/puck/MultiColumn";
+import {
   SectionDividerProps,
   sectionDividerConfig,
 } from "@components/puck/SectionDivider";
@@ -22,6 +26,7 @@ export type PageProps = {
   Heading: HeadingProps;
   Hero: HeroProps;
   IFrame: IFrameProps;
+  MultiColumn: MultiColumnProps;
   SectionDivider: SectionDividerProps;
   Text: TextProps;
   VerticalSpace: VerticalSpaceProps;
@@ -40,6 +45,7 @@ export const pageConfig: PageConfig = sectionThemedConfig({
     Heading: headingConfig,
     Hero: heroConfig,
     IFrame: iframeConfig,
+    MultiColumn: multiColumnConfig,
     SectionDivider: sectionDividerConfig,
     Text: textConfig,
     VerticalSpace: verticalSpaceConfig,
