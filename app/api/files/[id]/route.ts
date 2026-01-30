@@ -8,8 +8,10 @@ export async function DELETE(
   _request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  // Auth check outside try/catch to let auth errors propagate
+  await requireServerPermission({ all: ["files:delete"] });
+  
   try {
-    await requireServerPermission({ all: ["files:delete"] });
     const { id } = await params;
     
     // Get file metadata

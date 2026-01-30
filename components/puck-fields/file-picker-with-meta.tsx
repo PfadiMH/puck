@@ -23,12 +23,21 @@ function FilePickerWithMeta({
   readOnly,
 }: CustomFieldRenderProps<FilePickerValue>) {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const handleSelect = (files: FileRecord[]) => {
     if (files.length > 0) {
       const file = files[0];
+      
+      // Guard against missing URL
+      if (!file.url) {
+        setError("Selected file has no valid URL");
+        return;
+      }
+      
+      setError(null);
       const selection: FileSelection = {
-        url: file.url || "",
+        url: file.url,
         size: file.size,
         filename: file.filename,
         contentType: file.contentType,
@@ -118,6 +127,10 @@ function FilePickerWithMeta({
           >
             Change file
           </button>
+        )}
+        
+        {error && (
+          <p className="text-sm text-red-500">{error}</p>
         )}
       </div>
 

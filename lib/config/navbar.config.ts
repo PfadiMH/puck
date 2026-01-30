@@ -16,18 +16,21 @@ export type NavbarProps = {
   NavbarItem: NavbarItemProps;
 };
 export type NavbarRootProps = {
-  logo?: FileSelection | null;
+  /** Logo can be FileSelection (new) or string (legacy base64/URL) for backward compatibility */
+  logo?: FileSelection | string | null;
 };
 export type NavbarConfig = Config<NavbarProps, NavbarRootProps>;
 export type NavbarData = Data<NavbarProps, NavbarRootProps>;
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const navbarConfig: NavbarConfig = {
   root: {
     fields: {
+      // Field outputs FileSelection, but we accept string for backward compatibility with legacy data
       logo: {
         ...filePickerWithMetaField,
         label: "Logo",
-      },
+      } as any,
     },
   },
   // @keep-sorted

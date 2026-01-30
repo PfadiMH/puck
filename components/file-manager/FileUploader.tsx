@@ -1,7 +1,7 @@
 "use client";
 
 import { Upload } from "lucide-react";
-import { useCallback, useState } from "react";
+import { useCallback, useId, useState } from "react";
 
 interface FileUploaderProps {
   onUpload: (file: File) => Promise<void>;
@@ -12,6 +12,7 @@ export function FileUploader({
   onUpload,
   accept = "image/*,application/pdf",
 }: FileUploaderProps) {
+  const inputId = useId();
   const [isDragging, setIsDragging] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
 
@@ -82,13 +83,13 @@ export function FileUploader({
       <input
         type="file"
         className="hidden"
-        id="file-upload"
+        id={inputId}
         accept={accept}
         onChange={handleChange}
         disabled={isUploading}
       />
       <label
-        htmlFor="file-upload"
+        htmlFor={inputId}
         className="flex flex-col items-center cursor-pointer"
       >
         <Upload className="w-10 h-10 text-gray-400 mb-2" />

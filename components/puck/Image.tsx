@@ -18,9 +18,9 @@ export type ImageProps = {
 const aspectRatioClasses: Record<AspectRatio, string> = {
   auto: "",
   "16:9": "aspect-video",
-  "4:3": "aspect-4/3",
+  "4:3": "aspect-[4/3]",
   "1:1": "aspect-square",
-  "3:2": "aspect-3/2",
+  "3:2": "aspect-[3/2]",
 };
 
 /**

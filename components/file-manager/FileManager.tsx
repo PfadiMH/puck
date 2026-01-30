@@ -24,19 +24,15 @@ export function FileManager({
   const [selectedIds, setSelectedIds] = useState<string[]>(initialSelectedIds);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [publicUrl, setPublicUrl] = useState("");
 
   const fetchFiles = useCallback(async () => {
+    // Clear previous error before new fetch
+    setError(null);
     try {
       const res = await fetch("/api/files");
       if (!res.ok) throw new Error("Failed to fetch files");
       const data: FileItem[] = await res.json();
       setFiles(data);
-      // Extract public URL from first file if available
-      if (data.length > 0 && data[0].url) {
-        const url = new URL(data[0].url);
-        setPublicUrl(`${url.protocol}//${url.host}`);
-      }
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to load files");
     } finally {
@@ -137,7 +133,6 @@ export function FileManager({
           selectedIds={selectedIds}
           onSelect={handleSelect}
           onDelete={handleDelete}
-          fallbackPublicUrl={publicUrl}
         />
       )}
     </div>

@@ -9,7 +9,6 @@ interface FileGridProps {
   selectedIds: string[];
   onSelect: (id: string) => void;
   onDelete: (id: string) => void;
-  fallbackPublicUrl?: string;
 }
 
 function blurhashToDataURL(blurhash: string): string {
@@ -17,12 +16,17 @@ function blurhashToDataURL(blurhash: string): string {
   return `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Crect fill='%23888'/%3E%3C/svg%3E`;
 }
 
+function formatFileSize(bytes: number): string {
+  if (bytes < 1024) return `${bytes} B`;
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+}
+
 export function FileGrid({
   files,
   selectedIds,
   onSelect,
   onDelete,
-  fallbackPublicUrl = "",
 }: FileGridProps) {
   const isImage = (contentType: string) => contentType.startsWith("image/");
 
@@ -30,8 +34,8 @@ export function FileGrid({
     <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
       {files.map((file) => {
         const isSelected = selectedIds.includes(file._id);
-        const url = file.url ||
-          (fallbackPublicUrl ? `${fallbackPublicUrl}/${file.s3Key}` : `/${file.s3Key}`);
+        // Only use the actual URL - never fabricate paths from s3Key
+        const url = file.url;
 
         return (
           <div
@@ -45,7 +49,7 @@ export function FileGrid({
           >
             {/* Preview */}
             <div className="aspect-square bg-gray-100 flex items-center justify-center">
-              {isImage(file.contentType) ? (
+              {isImage(file.contentType) && url ? (
                 <Image
                   src={url}
                   alt={file.filename}
@@ -65,7 +69,7 @@ export function FileGrid({
             <div className="p-2 bg-white">
               <p className="text-xs truncate text-gray-700">{file.filename}</p>
               <p className="text-xs text-gray-400">
-                {(file.size / 1024).toFixed(1)} KB
+                {formatFileSize(file.size)}
               </p>
             </div>
 

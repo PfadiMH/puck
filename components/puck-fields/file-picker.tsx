@@ -17,11 +17,20 @@ function FilePicker({
   readOnly,
 }: CustomFieldRenderProps<FilePickerProps>) {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const handleSelect = (files: FileRecord[]) => {
     if (files.length > 0) {
-      const url = files[0].url || files[0].s3Key;
-      onChange(url);
+      const file = files[0];
+      
+      // Only use the public URL, never the s3Key
+      if (!file.url) {
+        setError("Selected file has no valid URL");
+        return;
+      }
+      
+      setError(null);
+      onChange(file.url);
       setIsModalOpen(false);
     }
   };
@@ -30,8 +39,8 @@ function FilePicker({
     onChange(undefined);
   };
 
-  const isImage = value?.match(/\.(jpg|jpeg|png|gif|webp|svg)$/i) || 
-                  value?.includes("/images/");
+  // Check file extension only (removed fragile /images/ path check)
+  const isImage = value?.match(/\.(jpg|jpeg|png|gif|webp|svg)$/i);
 
   return (
     <>
@@ -88,6 +97,10 @@ function FilePicker({
           >
             Change file
           </button>
+        )}
+        
+        {error && (
+          <p className="text-sm text-red-500">{error}</p>
         )}
       </div>
 

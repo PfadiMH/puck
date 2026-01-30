@@ -103,6 +103,10 @@ export async function POST(request: NextRequest) {
     await uploadFile(s3Key, finalBuffer, contentType);
 
     // Save metadata to database
+    // Extract user identifier from session (id, email, or name)
+    const user = session.user;
+    const uploadedBy = user?.email || user?.name || "unknown";
+    
     const record = await dbService.saveFile({
       filename: file.name,
       s3Key,
@@ -111,11 +115,7 @@ export async function POST(request: NextRequest) {
       width,
       height,
       blurhash,
-      uploadedBy:
-        (session.user as any)?.id ||
-        (session.user as any)?.email ||
-        (session.user as any)?.name ||
-        "unknown",
+      uploadedBy,
     });
 
     return NextResponse.json({
