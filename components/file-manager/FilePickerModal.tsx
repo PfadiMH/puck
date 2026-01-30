@@ -9,7 +9,7 @@ import { FileManager } from "./FileManager";
 interface FilePickerModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSelect: (urls: string[] | string) => void;
+  onSelect: (files: FileRecord[]) => void;
   multiple?: boolean;
 }
 
@@ -33,16 +33,10 @@ export function FilePickerModal({
 
   const handleConfirm = useCallback(() => {
     if (selectedFiles.length > 0) {
-      if (multiple) {
-        const urls = selectedFiles.map((f) => f.url || f.s3Key);
-        onSelect(urls);
-      } else {
-        const file = selectedFiles[0];
-        onSelect(file.url || file.s3Key);
-      }
+      onSelect(selectedFiles);
       onClose();
     }
-  }, [selectedFiles, onSelect, onClose, multiple]);
+  }, [selectedFiles, onSelect, onClose]);
 
   if (!isOpen) return null;
 

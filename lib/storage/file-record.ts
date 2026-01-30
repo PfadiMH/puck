@@ -26,3 +26,17 @@ export interface FileRecord {
 }
 
 export type FileRecordInput = Omit<FileRecordDb, "_id" | "createdAt">;
+
+/**
+ * Subset of file metadata stored in Puck component props.
+ * Used by Image and DownloadButton components to access S3 file info.
+ */
+export type FileSelection = {
+  url: string;
+  size: number;
+  filename: string;
+  contentType: string;
+  blurhash?: string;
+  width?: number;
+  height?: number;
+};

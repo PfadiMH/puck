@@ -43,7 +43,7 @@ export function NavbarItemsDesktop({ data }: NavbarComponentsProps) {
       </div>
 
       <div className="relative w-28 h-28 mb-[-50px]">
-        {logo && <NavbarLogo logo={logo} />}
+        {logo?.url && <NavbarLogo logo={logo} />}
       </div>
 
       <div className="flex justify-start gap-4 flex-wrap mb-1">
