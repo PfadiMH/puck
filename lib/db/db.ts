@@ -3,7 +3,7 @@ import type { NavbarData } from "@lib/config/navbar.config";
 import type { PageData } from "@lib/config/page.config";
 import { env } from "@lib/env";
 import type { SecurityConfig } from "@lib/security/security-config";
-import type { Data } from "@measured/puck";
+import type { Data } from "@puckeditor/core";
 import { MockDatabaseService } from "./db-mock-impl";
 import { MongoService } from "./db-mongo-impl";
 

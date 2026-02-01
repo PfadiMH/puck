@@ -1,6 +1,6 @@
 import type { TextProps } from "@components/puck/Text";
 import { textConfig } from "@components/puck/Text";
-import type { Config, Data } from "@measured/puck";
+import type { Config, Data } from "@puckeditor/core";
 
 // @keep-sorted
 export type FooterProps = {
