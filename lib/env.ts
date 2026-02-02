@@ -9,6 +9,7 @@ export const env = createEnv({
     MONGODB_DB_NAME: z.string().min(1),
     MOCK_AUTH: z.string().optional(),
     NODE_ENV: z.enum(["development", "production", "test"]).optional(),
+    AUTH_KEYCLOAK_IDP_HINT: z.string().optional(),
   },
   client: {
     // Add NEXT_PUBLIC_ variables here
@@ -20,6 +21,7 @@ export const env = createEnv({
     MONGODB_DB_NAME: process.env.MONGODB_DB_NAME,
     MOCK_AUTH: process.env.MOCK_AUTH,
     NODE_ENV: process.env.NODE_ENV,
+    AUTH_KEYCLOAK_IDP_HINT: process.env.AUTH_KEYCLOAK_IDP_HINT,
   },
   skipValidation: !!process.env.SKIP_ENV_VALIDATION,
   emptyStringAsUndefined: true,

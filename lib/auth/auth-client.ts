@@ -4,19 +4,29 @@ import NextAuth from "next-auth";
 import Keycloak from "next-auth/providers/keycloak";
 import { getMockAuthProvider } from "./mock-auth-config";
 
-const USE_MOCK_AUTH = env.MOCK_AUTH === "true" && env.NODE_ENV !== "production";
+// MOCK_AUTH=true explicitly enables mock auth, regardless of NODE_ENV
+// This allows preview deployments to use mock auth with optimized production builds
+const USE_MOCK_AUTH = env.MOCK_AUTH === "true";
 
 const { handlers, signIn, signOut, auth } = NextAuth({
   basePath: "/auth",
   providers: [
     ...(USE_MOCK_AUTH ? [getMockAuthProvider()] : []),
-    Keycloak({
-      authorization: {
-        params: {
-          scope: "openid profile email with_roles",
-        },
-      },
-    }),
+    // Only include Keycloak when not using mock auth
+    ...(!USE_MOCK_AUTH
+      ? [
+          Keycloak({
+            authorization: {
+              params: {
+                scope: "openid profile email roles",
+                ...(env.AUTH_KEYCLOAK_IDP_HINT && {
+                  kc_idp_hint: env.AUTH_KEYCLOAK_IDP_HINT,
+                }),
+              },
+            },
+          }),
+        ]
+      : []),
   ],
   callbacks: {
     async jwt({ token, profile, user, trigger, session }) {
