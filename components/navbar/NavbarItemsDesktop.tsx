@@ -1,6 +1,6 @@
 import { NavbarLogo } from "@components/navbar/NavbarLogo";
 import { navbarConfig, NavbarData } from "@lib/config/navbar.config";
-import { Render } from "@measured/puck";
+import { Render } from "@puckeditor/core";
 
 export type NavbarComponentsProps = {
   data: NavbarData;

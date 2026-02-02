@@ -1,5 +1,5 @@
 import cn from "@lib/cn";
-import { usePuck } from "@measured/puck";
+import { usePuck } from "@puckeditor/core";
 import { Undo2, Redo2 } from "lucide-react";
 
 function UndoRedoButtons() {
