@@ -7,7 +7,7 @@ import {
   navbarItemConfig,
   NavbarItemProps,
 } from "@components/puck/navbar/NavbarItem";
-import type { Config, Data } from "@puckeditor/core";
+import type { Config, Data } from "@measured/puck";
 
 // @keep-sorted
 export type NavbarProps = {

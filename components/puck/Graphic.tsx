@@ -1,5 +1,5 @@
 import ParallaxRender from "@components/page/ParallaxRender";
-import { ComponentConfig, WithPuckProps } from "@puckeditor/core";
+import { ComponentConfig, WithPuckProps } from "@measured/puck";
 
 type GraphicType = "parallax" | "nothing";
 

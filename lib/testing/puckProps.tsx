@@ -1,4 +1,4 @@
-import { WithId, WithPuckProps } from "@puckeditor/core";
+import { WithId, WithPuckProps } from "@measured/puck";
 
 export function createPuckProps(): WithId<WithPuckProps<unknown>> {
   return {
@@ -7,7 +7,6 @@ export function createPuckProps(): WithId<WithPuckProps<unknown>> {
       renderDropZone: () => <></>,
       isEditing: false,
       dragRef: null,
-      metadata: {},
     },
   };
 }

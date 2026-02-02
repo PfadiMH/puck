@@ -1,6 +1,6 @@
 import { CustomFieldRenderProps } from "@lib/custom-field-types";
 import { Upload } from "lucide-react";
-import { CustomField } from "@puckeditor/core";
+import { CustomField } from "@measured/puck";
 
 type UploadFileProps = string | undefined;
 

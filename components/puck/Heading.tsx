@@ -1,4 +1,4 @@
-import { ComponentConfig } from "@puckeditor/core";
+import { ComponentConfig } from "@measured/puck";
 import { Property } from "csstype";
 import { createElement } from "react";
 

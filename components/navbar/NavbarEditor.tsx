@@ -7,8 +7,8 @@ import {
   NavbarData,
 } from "@lib/config/navbar.config";
 import { saveNavbar } from "@lib/db/db-actions";
-import { Puck } from "@puckeditor/core";
-import "@puckeditor/core/puck.css";
+import { Puck } from "@measured/puck";
+import "@measured/puck/puck.css";
 
 export function NavbarEditor({ data }: { data: NavbarData }) {
   return (

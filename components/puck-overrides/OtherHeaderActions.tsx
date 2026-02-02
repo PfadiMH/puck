@@ -1,7 +1,7 @@
 "use client";
 import Button from "@components/ui/Button";
 import { toast } from "@components/ui/Toast";
-import { Config, usePuck, UserGenerics } from "@puckeditor/core";
+import { Config, usePuck, UserGenerics } from "@measured/puck";
 import { useMutation } from "@tanstack/react-query";
 import { Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";

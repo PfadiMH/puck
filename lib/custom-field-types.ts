@@ -1,4 +1,4 @@
-import { CustomField } from "@puckeditor/core";
+import { CustomField } from "@measured/puck";
 
 export type CustomFieldRenderProps<Props extends any = {}> = {
   field: CustomField<Props>;

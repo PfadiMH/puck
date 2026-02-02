@@ -1,4 +1,4 @@
-import { ComponentConfig, WithPuckProps } from "@puckeditor/core";
+import { ComponentConfig, WithPuckProps } from "@measured/puck";
 
 export type FlexProps = {
   items: { minItemWidth?: number }[];

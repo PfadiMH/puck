@@ -1,4 +1,4 @@
-import { ComponentConfig } from "@puckeditor/core";
+import { ComponentConfig } from "@measured/puck";
 import React from "react";
 
 export type IFrameProps = {

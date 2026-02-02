@@ -2,8 +2,8 @@
 import PageHeaderActions from "@components/puck-overrides/PageHeaderActions";
 import PuckHeader from "@components/puck-overrides/PuckHeader";
 import { PageConfig, pageConfig, PageData } from "@lib/config/page.config";
-import { Puck, usePuck } from "@puckeditor/core";
-import "@puckeditor/core/puck.css";
+import { Puck, usePuck } from "@measured/puck";
+import "@measured/puck/puck.css";
 
 type HeaderTitleProps = {
   path: string;

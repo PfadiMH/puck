@@ -1,7 +1,7 @@
 "use client";
 import { PageConfig } from "@lib/config/page.config";
 import { applySectionTheming } from "@lib/section-theming";
-import { usePuck } from "@puckeditor/core";
+import { usePuck } from "@measured/puck";
 import { PropsWithChildren, useEffect, useMemo } from "react";
 
 /**

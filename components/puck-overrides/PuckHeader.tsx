@@ -2,7 +2,7 @@
 
 import cn from "@lib/cn";
 import { PageConfig } from "@lib/config/page.config";
-import { usePuck } from "@puckeditor/core";
+import { usePuck } from "@measured/puck";
 import { PanelLeft, PanelRight } from "lucide-react";
 import { ReactNode } from "react";
 import { CollapsibleMenu } from "./CollapsibleMenu";
