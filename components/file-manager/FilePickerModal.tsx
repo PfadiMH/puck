@@ -21,11 +21,25 @@ export function FilePickerModal({
 }: FilePickerModalProps) {
   const [selectedFiles, setSelectedFiles] = useState<FileRecord[]>([]);
 
+  // Reset selection when modal opens
   useEffect(() => {
     if (isOpen) {
       setSelectedFiles([]);
     }
   }, [isOpen]);
+
+  // Handle escape key to close modal (only attach listener when open)
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        onClose();
+      }
+    };
+    document.addEventListener("keydown", handleEscape);
+    return () => document.removeEventListener("keydown", handleEscape);
+  }, [isOpen, onClose]);
 
   const handleSelect = useCallback((files: FileRecord[]) => {
     setSelectedFiles(files);
@@ -61,6 +75,7 @@ export function FilePickerModal({
           <h2 className="text-lg font-semibold">Select File</h2>
           <button
             onClick={onClose}
+            aria-label="Close modal"
             className="p-1 hover:bg-gray-100 rounded"
           >
             <X className="w-5 h-5" />

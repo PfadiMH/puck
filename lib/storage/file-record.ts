@@ -9,6 +9,10 @@ export interface FileRecordDb {
   blurhash?: string;
   uploadedBy: string;
   createdAt: Date;
+  /** Virtual folder path, e.g. "/events/2024" or "/" for root */
+  folder?: string;
+  /** Freeform tags, normalized to lowercase */
+  tags?: string[];
 }
 
 export interface FileRecord {
@@ -23,6 +27,10 @@ export interface FileRecord {
   uploadedBy: string;
   createdAt: string;
   url?: string;
+  /** Virtual folder path, e.g. "/events/2024" or "/" for root */
+  folder?: string;
+  /** Freeform tags, normalized to lowercase */
+  tags?: string[];
 }
 
 export type FileRecordInput = Omit<FileRecordDb, "_id" | "createdAt">;

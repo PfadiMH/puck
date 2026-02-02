@@ -8,6 +8,20 @@ import type { Data } from "@measured/puck";
 import { MockDatabaseService } from "./db-mock-impl";
 import { MongoService } from "./db-mongo-impl";
 
+export interface FileQueryOptions {
+  folder?: string;
+  search?: string;
+  tags?: string[];
+  limit?: number;
+  cursor?: string; // _id of last item for cursor pagination
+}
+
+export interface FileQueryResult {
+  files: FileRecord[];
+  nextCursor: string | null;
+  total: number;
+}
+
 export interface DatabaseService {
   savePage(path: string, data: Data): Promise<void>;
   deletePage(path: string): Promise<void>;
@@ -23,7 +37,14 @@ export interface DatabaseService {
   saveFile(file: FileRecordInput): Promise<FileRecord>;
   getFile(id: string): Promise<FileRecord | null>;
   getAllFiles(): Promise<FileRecord[]>;
+  queryFiles(options: FileQueryOptions): Promise<FileQueryResult>;
+  countFiles(options: Omit<FileQueryOptions, "limit" | "cursor">): Promise<number>;
   deleteFile(id: string): Promise<void>;
+  updateFile(
+    id: string,
+    updates: { folder?: string; tags?: string[] }
+  ): Promise<FileRecord | null>;
+  getAllFolders(): Promise<string[]>;
 }
 
 function getDatabaseService(): DatabaseService {

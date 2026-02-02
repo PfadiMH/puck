@@ -65,10 +65,19 @@ function FilePicker({
           </div>
         ) : (
           <div
+            role="button"
+            tabIndex={readOnly ? -1 : 0}
+            aria-disabled={readOnly}
             className={`border-2 border-dashed border-gray-300 rounded-lg p-6 text-center ${
               readOnly ? "opacity-50" : "cursor-pointer hover:border-gray-400"
             }`}
             onClick={() => !readOnly && setIsModalOpen(true)}
+            onKeyDown={(e) => {
+              if (!readOnly && (e.key === "Enter" || e.key === " ")) {
+                e.preventDefault();
+                setIsModalOpen(true);
+              }
+            }}
           >
             <ImageIcon className="w-10 h-10 text-gray-400 mx-auto mb-2" />
             <p className="text-sm text-gray-600">

@@ -19,10 +19,13 @@ export async function processImage(buffer: Buffer): Promise<{
   }
 
   // Convert to WebP for better compression (keep original if already webp)
-  const processed = await image.webp({ quality: 85 }).toBuffer();
+  // Use clone() to avoid pipeline state issues
+  const processed = await image.clone().webp({ quality: 85 }).toBuffer();
 
   // Generate blurhash from a small version of the image
+  // Use clone() for independent pipeline
   const { data, info } = await image
+    .clone()
     .resize(32, 32, { fit: "inside" })
     .ensureAlpha()
     .raw()

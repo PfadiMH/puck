@@ -1,7 +1,8 @@
 "use client";
 
+import { ACCEPT_STRING, ALLOWED_TYPES, MAX_FILE_SIZE, MAX_FILE_SIZE_MB } from "@lib/files/constants";
 import { Upload } from "lucide-react";
-import { useCallback, useState } from "react";
+import { useCallback, useId, useState } from "react";
 
 interface FileUploaderProps {
   onUpload: (file: File) => Promise<void>;
@@ -10,28 +11,19 @@ interface FileUploaderProps {
 
 export function FileUploader({
   onUpload,
-  accept = "image/*,application/pdf",
+  accept = ACCEPT_STRING,
 }: FileUploaderProps) {
+  const inputId = useId();
   const [isDragging, setIsDragging] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
-
-  const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
-  const allowedTypes = [
-    "image/jpeg",
-    "image/png",
-    "image/webp",
-    "image/gif",
-    "image/svg+xml",
-    "application/pdf",
-  ];
 
   const handleFile = useCallback(
     async (file: File) => {
       if (file.size > MAX_FILE_SIZE) {
-        alert("File too large. Maximum size is 10MB.");
+        alert(`File too large. Maximum size is ${MAX_FILE_SIZE_MB}MB.`);
         return;
       }
-      if (!allowedTypes.includes(file.type)) {
+      if (!ALLOWED_TYPES.includes(file.type)) {
         alert("Invalid file type. Allowed: images and PDFs.");
         return;
       }
@@ -82,13 +74,13 @@ export function FileUploader({
       <input
         type="file"
         className="hidden"
-        id="file-upload"
+        id={inputId}
         accept={accept}
         onChange={handleChange}
         disabled={isUploading}
       />
       <label
-        htmlFor="file-upload"
+        htmlFor={inputId}
         className="flex flex-col items-center cursor-pointer"
       >
         <Upload className="w-10 h-10 text-gray-400 mb-2" />
@@ -100,7 +92,7 @@ export function FileUploader({
               Drop file here or click to upload
             </span>
             <span className="text-gray-400 text-sm mt-1">
-              Images (JPG, PNG, WebP, GIF, SVG) or PDF, max 10MB
+              Images (JPG, PNG, WebP, GIF, SVG) or PDF, max {MAX_FILE_SIZE_MB}MB
             </span>
           </>
         )}

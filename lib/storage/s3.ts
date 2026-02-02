@@ -73,8 +73,18 @@ export async function fileExists(key: string): Promise<boolean> {
       })
     );
     return true;
-  } catch {
-    return false;
+  } catch (err: unknown) {
+    // NotFound is expected when file doesn't exist
+    if (
+      err &&
+      typeof err === "object" &&
+      "name" in err &&
+      err.name === "NotFound"
+    ) {
+      return false;
+    }
+    // Re-throw unexpected errors (network, permissions, etc.)
+    throw err;
   }
 }
 
@@ -82,5 +92,10 @@ export function getPublicUrl(key: string): string {
   if (!env.S3_PUBLIC_URL) {
     throw new Error("S3_PUBLIC_URL not configured");
   }
-  return `${env.S3_PUBLIC_URL}/${key}`;
+  // Encode path segments while preserving slashes
+  const encodedKey = key
+    .split("/")
+    .map(encodeURIComponent)
+    .join("/");
+  return `${env.S3_PUBLIC_URL}/${encodedKey}`;
 }

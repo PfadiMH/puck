@@ -6,7 +6,7 @@ import type {
   FileRecordDb,
   FileRecordInput,
 } from "@lib/storage/file-record";
-import type { DatabaseService } from "./db";
+import type { DatabaseService, FileQueryOptions, FileQueryResult } from "./db";
 
 export class MockDatabaseService implements DatabaseService {
   private files: FileRecordDb[] = [];
@@ -53,7 +53,88 @@ export class MockDatabaseService implements DatabaseService {
       .map((f) => ({ ...f, createdAt: f.createdAt.toISOString() }));
   }
 
+  private filterFiles(options: Omit<FileQueryOptions, "limit" | "cursor">): FileRecordDb[] {
+    return this.files.filter((f) => {
+      if (options.folder && options.folder !== "/" && f.folder !== options.folder) {
+        return false;
+      }
+      if (options.search) {
+        const searchLower = options.search.toLowerCase();
+        const matchesFilename = f.filename.toLowerCase().includes(searchLower);
+        const matchesTags = f.tags?.some((t) => t.toLowerCase().includes(searchLower));
+        if (!matchesFilename && !matchesTags) return false;
+      }
+      if (options.tags && options.tags.length > 0) {
+        if (!f.tags || !options.tags.some((t) => f.tags?.includes(t))) {
+          return false;
+        }
+      }
+      return true;
+    });
+  }
+
+  async queryFiles(options: FileQueryOptions): Promise<FileQueryResult> {
+    const limit = options.limit || 50;
+    let filtered = this.filterFiles(options);
+
+    // Sort by createdAt descending
+    filtered.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
+
+    const total = filtered.length;
+
+    // Apply cursor pagination
+    if (options.cursor) {
+      const cursorIndex = filtered.findIndex((f) => f._id === options.cursor);
+      if (cursorIndex !== -1) {
+        filtered = filtered.slice(cursorIndex + 1);
+      }
+    }
+
+    // Apply limit
+    const page = filtered.slice(0, limit);
+    const nextCursor = page.length === limit && filtered.length > limit ? page[page.length - 1]._id : null;
+
+    return {
+      files: page.map((f) => ({ ...f, createdAt: f.createdAt.toISOString() })),
+      nextCursor,
+      total,
+    };
+  }
+
+  async countFiles(options: Omit<FileQueryOptions, "limit" | "cursor">): Promise<number> {
+    return this.filterFiles(options).length;
+  }
+
   async deleteFile(id: string): Promise<void> {
     this.files = this.files.filter((f) => f._id !== id);
+  }
+
+  async updateFile(
+    id: string,
+    updates: { folder?: string; tags?: string[] }
+  ): Promise<FileRecord | null> {
+    const index = this.files.findIndex((f) => f._id === id);
+    if (index === -1) return null;
+
+    this.files[index] = {
+      ...this.files[index],
+      ...updates,
+    };
+
+    return {
+      ...this.files[index],
+      createdAt: this.files[index].createdAt.toISOString(),
+    };
+  }
+
+  async getAllFolders(): Promise<string[]> {
+    const folders = new Set<string>();
+    folders.add("/"); // Always include root
+    for (const file of this.files) {
+      if (file.folder) {
+        folders.add(file.folder);
+      }
+    }
+    return [...folders].sort();
   }
 }
