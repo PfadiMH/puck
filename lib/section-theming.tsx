@@ -1,7 +1,7 @@
 import { PuckSectionThemeUpdater } from "@components/misc/PuckSectionThemeUpdater";
 import { SectionThemedComponent } from "@components/page/SectionThemedComponent";
 import { PageConfig, PageData } from "@lib/config/page.config";
-import { WithId, WithPuckProps } from "@measured/puck";
+import { WithId, WithPuckProps } from "@puckeditor/core";
 import { ComponentProps, JSX, PropsWithChildren } from "react";
 import { mapObjectEntries } from "./typed-object-entries";
 

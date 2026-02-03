@@ -10,7 +10,7 @@ import type {
   FileRecordDb,
   FileRecordInput,
 } from "@lib/storage/file-record";
-import { Data } from "@measured/puck";
+import { Data } from "@puckeditor/core";
 import { Db, Filter, MongoClient } from "mongodb";
 import { DatabaseService, FileQueryOptions, FileQueryResult } from "./db";
 
