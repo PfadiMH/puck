@@ -1,4 +1,4 @@
-import { ComponentConfig, WithPuckProps } from "@measured/puck";
+import { ComponentConfig, WithPuckProps } from "@puckeditor/core";
 
 export type CardVariant = "elevated" | "outlined" | "filled";
 export type CardSpacing = "none" | "small" | "medium" | "large";
