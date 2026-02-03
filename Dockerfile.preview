@@ -1,0 +1,102 @@
+# Dockerfile.preview
+# All-in-one container for PR preview deployments
+# Contains: Puck App + MongoDB + MinIO
+#
+# Usage: docker build -f Dockerfile.preview -t puck-preview .
+
+FROM ubuntu:22.04
+
+# Prevent interactive prompts during package installation
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Install dependencies
+RUN apt-get update && apt-get install -y \
+    curl \
+    gnupg \
+    supervisor \
+    ca-certificates \
+    unzip \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install MongoDB 7.0
+RUN curl -fsSL https://www.mongodb.org/static/pgp/server-7.0.asc | gpg --dearmor -o /usr/share/keyrings/mongodb-server-7.0.gpg \
+    && echo "deb [ signed-by=/usr/share/keyrings/mongodb-server-7.0.gpg ] https://repo.mongodb.org/apt/ubuntu jammy/mongodb-org/7.0 multiverse" > /etc/apt/sources.list.d/mongodb-org-7.0.list \
+    && apt-get update \
+    && apt-get install -y mongodb-org \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install MinIO (auto-detect architecture)
+RUN ARCH=$(dpkg --print-architecture) && \
+    if [ "$ARCH" = "arm64" ]; then MINIO_ARCH="linux-arm64"; else MINIO_ARCH="linux-amd64"; fi && \
+    curl -fsSL https://dl.min.io/server/minio/release/${MINIO_ARCH}/minio -o /usr/local/bin/minio && \
+    chmod +x /usr/local/bin/minio
+
+# Install MinIO Client (mc) for bucket creation (auto-detect architecture)
+RUN ARCH=$(dpkg --print-architecture) && \
+    if [ "$ARCH" = "arm64" ]; then MC_ARCH="linux-arm64"; else MC_ARCH="linux-amd64"; fi && \
+    curl -fsSL https://dl.min.io/client/mc/release/${MC_ARCH}/mc -o /usr/local/bin/mc && \
+    chmod +x /usr/local/bin/mc
+
+# Install Bun
+RUN curl -fsSL https://bun.sh/install | bash
+ENV PATH="/root/.bun/bin:${PATH}"
+
+# Create necessary directories
+RUN mkdir -p /data/db /data/minio /var/log/supervisor
+
+# Set working directory
+WORKDIR /app
+
+# Copy package files first for better caching
+COPY package.json bun.lock* ./
+
+# Install dependencies
+RUN bun install
+
+# Copy application code
+COPY . .
+
+# Build the application
+ENV SKIP_ENV_VALIDATION=true
+RUN bun run build
+
+# Copy supervisor configuration
+COPY supervisord.preview.conf /etc/supervisor/conf.d/supervisord.conf
+
+# Copy initialization script
+COPY scripts/preview-init.sh /usr/local/bin/preview-init.sh
+RUN chmod +x /usr/local/bin/preview-init.sh
+
+# Environment variables for preview (with sensible defaults)
+# These can be overridden via Dokploy environment configuration
+ENV NODE_ENV=production
+ENV MONGODB_CONNECTION_STRING=mongodb://localhost:27017
+ENV MONGODB_DB_NAME=puck-preview
+ENV S3_ENDPOINT=http://localhost:9000
+ENV S3_REGION=us-east-1
+ENV S3_BUCKET=puck-preview
+ENV AUTH_TRUST_HOST=true
+ENV MOCK_AUTH=true
+
+# MinIO credentials (internal to container, not exposed)
+ENV MINIO_ROOT_USER=minioadmin
+ENV MINIO_ROOT_PASSWORD=minioadmin
+ENV S3_ACCESS_KEY_ID=minioadmin
+ENV S3_SECRET_ACCESS_KEY=minioadmin
+
+# AUTH_SECRET must be provided at runtime
+# AUTH_URL and INTERNAL_API_BASE_URL will use DOKPLOY_DEPLOY_URL
+
+# Expose ports
+# 3000 = Puck app (main)
+# 27017 = MongoDB (internal)
+# 9000 = MinIO API (internal)
+# 9001 = MinIO Console (internal)
+EXPOSE 3000
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
+    CMD curl -f http://localhost:3000/login || exit 1
+
+# Start all services via supervisor
+CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
