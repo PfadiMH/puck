@@ -2,7 +2,7 @@
 
 import { FilePickerModal } from "@components/file-manager/FilePickerModal";
 import { CustomFieldRenderProps } from "@lib/custom-field-types";
-import { CustomField } from "@measured/puck";
+import { CustomField } from "@puckeditor/core";
 import { ImageIcon, X } from "lucide-react";
 import Image from "next/image";
 import { useState } from "react";
