@@ -6,12 +6,14 @@ import { pageConfig, PageData } from "@lib/config/page.config";
 import { Render } from "@puckeditor/core";
 
 export interface PageRenderProps {
+  path: string;
   navbarData: NavbarData;
   pageData: PageData;
   footerData: FooterData;
 }
 
 async function PageRender({
+  path,
   navbarData,
   pageData,
   footerData,

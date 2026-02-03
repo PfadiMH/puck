@@ -50,6 +50,7 @@ export default async function Page({ params }: { params: Params }) {
   return (
     <PageRender
       {...{
+        path,
         navbarData,
         pageData,
         footerData,
