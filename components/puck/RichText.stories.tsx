@@ -25,6 +25,7 @@ const defaultPuckProps = {
     renderDropZone: () => null,
     isEditing: false,
     dragRef: null,
+    metadata: {},
   },
 };
 
@@ -39,65 +40,32 @@ export const Default: Story = {
 export const WithHeadings: Story = {
   args: {
     ...defaultPuckProps,
-    content: `
-      <h2>Main Heading</h2>
-      <p>Some introductory text here.</p>
-      <h3>Sub Heading</h3>
-      <p>More detailed content follows.</p>
-      <h4>Smaller Heading</h4>
-      <p>Even more specific information.</p>
-    `,
+    content:
+      "<h2>Main Heading</h2><p>Some introductory text here.</p><h3>Sub Heading</h3><p>More detailed content follows.</p>",
   },
 };
 
 export const WithLists: Story = {
   args: {
     ...defaultPuckProps,
-    content: `
-      <h3>Unordered List</h3>
-      <ul>
-        <li>First item</li>
-        <li>Second item</li>
-        <li>Third item</li>
-      </ul>
-      <h3>Ordered List</h3>
-      <ol>
-        <li>Step one</li>
-        <li>Step two</li>
-        <li>Step three</li>
-      </ol>
-    `,
-  },
-};
-
-export const WithFormatting: Story = {
-  args: {
-    ...defaultPuckProps,
-    content: `
-      <p>This text has <strong>bold</strong> and <em>italic</em> formatting.</p>
-      <p>You can also combine <strong><em>both styles</em></strong> together.</p>
-    `,
+    content:
+      "<h3>Unordered List</h3><ul><li>First item</li><li>Second item</li></ul><h3>Ordered List</h3><ol><li>Step one</li><li>Step two</li></ol>",
   },
 };
 
 export const WithLinks: Story = {
   args: {
     ...defaultPuckProps,
-    content: `
-      <p>Check out <a href="https://example.com">this link</a> for more information.</p>
-      <p>You can also visit <a href="https://pfadimh.ch">our website</a>.</p>
-    `,
+    content:
+      '<p>Check out <a href="https://example.com">this link</a> for more information.</p>',
   },
 };
 
 export const WithBlockquote: Story = {
   args: {
     ...defaultPuckProps,
-    content: `
-      <p>Here is an important quote:</p>
-      <blockquote><p>The best way to predict the future is to create it.</p></blockquote>
-      <p>This was said by a wise person.</p>
-    `,
+    content:
+      "<p>Here is an important quote:</p><blockquote><p>The best way to predict the future is to create it.</p></blockquote>",
   },
 };
 
@@ -111,13 +79,7 @@ export const MudTheme: Story = {
   ],
   args: {
     ...defaultPuckProps,
-    content: `
-      <h2>Mud Theme Example</h2>
-      <p>This demonstrates the <strong>rich text</strong> component in the mud theme.</p>
-      <ul>
-        <li>Styled list item</li>
-        <li>Another item with <a href="#">a link</a></li>
-      </ul>
-    `,
+    content:
+      "<h2>Mud Theme Example</h2><p>This demonstrates the <strong>rich text</strong> component in the mud theme.</p>",
   },
 };
