@@ -1,7 +1,7 @@
 import { datePickerField } from "@components/puck-fields/date-picker";
 import { timePickerField } from "@components/puck-fields/time-picker";
 import { uploadFileField } from "@components/puck-fields/upload-file";
-import { ComponentConfig } from "@measured/puck";
+import { ComponentConfig } from "@puckeditor/core";
 import { Calendar, Clock, MapPin, Backpack, Info } from "lucide-react";
 import Image from "next/image";
 

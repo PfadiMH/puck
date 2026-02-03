@@ -1,7 +1,7 @@
 "use client";
 
 import { CustomFieldRenderProps } from "@lib/custom-field-types";
-import { CustomField } from "@measured/puck";
+import { CustomField } from "@puckeditor/core";
 
 type TimePickerProps = string;
 
