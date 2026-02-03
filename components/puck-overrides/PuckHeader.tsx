@@ -38,10 +38,11 @@ function PuckHeader({ headerTitle, headerActions }: PuckHeaderProps) {
     <header
       className={cn(
         styles.header,
-        "relative flex justify-between items-center px-4 py-2 gap-4 border-b-2 border-primary"
+        "relative flex justify-between items-center px-2 sm:px-4 py-2 gap-2 sm:gap-4 border-b-2 border-primary"
       )}
     >
-      <div className="flex gap-2">
+      {/* Sidebar toggles */}
+      <div className="flex gap-1 sm:gap-2 shrink-0">
         <button
           className="w-6 h-6 cursor-pointer"
           onClick={toggleLeftSideBar}
@@ -60,10 +61,14 @@ function PuckHeader({ headerTitle, headerActions }: PuckHeaderProps) {
         </button>
       </div>
 
-      <div>
-        <h1 className="text-lg font-bold">{headerTitle}</h1>
+      {/* Title - Truncate on small screens */}
+      <div className="min-w-0 flex-1 sm:flex-none text-center sm:text-left">
+        <h1 className="text-base sm:text-lg font-bold truncate max-w-[120px] sm:max-w-none">
+          {headerTitle}
+        </h1>
       </div>
 
+      {/* Collapsible menu for actions */}
       <CollapsibleMenu>{headerActions}</CollapsibleMenu>
     </header>
   );

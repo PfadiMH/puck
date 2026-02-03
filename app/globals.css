@@ -98,6 +98,11 @@
     @apply text-2xl;
   }
 }
+/* Reset Puck editor UI colors (prevent theme color inheritance) */
+body .puck-editor-wrapper {
+  color: #5a5a5a;
+}
+
 @layer components {
   .content-main {
     --gap: clamp(2rem, 6vw, 3rem);
