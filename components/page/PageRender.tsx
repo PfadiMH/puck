@@ -23,7 +23,7 @@ async function PageRender({
       <NavbarRender data={navbarData} />
       <Render config={pageConfig} data={pageData} />
       <Render config={footerConfig} data={footerData} />
-      <EditPageButton path={path} />
+      <EditPageButton />
     </>
   );
 }
