@@ -68,7 +68,7 @@ function PuckHeader({ headerTitle, headerActions }: PuckHeaderProps) {
         </h1>
       </div>
 
-      {/* Collapsible menu for actions */}
+{/* Collapsible menu for actions */}
       <CollapsibleMenu>{headerActions}</CollapsibleMenu>
     </header>
   );
