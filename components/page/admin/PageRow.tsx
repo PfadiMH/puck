@@ -45,7 +45,7 @@ function PageRow({ page, variant = "table" }: PageRowProps) {
             <PermissionGuard policy={{ all: ["page:delete"] }}>
               <DialogRoot>
                 <DialogTrigger>
-                  <button className="p-1 px-3 text-xs font-bold uppercase rounded border border-red-500/40 text-red-500/80 hover:bg-red-500/10 transition-colors">
+                  <button type="button" className="p-1 px-3 text-xs font-bold uppercase rounded border border-red-500/40 text-red-500/80 hover:bg-red-500/10 transition-colors">
                     Delete
                   </button>
                 </DialogTrigger>
@@ -87,7 +87,7 @@ function PageRow({ page, variant = "table" }: PageRowProps) {
         <PermissionGuard policy={{ all: ["page:delete"] }}>
           <DialogRoot>
             <DialogTrigger>
-              <button className="h-8 px-4 text-xs font-bold uppercase rounded border border-red-500/40 text-red-500/80 hover:bg-red-500/10 transition-colors">
+              <button type="button" className="h-8 px-4 text-xs font-bold uppercase rounded border border-red-500/40 text-red-500/80 hover:bg-red-500/10 transition-colors">
                 Delete
               </button>
             </DialogTrigger>
