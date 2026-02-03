@@ -12,19 +12,21 @@ import "@puckeditor/core/puck.css";
 
 export function FooterEditor({ data }: { data: FooterData }) {
   return (
-    <Puck
-      config={footerConfig}
-      data={data}
-      overrides={{
-        header: () => (
-          <PuckHeader
-            headerTitle="Editing Footer"
-            headerActions={
-              <OtherHeaderActions<FooterConfig> saveData={saveFooter} />
-            }
-          />
-        ),
-      }}
-    />
+    <div className="puck-editor-wrapper">
+      <Puck
+        config={footerConfig}
+        data={data}
+        overrides={{
+          header: () => (
+            <PuckHeader
+              headerTitle="Editing Footer"
+              headerActions={
+                <OtherHeaderActions<FooterConfig> saveData={saveFooter} />
+              }
+            />
+          ),
+        }}
+      />
+    </div>
   );
 }
