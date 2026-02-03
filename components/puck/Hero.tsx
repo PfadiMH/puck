@@ -1,6 +1,6 @@
 import { PostHeroSvg } from "@components/graphics/PostHeroSvg";
 import { uploadFileField } from "@components/puck-fields/upload-file";
-import { ComponentConfig } from "@measured/puck";
+import { ComponentConfig } from "@puckeditor/core";
 import Image from "next/image";
 
 export type HeroProps = {

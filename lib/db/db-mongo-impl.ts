@@ -5,7 +5,7 @@ import {
   defaultSecurityConfig,
   SecurityConfig,
 } from "@lib/security/security-config";
-import { Data } from "@measured/puck";
+import { Data } from "@puckeditor/core";
 import { Db, MongoClient } from "mongodb";
 import { DatabaseService } from "./db";
 
