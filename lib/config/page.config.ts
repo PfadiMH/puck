@@ -14,7 +14,7 @@ import {
   verticalSpaceConfig,
 } from "@components/puck/VerticalSpace";
 import { sectionThemedConfig } from "@lib/section-theming";
-import type { Config, Data } from "@measured/puck";
+import type { Config, Data } from "@puckeditor/core";
 
 // @keep-sorted
 export type PageProps = {
