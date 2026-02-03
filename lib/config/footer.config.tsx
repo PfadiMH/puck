@@ -1,4 +1,8 @@
 import {
+  footerColumnsConfig,
+  FooterColumnsProps,
+} from "@components/puck/footer/FooterColumns";
+import {
   footerLinkGroupConfig,
   FooterLinkGroupProps,
 } from "@components/puck/footer/FooterLinkGroup";
@@ -11,6 +15,7 @@ import type { PropsWithChildren } from "react";
 
 // @keep-sorted
 export type FooterProps = {
+  FooterColumns: FooterColumnsProps;
   FooterLinkGroup: FooterLinkGroupProps;
   FooterText: FooterTextProps;
 };
@@ -19,38 +24,7 @@ export type FooterConfig = Config<FooterProps, FooterRootProps>;
 export type FooterData = Data<FooterProps, FooterRootProps>;
 
 function FooterRoot({ children }: PropsWithChildren) {
-  return (
-    <>
-      <style>{`
-        /* Live site styles */
-        .puck-footer-grid {
-          display: grid;
-          grid-template-columns: 1fr;
-          gap: 2rem;
-          width: 100%;
-          justify-items: center;
-          text-align: center;
-        }
-
-        .puck-footer-grid > div {
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          width: 100%;
-        }
-
-        @media (min-width: 640px) {
-          .puck-footer-grid { grid-template-columns: repeat(2, 1fr); }
-        }
-        @media (min-width: 1024px) {
-          .puck-footer-grid { grid-template-columns: repeat(3, 1fr); }
-        }
-      `}</style>
-      <div className="puck-footer-grid">
-        {children}
-      </div>
-    </>
-  );
+  return <div className="w-full">{children}</div>;
 }
 
 export const footerConfig: FooterConfig = {
@@ -59,13 +33,22 @@ export const footerConfig: FooterConfig = {
   },
   // @keep-sorted
   components: {
+    FooterColumns: footerColumnsConfig,
     FooterLinkGroup: footerLinkGroupConfig,
     FooterText: footerTextConfig,
   },
 };
 
 export const defaultFooterData: FooterData = {
-  content: [],
+  content: [
+    {
+      type: "FooterColumns",
+      props: {
+        id: "footer-columns-1",
+        columns: [{ id: "1" }, { id: "2" }, { id: "3" }],
+      },
+    },
+  ],
   root: {
     props: {},
   },
