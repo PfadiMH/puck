@@ -1,8 +1,10 @@
+import { FooterRender } from "@components/footer/FooterRender";
 import { NavbarRender } from "@components/navbar/NavbarRender";
 import { EditPageButton } from "@components/page/EditPageButton";
-import { footerConfig, FooterData } from "@lib/config/footer.config";
+import { FooterData } from "@lib/config/footer.config";
 import { NavbarData } from "@lib/config/navbar.config";
 import { pageConfig, PageData } from "@lib/config/page.config";
+import { getLastSectionTheme } from "@lib/section-theming";
 import { Render } from "@puckeditor/core";
 
 export interface PageRenderProps {
@@ -16,11 +18,15 @@ async function PageRender({
   pageData,
   footerData,
 }: PageRenderProps) {
+  // Footer theme is the opposite of the last section's theme
+  const lastSectionTheme = getLastSectionTheme(pageData);
+  const footerTheme = lastSectionTheme === "sun" ? "mud" : "sun";
+
   return (
     <>
       <NavbarRender data={navbarData} />
       <Render config={pageConfig} data={pageData} />
-      <Render config={footerConfig} data={footerData} />
+<FooterRender data={footerData} theme={footerTheme} />
       <EditPageButton />
     </>
   );
