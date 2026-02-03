@@ -1,6 +1,6 @@
 import { footerConfig, FooterData } from "@lib/config/footer.config";
 import { Theme } from "@lib/section-theming";
-import { Render } from "@measured/puck";
+import { Render } from "@puckeditor/core";
 
 type FooterRenderProps = {
   data: FooterData;

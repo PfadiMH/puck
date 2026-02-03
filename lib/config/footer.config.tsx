@@ -6,7 +6,7 @@ import {
   footerTextConfig,
   FooterTextProps,
 } from "@components/puck/footer/FooterText";
-import type { Config, Data } from "@measured/puck";
+import type { Config, Data } from "@puckeditor/core";
 import type { PropsWithChildren } from "react";
 
 // @keep-sorted
