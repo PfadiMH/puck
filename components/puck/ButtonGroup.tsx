@@ -1,7 +1,7 @@
 import Button from "@components/ui/Button";
 import { uploadFileField } from "@components/puck-fields/upload-file";
 import cn from "@lib/cn";
-import { ComponentConfig } from "@measured/puck";
+import { ComponentConfig } from "@puckeditor/core";
 import Image from "next/image";
 import Link from "next/link";
 
