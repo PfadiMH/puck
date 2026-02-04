@@ -1,42 +1,12 @@
-import { ComponentConfig, WithPuckProps } from "@measured/puck";
-
-export type LayoutPreset =
-  | "50 / 50"
-  | "33 / 67"
-  | "67 / 33"
-  | "25 / 75"
-  | "75 / 25"
-  | "33 / 33 / 33"
-  | "25 / 50 / 25"
-  | "50 / 25 / 25"
-  | "25 / 25 / 50"
-  | "25 / 25 / 25 / 25";
+import { ComponentConfig, WithPuckProps } from "@puckeditor/core";
 
 export type MultiColumnProps = {
-  layout: LayoutPreset;
-  gap: "none" | "small" | "medium" | "large";
+  layout: number[];
+  gap: string;
   stackOnMobile: boolean;
 };
 
-const layoutPresets: Record<LayoutPreset, number[]> = {
-  "50 / 50": [1, 1],
-  "33 / 67": [1, 2],
-  "67 / 33": [2, 1],
-  "25 / 75": [1, 3],
-  "75 / 25": [3, 1],
-  "33 / 33 / 33": [1, 1, 1],
-  "25 / 50 / 25": [1, 2, 1],
-  "50 / 25 / 25": [2, 1, 1],
-  "25 / 25 / 50": [1, 1, 2],
-  "25 / 25 / 25 / 25": [1, 1, 1, 1],
-};
-
-const gapValues = {
-  none: "0",
-  small: "0.5rem",
-  medium: "1rem",
-  large: "2rem",
-};
+const DEFAULT_LAYOUT = [1, 1];
 
 function MultiColumn({
   layout,
@@ -44,7 +14,7 @@ function MultiColumn({
   stackOnMobile,
   puck: { renderDropZone: DropZone },
 }: WithPuckProps<MultiColumnProps>) {
-  const columns = layoutPresets[layout] ?? layoutPresets["50 / 50"];
+  const columns = Array.isArray(layout) ? layout : DEFAULT_LAYOUT;
   const gridTemplateColumns = columns.map((ratio) => `${ratio}fr`).join(" ");
 
   return (
@@ -53,7 +23,7 @@ function MultiColumn({
       style={{
         display: "grid",
         gridTemplateColumns,
-        gap: gapValues[gap],
+        gap,
         alignItems: "start",
       }}
     >
@@ -70,8 +40,8 @@ export const multiColumnConfig: ComponentConfig<MultiColumnProps> = {
   label: "Multi Column",
   render: MultiColumn,
   defaultProps: {
-    layout: "50 / 50",
-    gap: "medium",
+    layout: [1, 1],
+    gap: "1rem",
     stackOnMobile: true,
   },
   fields: {
@@ -79,26 +49,26 @@ export const multiColumnConfig: ComponentConfig<MultiColumnProps> = {
       type: "select",
       label: "Layout",
       options: [
-        { label: "2 Columns - Equal", value: "50 / 50" },
-        { label: "2 Columns - Narrow | Wide", value: "33 / 67" },
-        { label: "2 Columns - Wide | Narrow", value: "67 / 33" },
-        { label: "2 Columns - Sidebar | Main", value: "25 / 75" },
-        { label: "2 Columns - Main | Sidebar", value: "75 / 25" },
-        { label: "3 Columns - Equal", value: "33 / 33 / 33" },
-        { label: "3 Columns - Narrow | Wide | Narrow", value: "25 / 50 / 25" },
-        { label: "3 Columns - Wide | Narrow | Narrow", value: "50 / 25 / 25" },
-        { label: "3 Columns - Narrow | Narrow | Wide", value: "25 / 25 / 50" },
-        { label: "4 Columns - Equal", value: "25 / 25 / 25 / 25" },
+        { label: "2 Columns - Equal", value: [1, 1] },
+        { label: "2 Columns - Narrow | Wide", value: [1, 2] },
+        { label: "2 Columns - Wide | Narrow", value: [2, 1] },
+        { label: "2 Columns - Sidebar | Main", value: [1, 3] },
+        { label: "2 Columns - Main | Sidebar", value: [3, 1] },
+        { label: "3 Columns - Equal", value: [1, 1, 1] },
+        { label: "3 Columns - Narrow | Wide | Narrow", value: [1, 2, 1] },
+        { label: "3 Columns - Wide | Narrow | Narrow", value: [2, 1, 1] },
+        { label: "3 Columns - Narrow | Narrow | Wide", value: [1, 1, 2] },
+        { label: "4 Columns - Equal", value: [1, 1, 1, 1] },
       ],
     },
     gap: {
       type: "select",
       label: "Gap",
       options: [
-        { label: "None", value: "none" },
-        { label: "Small", value: "small" },
-        { label: "Medium", value: "medium" },
-        { label: "Large", value: "large" },
+        { label: "None", value: "0" },
+        { label: "Small", value: "0.5rem" },
+        { label: "Medium", value: "1rem" },
+        { label: "Large", value: "2rem" },
       ],
     },
     stackOnMobile: {
