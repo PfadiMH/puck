@@ -1,13 +1,15 @@
 import { datePickerField } from "@components/puck-fields/date-picker";
+import {
+  getPackingIcon,
+  iconSelectorField,
+} from "@components/puck-fields/icon-selector";
 import { timePickerField } from "@components/puck-fields/time-picker";
-import { uploadFileField } from "@components/puck-fields/upload-file";
 import { ComponentConfig } from "@puckeditor/core";
 import { Calendar, Clock, MapPin, Backpack, Info } from "lucide-react";
-import Image from "next/image";
 
 export type MitnehmenItem = {
   name: string;
-  icon?: string;
+  icon?: string; // Icon ID from predefined set
 };
 
 export type LocationInfo = {
@@ -30,8 +32,29 @@ function formatDate(dateString: string): string {
   // Parse YYYY-MM-DD without timezone shift by using component parts
   const [year, month, day] = dateString.split("-").map(Number);
   const date = new Date(year, month - 1, day);
-  const days = ["Sonntag", "Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag"];
-  const months = ["Januar", "Februar", "März", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember"];
+  const days = [
+    "Sonntag",
+    "Montag",
+    "Dienstag",
+    "Mittwoch",
+    "Donnerstag",
+    "Freitag",
+    "Samstag",
+  ];
+  const months = [
+    "Januar",
+    "Februar",
+    "März",
+    "April",
+    "Mai",
+    "Juni",
+    "Juli",
+    "August",
+    "September",
+    "Oktober",
+    "November",
+    "Dezember",
+  ];
   return `${days[date.getDay()]}, ${date.getDate()}. ${months[date.getMonth()]} ${date.getFullYear()}`;
 }
 
@@ -45,20 +68,26 @@ function isValidHttpUrl(url: string): boolean {
   }
 }
 
-function LocationDisplay({ label, location }: { label: string; location: LocationInfo }) {
+function LocationDisplay({
+  label,
+  location,
+}: {
+  label: string;
+  location: LocationInfo;
+}) {
   if (!location?.name) return null;
-  
+
   const hasValidLink = isValidHttpUrl(location.mapsLink || "");
-  
+
   return (
     <div className="flex items-start gap-2">
       <MapPin className="w-5 h-5 mt-0.5 flex-shrink-0 text-primary" />
       <div>
         <span className="font-semibold">{label}: </span>
         {hasValidLink ? (
-          <a 
-            href={location.mapsLink} 
-            target="_blank" 
+          <a
+            href={location.mapsLink}
+            target="_blank"
             rel="noopener noreferrer"
             className="underline hover:text-primary transition-colors"
           >
@@ -83,31 +112,46 @@ function Activity({
 }: ActivityProps) {
   const hasEndLocation = endLocation?.name && endLocation.name.trim() !== "";
   const hasLocation = location?.name && location.name.trim() !== "";
-  const hasMitnehmen = mitnehmen && mitnehmen.length > 0 && mitnehmen.some(item => item.name?.trim());
+  const hasMitnehmen =
+    mitnehmen &&
+    mitnehmen.length > 0 &&
+    mitnehmen.some((item) => item.name?.trim());
   const hasBemerkung = bemerkung && bemerkung.trim() !== "";
-  
+
   // Check what sections exist below each section for border logic
   const hasContentBelowDateTime = hasLocation || hasMitnehmen || hasBemerkung;
   const hasContentBelowLocation = hasMitnehmen || hasBemerkung;
   const hasContentBelowMitnehmen = hasBemerkung;
-  
+
   return (
     <div className="bg-elevated rounded-lg p-6 shadow-md">
       {/* Date and Time */}
-      <div className={hasContentBelowDateTime ? "mb-4 pb-4 border-b border-primary/20" : ""}>
+      <div
+        className={
+          hasContentBelowDateTime ? "mb-4 pb-4 border-b border-primary/20" : ""
+        }
+      >
         <div className="flex items-center gap-2 mb-2">
           <Calendar className="w-5 h-5 text-primary" />
           <span className="font-semibold text-lg">{formatDate(date)}</span>
         </div>
         <div className="flex items-center gap-2">
           <Clock className="w-5 h-5 text-primary" />
-          <span>{startTime} - {endTime} Uhr</span>
+          <span>
+            {startTime} - {endTime} Uhr
+          </span>
         </div>
       </div>
 
       {/* Location(s) */}
       {hasLocation && (
-        <div className={hasContentBelowLocation ? "mb-4 pb-4 border-b border-primary/20 space-y-2" : "space-y-2"}>
+        <div
+          className={
+            hasContentBelowLocation
+              ? "mb-4 pb-4 border-b border-primary/20 space-y-2"
+              : "space-y-2"
+          }
+        >
           {hasEndLocation ? (
             <>
               <LocationDisplay label="Besammlung" location={location} />
@@ -121,28 +165,33 @@ function Activity({
 
       {/* Mitnehmen */}
       {hasMitnehmen && (
-        <div className={hasContentBelowMitnehmen ? "mb-4 pb-4 border-b border-primary/20" : ""}>
+        <div
+          className={
+            hasContentBelowMitnehmen
+              ? "mb-4 pb-4 border-b border-primary/20"
+              : ""
+          }
+        >
           <div className="flex items-center gap-2 mb-2">
             <Backpack className="w-5 h-5 text-primary" />
             <span className="font-semibold">Mitnehmen:</span>
           </div>
           <ul className="list-none pl-7 space-y-1">
-            {mitnehmen.filter(item => item.name?.trim()).map((item, index) => (
-              <li key={index} className="flex items-center gap-2">
-                {item.icon ? (
-                  <Image 
-                    src={item.icon} 
-                    alt="" 
-                    width={20} 
-                    height={20} 
-                    className="w-5 h-5 object-contain"
-                  />
-                ) : (
-                  <span className="w-2 h-2 rounded-full bg-primary" />
-                )}
-                <span>{item.name}</span>
-              </li>
-            ))}
+            {mitnehmen
+              .filter((item) => item.name?.trim())
+              .map((item, index) => {
+                const IconComponent = getPackingIcon(item.icon);
+                return (
+                  <li key={index} className="flex items-center gap-2">
+                    {IconComponent ? (
+                      <IconComponent className="w-5 h-5 text-primary" />
+                    ) : (
+                      <span className="w-2 h-2 rounded-full bg-primary" />
+                    )}
+                    <span>{item.name}</span>
+                  </li>
+                );
+              })}
           </ul>
         </div>
       )}
@@ -210,7 +259,7 @@ export const activityConfig: ComponentConfig<ActivityProps> = {
           type: "text",
           label: "Gegenstand",
         },
-        icon: uploadFileField,
+        icon: iconSelectorField,
       },
       getItemSummary: (item) => item.name || "Neuer Gegenstand",
       defaultItemProps: {
