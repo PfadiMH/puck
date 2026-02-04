@@ -16,6 +16,7 @@
     "@t3-oss/env-nextjs": "^0.13.10",
     "@tailwindcss/vite": "^4.1.4",
     "@tanstack/react-query": "^5.74.4",
+    "class-variance-authority": "^0.7.1",
     "classnames": "^2.5.1",
     "clsx": "^2.1.1",
     "eslint-plugin-command": "^3.2.0",

@@ -1,3 +1,7 @@
+import {
+  ButtonGroupProps,
+  buttonGroupConfig,
+} from "@components/puck/ButtonGroup";
 import { FlexProps, flexConfig } from "@components/puck/Flex";
 import { GraphicProps, graphicConfig } from "@components/puck/Graphic";
 import { HeadingProps, headingConfig } from "@components/puck/Heading";
@@ -17,6 +21,7 @@ import type { Config, Data } from "@puckeditor/core";
 
 // @keep-sorted
 export type PageProps = {
+  ButtonGroup: ButtonGroupProps;
   Flex: FlexProps;
   Graphic: GraphicProps;
   Heading: HeadingProps;
@@ -35,6 +40,7 @@ export type PageData = Data<PageProps, PageRootProps>;
 export const pageConfig: PageConfig = sectionThemedConfig({
   // @keep-sorted
   components: {
+    ButtonGroup: buttonGroupConfig,
     Flex: flexConfig,
     Graphic: graphicConfig,
     Heading: headingConfig,
