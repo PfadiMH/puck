@@ -2,6 +2,7 @@
 
 /// <reference types="altcha" />
 import Button from "@components/ui/Button";
+import { submitForm } from "@lib/actions/submit-form";
 import cn from "@lib/cn";
 import { useSectionTheme } from "@lib/contexts/section-theme-context";
 import { FormEvent, useEffect, useRef, useState } from "react";
@@ -20,8 +21,7 @@ export interface FormField {
 }
 
 export interface FormClientProps {
-  recipientEmail: string;
-  recipientToken: string;
+  componentId: string;
   formTitle: string;
   submitButtonText: string;
   successMessage: string;
@@ -30,8 +30,7 @@ export interface FormClientProps {
 }
 
 export function FormClient({
-  recipientEmail,
-  recipientToken,
+  componentId,
   formTitle,
   submitButtonText,
   successMessage,
@@ -110,28 +109,14 @@ export function FormClient({
     setErrorMessage("");
 
     try {
-      const res = await fetch("/api/forms", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          recipientEmail,
-          recipientToken,
-          formTitle,
-          fields,
-          formData,
-          altchaPayload,
-        }),
+      const result = await submitForm({
+        pagePath: window.location.pathname,
+        componentId,
+        formData,
+        altchaPayload,
       });
-      if (!res.ok) {
-        let errorMsg = `Fehler ${res.status}`;
-        try {
-          const data = await res.json();
-          errorMsg = data.error || errorMsg;
-        } catch {
-          const text = await res.text().catch(() => "");
-          if (text) errorMsg = `${errorMsg}: ${text.slice(0, 100)}`;
-        }
-        throw new Error(errorMsg);
+      if (!result.success) {
+        throw new Error(result.error || "Fehler");
       }
       setStatus("success");
       setFormData({});

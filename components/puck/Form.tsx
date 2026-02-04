@@ -1,5 +1,4 @@
 import { ComponentConfig } from "@measured/puck";
-import { createRecipientToken } from "@lib/form-token";
 import { FormClient, FormField } from "./FormClient";
 
 export type { FormField, FormFieldType } from "./FormClient";
@@ -14,19 +13,16 @@ export interface FormProps {
 }
 
 function Form({
-  recipientEmail,
   formTitle,
   submitButtonText,
   successMessage,
   fields,
   editMode,
-}: FormProps) {
-  const recipientToken = recipientEmail ? createRecipientToken(recipientEmail) : "";
-
+  id,
+}: FormProps & { id: string }) {
   return (
     <FormClient
-      recipientEmail={recipientEmail}
-      recipientToken={recipientToken}
+      componentId={id}
       formTitle={formTitle}
       submitButtonText={submitButtonText}
       successMessage={successMessage}
@@ -46,7 +42,7 @@ export const formConfig: ComponentConfig<FormProps> = {
     },
     recipientEmail: {
       type: "text",
-      label: "Empfänger E-Mail",
+      label: "Empfänger E-Mails (mehrere mit Komma trennen)",
     },
     submitButtonText: {
       type: "text",

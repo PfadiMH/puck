@@ -1,11 +1,15 @@
 import { SectionThemeProvider } from "@components/contexts/SectionThemeProvider";
-import { FormClient, FormClientProps } from "@components/puck/FormClient";
-import { describe, expect, test } from "vitest";
+import { describe, expect, test, vi } from "vitest";
 import { render } from "vitest-browser-react";
 
+vi.mock("@lib/actions/submit-form", () => ({
+  submitForm: vi.fn(),
+}));
+
+import { FormClient, FormClientProps } from "@components/puck/FormClient";
+
 const defaultProps: FormClientProps = {
-  recipientEmail: "pfadi@meilen.com",
-  recipientToken: "test-token",
+  componentId: "Form-test-123",
   formTitle: "Test Formular",
   submitButtonText: "Absenden",
   successMessage: "Danke!",

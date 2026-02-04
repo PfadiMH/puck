@@ -1,8 +1,11 @@
-import { FormField } from "@components/puck/Form";
+"use server";
+
+import type { FormField, FormProps } from "@components/puck/Form";
+import type { PageData } from "@lib/config/page.config";
+import { dbService } from "@lib/db/db";
 import { env } from "@lib/env";
-import { verifyRecipientToken } from "@lib/form-token";
 import { verifySolution } from "altcha-lib";
-import { NextRequest, NextResponse } from "next/server";
+import { headers } from "next/headers";
 
 const RATE_LIMIT_WINDOW = 60 * 1000;
 const RATE_LIMIT_MAX = 5;
@@ -30,30 +33,6 @@ function isValidEmail(email: string): boolean {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 }
 
-function isAllowedRecipient(email: string): boolean {
-  const normalizedEmail = email.toLowerCase().trim();
-
-  const allowedEmails = env.FORM_ALLOWED_RECIPIENT_EMAILS;
-  if (allowedEmails) {
-    const emails = allowedEmails.split(",").map((e) => e.trim().toLowerCase());
-    return emails.includes(normalizedEmail);
-  }
-
-  const allowedDomains = env.FORM_ALLOWED_RECIPIENT_DOMAINS;
-  if (allowedDomains) {
-    const domains = allowedDomains.split(",").map((d) => d.trim().toLowerCase());
-    const emailDomain = normalizedEmail.split("@")[1];
-    return emailDomain ? domains.includes(emailDomain) : false;
-  }
-
-  if (process.env.NODE_ENV === "production") {
-    console.error("FORM_ALLOWED_RECIPIENT_EMAILS or FORM_ALLOWED_RECIPIENT_DOMAINS must be set in production");
-    return false;
-  }
-
-  return true;
-}
-
 function isRateLimited(ip: string): boolean {
   cleanupRateLimitMap();
 
@@ -71,12 +50,28 @@ function isRateLimited(ip: string): boolean {
 }
 
 interface FormSubmission {
-  recipientEmail: string;
-  recipientToken: string;
-  formTitle: string;
-  fields: FormField[];
+  pagePath: string;
+  componentId: string;
   formData: Record<string, string | string[]>;
   altchaPayload?: string;
+}
+
+function findFormProps(pageData: PageData, componentId: string): FormProps | null {
+  for (const component of pageData.content) {
+    if (component.props.id === componentId && component.type === "Form") {
+      return component.props as unknown as FormProps;
+    }
+  }
+  if (pageData.zones) {
+    for (const zoneContent of Object.values(pageData.zones)) {
+      for (const component of zoneContent) {
+        if (component.props.id === componentId && component.type === "Form") {
+          return component.props as unknown as FormProps;
+        }
+      }
+    }
+  }
+  return null;
 }
 
 function escapeHtml(text: string): string {
@@ -212,54 +207,47 @@ async function sendEmail(
   }
 }
 
-export async function POST(request: NextRequest) {
+export async function submitForm(
+  submission: FormSubmission
+): Promise<{ success: boolean; error?: string }> {
   try {
-    const ip = request.headers.get("x-forwarded-for")?.split(",")[0] || "unknown";
+    const headersList = await headers();
+    const ip = headersList.get("x-forwarded-for")?.split(",")[0] || "unknown";
 
     if (isRateLimited(ip)) {
-      return NextResponse.json(
-        { error: "Zu viele Anfragen. Bitte warten." },
-        { status: 429 }
-      );
+      return { success: false, error: "Zu viele Anfragen. Bitte warten." };
     }
 
-    const body: FormSubmission = await request.json();
-    const { recipientEmail, recipientToken, formTitle, fields, formData, altchaPayload } = body;
+    const { pagePath, componentId, formData, altchaPayload } = submission;
 
-    if (!recipientEmail || !recipientToken || !formTitle || !fields || !formData) {
-      return NextResponse.json(
-        { error: "Fehlende Pflichtfelder" },
-        { status: 400 }
-      );
+    if (!pagePath || !componentId || !formData) {
+      return { success: false, error: "Fehlende Pflichtfelder" };
     }
 
-    if (!verifyRecipientToken(recipientEmail, recipientToken)) {
-      return NextResponse.json(
-        { error: "Ungültiger Empfänger-Token" },
-        { status: 403 }
-      );
+    const pageData = await dbService.getPage(pagePath);
+    if (!pageData) {
+      return { success: false, error: "Seite nicht gefunden" };
     }
 
-    if (!isValidEmail(recipientEmail)) {
-      return NextResponse.json(
-        { error: "Ungültige E-Mail-Adresse" },
-        { status: 400 }
-      );
+    const formProps = findFormProps(pageData, componentId);
+    if (!formProps) {
+      return { success: false, error: "Formular nicht gefunden" };
     }
 
-    if (!isAllowedRecipient(recipientEmail)) {
-      return NextResponse.json(
-        { error: "E-Mail-Empfänger nicht erlaubt" },
-        { status: 403 }
-      );
+    const { formTitle, fields, recipientEmail } = formProps;
+
+    const recipientEmails = recipientEmail
+      .split(",")
+      .map((e) => e.trim())
+      .filter((e) => e && isValidEmail(e));
+
+    if (recipientEmails.length === 0) {
+      return { success: false, error: "Keine gültigen Empfänger konfiguriert" };
     }
 
     const isAltchaValid = await verifyAltcha(altchaPayload);
     if (!isAltchaValid) {
-      return NextResponse.json(
-        { error: "Captcha-Verifizierung fehlgeschlagen" },
-        { status: 400 }
-      );
+      return { success: false, error: "Captcha-Verifizierung fehlgeschlagen" };
     }
 
     for (let i = 0; i < fields.length; i++) {
@@ -269,10 +257,7 @@ export async function POST(request: NextRequest) {
 
       if (field.required) {
         if (!value || (Array.isArray(value) && value.length === 0)) {
-          return NextResponse.json(
-            { error: `Feld "${field.label}" ist erforderlich` },
-            { status: 400 }
-          );
+          return { success: false, error: `Feld "${field.label}" ist erforderlich` };
         }
       }
 
@@ -280,35 +265,20 @@ export async function POST(request: NextRequest) {
         if (field.type === "number") {
           const num = Number(value);
           if (isNaN(num)) {
-            return NextResponse.json(
-              { error: `Feld "${field.label}" muss eine gültige Zahl sein` },
-              { status: 400 }
-            );
+            return { success: false, error: `Feld "${field.label}" muss eine gültige Zahl sein` };
           }
           if (field.minLength !== undefined && num < field.minLength) {
-            return NextResponse.json(
-              { error: `Feld "${field.label}" muss mindestens ${field.minLength} sein` },
-              { status: 400 }
-            );
+            return { success: false, error: `Feld "${field.label}" muss mindestens ${field.minLength} sein` };
           }
           if (field.maxLength !== undefined && num > field.maxLength) {
-            return NextResponse.json(
-              { error: `Feld "${field.label}" darf maximal ${field.maxLength} sein` },
-              { status: 400 }
-            );
+            return { success: false, error: `Feld "${field.label}" darf maximal ${field.maxLength} sein` };
           }
         } else {
           if (field.minLength && value.length < field.minLength) {
-            return NextResponse.json(
-              { error: `Feld "${field.label}" muss mindestens ${field.minLength} Zeichen haben` },
-              { status: 400 }
-            );
+            return { success: false, error: `Feld "${field.label}" muss mindestens ${field.minLength} Zeichen haben` };
           }
           if (field.maxLength && value.length > field.maxLength) {
-            return NextResponse.json(
-              { error: `Feld "${field.label}" darf maximal ${field.maxLength} Zeichen haben` },
-              { status: 400 }
-            );
+            return { success: false, error: `Feld "${field.label}" darf maximal ${field.maxLength} Zeichen haben` };
           }
         }
       }
@@ -317,20 +287,17 @@ export async function POST(request: NextRequest) {
     const { html, text } = formatEmailContent(formTitle, fields, formData);
     const subject = `Neue Einsendung: ${formTitle}`;
 
-    const emailSent = await sendEmail(recipientEmail, subject, html, text);
-    if (!emailSent) {
-      return NextResponse.json(
-        { error: "E-Mail konnte nicht gesendet werden" },
-        { status: 500 }
-      );
+    const emailResults = await Promise.all(
+      recipientEmails.map((email) => sendEmail(email, subject, html, text))
+    );
+
+    if (emailResults.every((r) => !r)) {
+      return { success: false, error: "E-Mail konnte nicht gesendet werden" };
     }
 
-    return NextResponse.json({ success: true });
+    return { success: true };
   } catch (error) {
     console.error("Form submission error:", error);
-    return NextResponse.json(
-      { error: "Ein Fehler ist aufgetreten" },
-      { status: 500 }
-    );
+    return { success: false, error: "Ein Fehler ist aufgetreten" };
   }
 }
