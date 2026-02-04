@@ -1,4 +1,4 @@
-import { ComponentConfig } from "@measured/puck";
+import { ComponentConfig } from "@puckeditor/core";
 import { FormClient, FormField } from "./FormClient";
 
 export type { FormField, FormFieldType } from "./FormClient";
