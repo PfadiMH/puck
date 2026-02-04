@@ -132,10 +132,4 @@
   .full {
     grid-column: full;
   }
-
-  @media (max-width: 768px) {
-    .multi-column-stack-mobile {
-      grid-template-columns: 1fr !important;
-    }
-  }
 }

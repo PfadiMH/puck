@@ -1,64 +1,72 @@
-import { multiColumnConfig, MultiColumnProps } from "@components/puck/MultiColumn";
-import { WithId, WithPuckProps } from "@puckeditor/core";
+import { multiColumnConfig } from "@components/puck/MultiColumn";
+import { SlotComponent } from "@puckeditor/core";
 import { expect, test } from "vitest";
 import { render } from "vitest-browser-react";
 
-function createMultiColumnProps(
-  props: Partial<MultiColumnProps> = {},
-  zones: string[] = []
-): WithId<WithPuckProps<MultiColumnProps>> {
+function createSlot(name: string): SlotComponent {
+  return () => <div data-testid={`slot-${name}`} />;
+}
+
+function createProps(
+  overrides: Partial<{
+    layout: number[];
+    gap: string;
+    column0: SlotComponent;
+    column1: SlotComponent;
+    column2: SlotComponent;
+    column3: SlotComponent;
+  }> = {}
+) {
   return {
-    id: "test-multi-column-id",
-    puck: {
-      renderDropZone: ({ zone }: { zone: string }) => {
-        zones.push(zone);
-        return <div data-testid={`dropzone-${zone}`} />;
-      },
-      metadata: {},
-      isEditing: false,
-      dragRef: null,
-    },
-    layout: [1, 1],
+    id: "test-id",
+    puck: { renderDropZone: () => null, metadata: {}, isEditing: false, dragRef: null },
+    layout: [1, 1] as number[],
     gap: "1rem",
-    stackOnMobile: true,
-    ...props,
+    column0: createSlot("column0"),
+    column1: createSlot("column1"),
+    ...overrides,
   };
 }
 
-test("renders 2 drop zones for [1, 1] layout", async () => {
-  const zones: string[] = [];
-  const props = createMultiColumnProps({ layout: [1, 1] }, zones);
+test("renders 2 slots for [1, 1] layout", async () => {
+  const props = createProps({ layout: [1, 1] });
 
-  await render(<multiColumnConfig.render {...props} />);
+  const screen = await render(<multiColumnConfig.render {...props} />);
 
-  expect(zones).toHaveLength(2);
-  expect(zones).toContain("column-0");
-  expect(zones).toContain("column-1");
+  await expect.element(screen.getByTestId("slot-column0")).toBeInTheDocument();
+  await expect.element(screen.getByTestId("slot-column1")).toBeInTheDocument();
 });
 
-test("renders 3 drop zones for [1, 1, 1] layout", async () => {
-  const zones: string[] = [];
-  const props = createMultiColumnProps({ layout: [1, 1, 1] }, zones);
+test("renders 3 slots for [1, 1, 1] layout", async () => {
+  const props = createProps({
+    layout: [1, 1, 1],
+    column2: createSlot("column2"),
+  });
 
-  await render(<multiColumnConfig.render {...props} />);
+  const screen = await render(<multiColumnConfig.render {...props} />);
 
-  expect(zones).toHaveLength(3);
-  expect(zones).toContain("column-0");
-  expect(zones).toContain("column-1");
-  expect(zones).toContain("column-2");
+  await expect.element(screen.getByTestId("slot-column0")).toBeInTheDocument();
+  await expect.element(screen.getByTestId("slot-column1")).toBeInTheDocument();
+  await expect.element(screen.getByTestId("slot-column2")).toBeInTheDocument();
 });
 
-test("renders 4 drop zones for [1, 1, 1, 1] layout", async () => {
-  const zones: string[] = [];
-  const props = createMultiColumnProps({ layout: [1, 1, 1, 1] }, zones);
+test("renders 4 slots for [1, 1, 1, 1] layout", async () => {
+  const props = createProps({
+    layout: [1, 1, 1, 1],
+    column2: createSlot("column2"),
+    column3: createSlot("column3"),
+  });
 
-  await render(<multiColumnConfig.render {...props} />);
+  const screen = await render(<multiColumnConfig.render {...props} />);
 
-  expect(zones).toHaveLength(4);
+  await expect.element(screen.getByTestId("slot-column0")).toBeInTheDocument();
+  await expect.element(screen.getByTestId("slot-column1")).toBeInTheDocument();
+  await expect.element(screen.getByTestId("slot-column2")).toBeInTheDocument();
+  await expect.element(screen.getByTestId("slot-column3")).toBeInTheDocument();
 });
 
 test("applies correct grid-template-columns for [1, 1]", async () => {
-  const props = createMultiColumnProps({ layout: [1, 1] });
+  const props = createProps({ layout: [1, 1] });
 
   const screen = await render(<multiColumnConfig.render {...props} />);
   const container = screen.container.firstChild as HTMLElement;
@@ -67,7 +75,7 @@ test("applies correct grid-template-columns for [1, 1]", async () => {
 });
 
 test("applies correct grid-template-columns for [1, 2]", async () => {
-  const props = createMultiColumnProps({ layout: [1, 2] });
+  const props = createProps({ layout: [1, 2] });
 
   const screen = await render(<multiColumnConfig.render {...props} />);
   const container = screen.container.firstChild as HTMLElement;
@@ -76,7 +84,10 @@ test("applies correct grid-template-columns for [1, 2]", async () => {
 });
 
 test("applies correct grid-template-columns for [1, 2, 1]", async () => {
-  const props = createMultiColumnProps({ layout: [1, 2, 1] });
+  const props = createProps({
+    layout: [1, 2, 1],
+    column2: createSlot("column2"),
+  });
 
   const screen = await render(<multiColumnConfig.render {...props} />);
   const container = screen.container.firstChild as HTMLElement;
@@ -85,19 +96,18 @@ test("applies correct grid-template-columns for [1, 2, 1]", async () => {
 });
 
 test("default props render correctly", async () => {
-  const zones: string[] = [];
-  const props = createMultiColumnProps({}, zones);
+  const props = createProps({});
 
   const screen = await render(<multiColumnConfig.render {...props} />);
   const container = screen.container.firstChild as HTMLElement;
 
-  expect(zones).toHaveLength(2);
   expect(container.style.gridTemplateColumns).toBe("1fr 1fr");
   expect(container.style.gap).toBe("1rem");
+  expect(container.children.length).toBe(2);
 });
 
 test("gap 0 applies 0", async () => {
-  const props = createMultiColumnProps({ gap: "0" });
+  const props = createProps({ gap: "0" });
 
   const screen = await render(<multiColumnConfig.render {...props} />);
   const container = screen.container.firstChild as HTMLElement;
@@ -106,7 +116,7 @@ test("gap 0 applies 0", async () => {
 });
 
 test("gap 0.5rem applies 0.5rem", async () => {
-  const props = createMultiColumnProps({ gap: "0.5rem" });
+  const props = createProps({ gap: "0.5rem" });
 
   const screen = await render(<multiColumnConfig.render {...props} />);
   const container = screen.container.firstChild as HTMLElement;
@@ -115,7 +125,7 @@ test("gap 0.5rem applies 0.5rem", async () => {
 });
 
 test("gap 2rem applies 2rem", async () => {
-  const props = createMultiColumnProps({ gap: "2rem" });
+  const props = createProps({ gap: "2rem" });
 
   const screen = await render(<multiColumnConfig.render {...props} />);
   const container = screen.container.firstChild as HTMLElement;
@@ -123,37 +133,20 @@ test("gap 2rem applies 2rem", async () => {
   expect(container.style.gap).toBe("2rem");
 });
 
-test("stackOnMobile true applies class", async () => {
-  const props = createMultiColumnProps({ stackOnMobile: true });
-
-  const screen = await render(<multiColumnConfig.render {...props} />);
-  const container = screen.container.firstChild as HTMLElement;
-
-  expect(container.className).toBe("multi-column-stack-mobile");
-});
-
-test("stackOnMobile false does not apply class", async () => {
-  const props = createMultiColumnProps({ stackOnMobile: false });
-
-  const screen = await render(<multiColumnConfig.render {...props} />);
-  const container = screen.container.firstChild as HTMLElement;
-
-  expect(container.className).toBe("");
-});
-
 test("fallback to [1, 1] for invalid layout", async () => {
-  const zones: string[] = [];
-  const props = createMultiColumnProps({ layout: "invalid" as unknown as number[] }, zones);
+  const props = createProps({
+    layout: "invalid" as unknown as number[],
+  });
 
   const screen = await render(<multiColumnConfig.render {...props} />);
   const container = screen.container.firstChild as HTMLElement;
 
-  expect(zones).toHaveLength(2);
   expect(container.style.gridTemplateColumns).toBe("1fr 1fr");
+  expect(container.children.length).toBe(2);
 });
 
 test("columns have proper styling to handle content", async () => {
-  const props = createMultiColumnProps({ layout: [1, 1] });
+  const props = createProps({ layout: [1, 1] });
 
   const screen = await render(<multiColumnConfig.render {...props} />);
   const container = screen.container.firstChild as HTMLElement;
@@ -167,18 +160,8 @@ test("columns have proper styling to handle content", async () => {
   }
 });
 
-test("columns maintain ratio regardless of content", async () => {
-  const props = createMultiColumnProps({ layout: [1, 1] });
-
-  const screen = await render(<multiColumnConfig.render {...props} />);
-  const container = screen.container.firstChild as HTMLElement;
-
-  expect(container.style.gridTemplateColumns).toBe("1fr 1fr");
-  expect(container.children.length).toBe(2);
-});
-
 test("align-items start prevents vertical stretching", async () => {
-  const props = createMultiColumnProps({ layout: [1, 1] });
+  const props = createProps({ layout: [1, 1] });
 
   const screen = await render(<multiColumnConfig.render {...props} />);
   const container = screen.container.firstChild as HTMLElement;

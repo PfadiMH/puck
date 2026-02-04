@@ -1,25 +1,34 @@
-import { ComponentConfig, WithPuckProps } from "@puckeditor/core";
+import { ComponentConfig, Slot, SlotComponent } from "@puckeditor/core";
 
 export type MultiColumnProps = {
   layout: number[];
   gap: string;
-  stackOnMobile: boolean;
+  column0: Slot;
+  column1: Slot;
+  column2?: Slot;
+  column3?: Slot;
 };
 
 const DEFAULT_LAYOUT = [1, 1];
 
-function MultiColumn({
-  layout,
-  gap,
-  stackOnMobile,
-  puck: { renderDropZone: DropZone },
-}: WithPuckProps<MultiColumnProps>) {
+const SLOT_NAMES = ["column0", "column1", "column2", "column3"] as const;
+
+type MultiColumnRenderProps = {
+  layout: number[];
+  gap: string;
+  column0: SlotComponent;
+  column1: SlotComponent;
+  column2?: SlotComponent;
+  column3?: SlotComponent;
+};
+
+function MultiColumn(props: MultiColumnRenderProps) {
+  const { layout, gap } = props;
   const columns = Array.isArray(layout) ? layout : DEFAULT_LAYOUT;
   const gridTemplateColumns = columns.map((ratio) => `${ratio}fr`).join(" ");
 
   return (
     <div
-      className={stackOnMobile ? "multi-column-stack-mobile" : ""}
       style={{
         display: "grid",
         gridTemplateColumns,
@@ -27,11 +36,22 @@ function MultiColumn({
         alignItems: "start",
       }}
     >
-      {columns.map((_, idx) => (
-        <div key={idx} style={{ minWidth: 0, overflowWrap: "break-word", height: "fit-content" }}>
-          <DropZone zone={`column-${idx}`} />
-        </div>
-      ))}
+      {columns.map((_, idx) => {
+        const Column = props[SLOT_NAMES[idx]] as SlotComponent | undefined;
+        if (!Column) return null;
+        return (
+          <div
+            key={idx}
+            style={{
+              minWidth: 0,
+              overflowWrap: "break-word",
+              height: "fit-content",
+            }}
+          >
+            <Column />
+          </div>
+        );
+      })}
     </div>
   );
 }
@@ -42,7 +62,8 @@ export const multiColumnConfig: ComponentConfig<MultiColumnProps> = {
   defaultProps: {
     layout: [1, 1],
     gap: "1rem",
-    stackOnMobile: true,
+    column0: [],
+    column1: [],
   },
   fields: {
     layout: {
@@ -71,13 +92,9 @@ export const multiColumnConfig: ComponentConfig<MultiColumnProps> = {
         { label: "Large", value: "2rem" },
       ],
     },
-    stackOnMobile: {
-      type: "radio",
-      label: "Stack on Mobile",
-      options: [
-        { label: "Yes", value: true },
-        { label: "No", value: false },
-      ],
-    },
+    column0: { type: "slot" },
+    column1: { type: "slot" },
+    column2: { type: "slot" },
+    column3: { type: "slot" },
   },
 };
