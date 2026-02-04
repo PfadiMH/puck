@@ -1,28 +1,14 @@
-import { ComponentConfig, WithPuckProps } from "@puckeditor/core";
+import cn from "@lib/cn";
+import { ComponentConfig, Slot } from "@puckeditor/core";
 
 export type CardVariant = "elevated" | "outlined" | "filled";
 export type CardSpacing = "none" | "small" | "medium" | "large";
 
 export type CardProps = {
+  content: Slot;
   variant: CardVariant;
   padding: CardSpacing;
   shadow: CardSpacing;
-};
-
-const BORDER_RADIUS = "0.625rem";
-
-const paddingValues: Record<CardSpacing, string> = {
-  none: "0",
-  small: "0.75rem",
-  medium: "1.25rem",
-  large: "2rem",
-};
-
-const shadowValues: Record<CardSpacing, string> = {
-  none: "none",
-  small: "0 2px 4px rgba(0,0,0,0.08)",
-  medium: "0 4px 6px rgba(0,0,0,0.1)",
-  large: "0 8px 16px rgba(0,0,0,0.12)",
 };
 
 const variantClasses: Record<CardVariant, string> = {
@@ -31,35 +17,44 @@ const variantClasses: Record<CardVariant, string> = {
   filled: "bg-primary text-contrast-primary",
 };
 
-function Card({
-  variant,
-  padding,
-  shadow,
-  puck: { renderDropZone: DropZone },
-}: WithPuckProps<CardProps>) {
-  return (
-    <div
-      className={variantClasses[variant] ?? variantClasses.elevated}
-      style={{
-        padding: paddingValues[padding] ?? paddingValues.medium,
-        borderRadius: BORDER_RADIUS,
-        boxShadow: shadowValues[shadow] ?? shadowValues.none,
-      }}
-    >
-      <DropZone zone="content" />
-    </div>
-  );
-}
+const paddingClasses: Record<CardSpacing, string> = {
+  none: "p-0",
+  small: "p-3",
+  medium: "p-5",
+  large: "p-8",
+};
+
+const shadowClasses: Record<CardSpacing, string> = {
+  none: "",
+  small: "shadow-sm",
+  medium: "shadow-md",
+  large: "shadow-lg",
+};
 
 export const cardConfig: ComponentConfig<CardProps> = {
   label: "Card",
-  render: Card,
+  render: ({ content: Content, variant, padding, shadow }) => (
+    <div
+      className={cn(
+        "rounded-xl",
+        variantClasses[variant] ?? variantClasses.elevated,
+        paddingClasses[padding] ?? paddingClasses.medium,
+        shadowClasses[shadow] ?? shadowClasses.none,
+      )}
+    >
+      <Content />
+    </div>
+  ),
   defaultProps: {
+    content: [],
     variant: "elevated",
     padding: "medium",
     shadow: "medium",
   },
   fields: {
+    content: {
+      type: "slot",
+    },
     variant: {
       type: "select",
       label: "Style",

@@ -4,24 +4,21 @@ import {
   CardVariant,
   cardConfig,
 } from "@components/puck/Card";
-import { WithId, WithPuckProps } from "@measured/puck";
+import { SlotComponent } from "@puckeditor/core";
 import { expect, test } from "vitest";
 import { render } from "vitest-browser-react";
 
-function createCardProps(
-  props: Partial<CardProps> = {},
-  zones: string[] = []
-): WithId<WithPuckProps<CardProps>> {
+type CardRenderProps = Omit<CardProps, "content"> & {
+  id: string;
+  content: SlotComponent;
+};
+
+const Card = cardConfig.render as (props: CardRenderProps) => React.ReactNode;
+
+function createCardProps(props: Partial<CardRenderProps> = {}): CardRenderProps {
   return {
     id: "test-card-id",
-    puck: {
-      renderDropZone: ({ zone }: { zone: string }) => {
-        zones.push(zone);
-        return <div data-testid={`dropzone-${zone}`} />;
-      },
-      isEditing: false,
-      dragRef: null,
-    },
+    content: () => <div data-testid="slot-content">slot</div>,
     variant: "elevated",
     padding: "medium",
     shadow: "medium",
@@ -29,29 +26,27 @@ function createCardProps(
   };
 }
 
-test("renders single content DropZone", async () => {
-  const zones: string[] = [];
-  const props = createCardProps({}, zones);
+test("renders content slot", async () => {
+  const props = createCardProps();
 
-  await render(<cardConfig.render {...props} />);
+  const screen = await render(<Card {...props} />);
 
-  expect(zones).toHaveLength(1);
-  expect(zones).toContain("content");
+  await expect.element(screen.getByTestId("slot-content")).toBeVisible();
 });
 
 test("elevated variant applies correct class", async () => {
   const props = createCardProps({ variant: "elevated" });
 
-  const screen = await render(<cardConfig.render {...props} />);
+  const screen = await render(<Card {...props} />);
   const container = screen.container.firstChild as HTMLElement;
 
-  expect(container.className).toBe("bg-elevated");
+  expect(container.className).toContain("bg-elevated");
 });
 
 test("outlined variant applies correct classes", async () => {
   const props = createCardProps({ variant: "outlined" });
 
-  const screen = await render(<cardConfig.render {...props} />);
+  const screen = await render(<Card {...props} />);
   const container = screen.container.firstChild as HTMLElement;
 
   expect(container.className).toContain("border");
@@ -62,107 +57,105 @@ test("outlined variant applies correct classes", async () => {
 test("filled variant applies correct classes", async () => {
   const props = createCardProps({ variant: "filled" });
 
-  const screen = await render(<cardConfig.render {...props} />);
+  const screen = await render(<Card {...props} />);
   const container = screen.container.firstChild as HTMLElement;
 
   expect(container.className).toContain("bg-primary");
   expect(container.className).toContain("text-contrast-primary");
 });
 
-test("padding none applies 0", async () => {
+test("padding none applies p-0", async () => {
   const props = createCardProps({ padding: "none" });
 
-  const screen = await render(<cardConfig.render {...props} />);
+  const screen = await render(<Card {...props} />);
   const container = screen.container.firstChild as HTMLElement;
 
-  expect(container.style.padding).toBe("0px");
+  expect(container.className).toContain("p-0");
 });
 
-test("padding small applies 0.75rem", async () => {
+test("padding small applies p-3", async () => {
   const props = createCardProps({ padding: "small" });
 
-  const screen = await render(<cardConfig.render {...props} />);
+  const screen = await render(<Card {...props} />);
   const container = screen.container.firstChild as HTMLElement;
 
-  expect(container.style.padding).toBe("0.75rem");
+  expect(container.className).toContain("p-3");
 });
 
-test("padding medium applies 1.25rem", async () => {
+test("padding medium applies p-5", async () => {
   const props = createCardProps({ padding: "medium" });
 
-  const screen = await render(<cardConfig.render {...props} />);
+  const screen = await render(<Card {...props} />);
   const container = screen.container.firstChild as HTMLElement;
 
-  expect(container.style.padding).toBe("1.25rem");
+  expect(container.className).toContain("p-5");
 });
 
-test("padding large applies 2rem", async () => {
+test("padding large applies p-8", async () => {
   const props = createCardProps({ padding: "large" });
 
-  const screen = await render(<cardConfig.render {...props} />);
+  const screen = await render(<Card {...props} />);
   const container = screen.container.firstChild as HTMLElement;
 
-  expect(container.style.padding).toBe("2rem");
+  expect(container.className).toContain("p-8");
 });
 
-test("shadow none applies no shadow", async () => {
+test("shadow none applies no shadow class", async () => {
   const props = createCardProps({ shadow: "none" });
 
-  const screen = await render(<cardConfig.render {...props} />);
+  const screen = await render(<Card {...props} />);
   const container = screen.container.firstChild as HTMLElement;
 
-  expect(container.style.boxShadow).toBe("none");
+  expect(container.className).not.toContain("shadow-");
 });
 
-test("shadow small applies subtle shadow", async () => {
+test("shadow small applies shadow-sm", async () => {
   const props = createCardProps({ shadow: "small" });
 
-  const screen = await render(<cardConfig.render {...props} />);
+  const screen = await render(<Card {...props} />);
   const container = screen.container.firstChild as HTMLElement;
 
-  expect(container.style.boxShadow).toContain("rgba(0, 0, 0, 0.08)");
+  expect(container.className).toContain("shadow-sm");
 });
 
-test("shadow medium applies medium shadow", async () => {
+test("shadow medium applies shadow-md", async () => {
   const props = createCardProps({ shadow: "medium" });
 
-  const screen = await render(<cardConfig.render {...props} />);
+  const screen = await render(<Card {...props} />);
   const container = screen.container.firstChild as HTMLElement;
 
-  expect(container.style.boxShadow).toContain("rgba(0, 0, 0, 0.1)");
+  expect(container.className).toContain("shadow-md");
 });
 
-test("shadow large applies pronounced shadow", async () => {
+test("shadow large applies shadow-lg", async () => {
   const props = createCardProps({ shadow: "large" });
 
-  const screen = await render(<cardConfig.render {...props} />);
+  const screen = await render(<Card {...props} />);
   const container = screen.container.firstChild as HTMLElement;
 
-  expect(container.style.boxShadow).toContain("rgba(0, 0, 0, 0.12)");
+  expect(container.className).toContain("shadow-lg");
 });
 
-test("border radius is fixed at 0.625rem", async () => {
+test("border radius uses rounded-xl", async () => {
   const props = createCardProps();
 
-  const screen = await render(<cardConfig.render {...props} />);
+  const screen = await render(<Card {...props} />);
   const container = screen.container.firstChild as HTMLElement;
 
-  expect(container.style.borderRadius).toBe("0.625rem");
+  expect(container.className).toContain("rounded-xl");
 });
 
 test("default props render correctly", async () => {
-  const zones: string[] = [];
-  const props = createCardProps({}, zones);
+  const props = createCardProps();
 
-  const screen = await render(<cardConfig.render {...props} />);
+  const screen = await render(<Card {...props} />);
   const container = screen.container.firstChild as HTMLElement;
 
-  expect(zones).toHaveLength(1);
-  expect(zones[0]).toBe("content");
-  expect(container.className).toBe("bg-elevated");
-  expect(container.style.padding).toBe("1.25rem");
-  expect(container.style.borderRadius).toBe("0.625rem");
-  expect(container.style.boxShadow).toContain("rgba(0, 0, 0, 0.1)");
+  await expect.element(screen.getByTestId("slot-content")).toBeVisible();
+  expect(container.className).toContain("bg-elevated");
+  expect(container.className).toContain("p-5");
+  expect(container.className).toContain("rounded-xl");
+  expect(container.className).toContain("shadow-md");
 });
 
 test("fallback to defaults for invalid props", async () => {
@@ -172,10 +165,10 @@ test("fallback to defaults for invalid props", async () => {
     shadow: "invalid" as CardSpacing,
   });
 
-  const screen = await render(<cardConfig.render {...props} />);
+  const screen = await render(<Card {...props} />);
   const container = screen.container.firstChild as HTMLElement;
 
-  expect(container.className).toBe("bg-elevated");
-  expect(container.style.padding).toBe("1.25rem");
-  expect(container.style.boxShadow).toBe("none");
+  expect(container.className).toContain("bg-elevated");
+  expect(container.className).toContain("p-5");
+  expect(container.className).not.toContain("shadow-");
 });
