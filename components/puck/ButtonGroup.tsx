@@ -1,4 +1,4 @@
-import Button, { getButtonClasses } from "@components/ui/Button";
+import Button from "@components/ui/Button";
 import { uploadFileField } from "@components/puck-fields/upload-file";
 import cn from "@lib/cn";
 import { ComponentConfig } from "@measured/puck";
@@ -45,52 +45,63 @@ const alignmentClasses = {
   right: "justify-end",
 };
 
-function ButtonGroup({ alignment, size, spacing, icon, iconPosition, buttons }: ButtonGroupProps) {
-  const renderIcon = () => (
+function ButtonIcon({ icon, size }: { icon: string; size: ButtonGroupProps["size"] }) {
+  return (
     <span className={cn("relative shrink-0", iconSizeClasses[size])}>
-      <Image src={icon!} alt="" fill sizes={iconSizes[size]} className="object-contain" />
+      <Image src={icon} alt="" fill sizes={iconSizes[size]} className="object-contain" />
     </span>
   );
+}
 
-  const renderButtonContent = (button: ButtonItem) => (
+function ButtonContent({
+  button,
+  icon,
+  iconPosition,
+  size,
+}: {
+  button: ButtonItem;
+  icon?: string;
+  iconPosition: ButtonGroupProps["iconPosition"];
+  size: ButtonGroupProps["size"];
+}) {
+  return (
     <>
-      {icon && iconPosition === "left" && renderIcon()}
+      {icon && iconPosition === "left" && <ButtonIcon icon={icon} size={size} />}
       <span>{button.content}</span>
-      {icon && iconPosition === "right" && renderIcon()}
+      {icon && iconPosition === "right" && <ButtonIcon icon={icon} size={size} />}
     </>
   );
+}
 
+function ButtonGroup({ alignment, size, spacing, icon, iconPosition, buttons }: ButtonGroupProps) {
   return (
     <div className={cn("flex flex-wrap items-center", alignmentClasses[alignment], gapClasses[spacing])}>
-      {buttons.map((button, idx) => {
-        const buttonClasses = getButtonClasses(size, button.color, "inline-flex items-center gap-2");
-
-        if (button.url) {
-          return (
-            <Link
-              key={idx}
-              href={button.url}
-              className={buttonClasses}
-              aria-label={button.content || "Button"}
-            >
-              {renderButtonContent(button)}
+      {buttons.map((button, idx) =>
+        button.url ? (
+          <Button
+            key={idx}
+            asChild
+            size={size}
+            color={button.color}
+            className="gap-2"
+          >
+            <Link href={button.url} aria-label={button.content || "Button"}>
+              <ButtonContent button={button} icon={icon} iconPosition={iconPosition} size={size} />
             </Link>
-          );
-        }
-
-        return (
+          </Button>
+        ) : (
           <Button
             key={idx}
             type="button"
             size={size}
             color={button.color}
-            className="inline-flex items-center gap-2"
+            className="gap-2"
             aria-label={button.content || "Button"}
           >
-            {renderButtonContent(button)}
+            <ButtonContent button={button} icon={icon} iconPosition={iconPosition} size={size} />
           </Button>
-        );
-      })}
+        )
+      )}
     </div>
   );
 }
