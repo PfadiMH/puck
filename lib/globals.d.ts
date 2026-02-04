@@ -1,1 +1,1 @@
-declare module "@measured/puck/puck.css";
+declare module "@puckeditor/core/puck.css";
