@@ -273,7 +273,11 @@ export const activityConfig: ComponentConfig<ActivityProps> = {
     },
   },
   defaultProps: {
-    date: new Date().toISOString().split("T")[0],
+    // Use local date to avoid UTC timezone shift
+    date: (() => {
+      const now = new Date();
+      return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
+    })(),
     startTime: "14:00",
     endTime: "17:00",
     location: {

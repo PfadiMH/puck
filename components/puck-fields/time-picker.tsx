@@ -1,5 +1,6 @@
 "use client";
 
+import cn from "@lib/cn";
 import { CustomFieldRenderProps } from "@lib/custom-field-types";
 import { CustomField } from "@puckeditor/core";
 
@@ -10,6 +11,10 @@ const hours = Array.from({ length: 24 }, (_, i) =>
 );
 const minutes = ["00", "15", "30", "45"];
 
+/**
+ * TimePicker - A time picker field for Puck with hour/minute dropdowns.
+ * Uses theme-aware styles matching the DatePicker component.
+ */
 function TimePicker({
   id,
   onChange,
@@ -26,8 +31,14 @@ function TimePicker({
     onChange(`${hour || "14"}:${newMinute}`);
   };
 
-  const selectStyles =
-    "px-3 py-2 border border-gray-300 rounded-md bg-white hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer";
+  const selectStyles = cn(
+    "px-3 py-2 rounded-md cursor-pointer",
+    "bg-elevated border-2 border-primary/30",
+    "text-contrast-ground",
+    "hover:border-primary/50",
+    "focus:outline-none focus:ring-2 focus:ring-primary/60 focus:border-primary",
+    "disabled:cursor-not-allowed disabled:opacity-50"
+  );
 
   return (
     <div className="flex items-center gap-2" id={id}>
@@ -43,7 +54,7 @@ function TimePicker({
           </option>
         ))}
       </select>
-      <span className="text-gray-500 font-medium">:</span>
+      <span className="text-contrast-ground/50 font-medium">:</span>
       <select
         value={minute || "00"}
         onChange={(e) => handleMinuteChange(e.target.value)}
@@ -56,7 +67,7 @@ function TimePicker({
           </option>
         ))}
       </select>
-      <span className="text-gray-500 text-sm">Uhr</span>
+      <span className="text-contrast-ground/50 text-sm">Uhr</span>
     </div>
   );
 }
