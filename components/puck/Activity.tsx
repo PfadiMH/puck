@@ -1,9 +1,7 @@
 import { datePickerField } from "@components/puck-fields/date-picker";
-import {
-  getPackingIcon,
-  iconSelectorField,
-} from "@components/puck-fields/icon-selector";
+import { iconSelectorField } from "@components/puck-fields/icon-selector";
 import { timePickerField } from "@components/puck-fields/time-picker";
+import { getPackingIcon } from "@lib/packing-icons";
 import { ComponentConfig } from "@puckeditor/core";
 import { Calendar, Clock, MapPin, Backpack, Info } from "lucide-react";
 
