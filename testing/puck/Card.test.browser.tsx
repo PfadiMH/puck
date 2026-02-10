@@ -142,7 +142,7 @@ test("border radius uses rounded-xl", async () => {
   const screen = await render(<Card {...props} />);
   const container = screen.container.firstChild as HTMLElement;
 
-  expect(container.className).toContain("rounded-xl");
+  expect(container.className).toContain("rounded-[0.625rem]");
 });
 
 test("default props render correctly", async () => {
@@ -154,7 +154,7 @@ test("default props render correctly", async () => {
   await expect.element(screen.getByTestId("slot-content")).toBeVisible();
   expect(container.className).toContain("bg-elevated");
   expect(container.className).toContain("p-5");
-  expect(container.className).toContain("rounded-xl");
+  expect(container.className).toContain("rounded-[0.625rem]");
   expect(container.className).toContain("shadow-md");
 });
 
