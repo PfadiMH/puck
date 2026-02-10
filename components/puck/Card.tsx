@@ -36,7 +36,7 @@ export const cardConfig: ComponentConfig<CardProps> = {
   render: ({ content: Content, variant, padding, shadow }) => (
     <div
       className={cn(
-        "min-w-0 overflow-hidden rounded-xl",
+        "min-w-0 overflow-hidden rounded-[0.625rem]",
         variantClasses[variant] ?? variantClasses.elevated,
         paddingClasses[padding] ?? paddingClasses.medium,
         shadowClasses[shadow] ?? shadowClasses.none,
