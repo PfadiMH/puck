@@ -75,10 +75,12 @@ Make sure you have the following tools installed on your system:
 
 The default values in this file are already configured for the local Docker database, so no changes are required to get started.
 
-    Optional:  
+    Optional:
     To enable form spam protection, set ALTCHA_HMAC_KEY to a random string:
-    
-    *openssl rand -hex 32*
+
+    ```bash
+    openssl rand -hex 32
+    ```
 
     Forms work without it (a default key is used), but a custom key is recommended for production. See the https://altcha.org/docs for more details.
 
