@@ -5,7 +5,7 @@ export type TextProps = {
 };
 
 function Text({ text }: TextProps) {
-  return <p className="text-wrap">{text}</p>;
+  return <p className="text-wrap break-words">{text}</p>;
 }
 
 export const textConfig: ComponentConfig<TextProps> = {
