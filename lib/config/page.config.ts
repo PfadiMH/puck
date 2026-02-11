@@ -14,7 +14,6 @@ import {
   SectionDividerProps,
   sectionDividerConfig,
 } from "@components/puck/SectionDivider";
-import { TextProps, textConfig } from "@components/puck/Text";
 import {
   VerticalSpaceProps,
   verticalSpaceConfig,
@@ -34,7 +33,6 @@ export type PageProps = {
   MultiColumn: MultiColumnProps;
   RichText: RichTextProps;
   SectionDivider: SectionDividerProps;
-  Text: TextProps;
   VerticalSpace: VerticalSpaceProps;
 };
 export type PageRootProps = {
@@ -56,7 +54,6 @@ export const pageConfig: PageConfig = sectionThemedConfig({
     MultiColumn: multiColumnConfig,
     RichText: richTextConfig,
     SectionDivider: sectionDividerConfig,
-    Text: textConfig,
     VerticalSpace: verticalSpaceConfig,
   },
 });

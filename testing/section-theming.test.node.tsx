@@ -8,9 +8,9 @@ describe("applySectionTheming", () => {
       content: [
         { type: "Heading", props: { id: "", text: "Heading", textAlign: "center", level: "h1" } },
         { type: "SectionDivider", props: { id: "" } },
-        { type: "Text", props: { id: "", text: "Mir sind Voll Däbii!" } },
+        { type: "RichText", props: { id: "", content: "<p>Mir sind Voll Däbii!</p>" } },
         { type: "SectionDivider", props: { id: "" } },
-        { type: "Text", props: { id: "", text: "Mir sind Voll Däbii!" } },
+        { type: "RichText", props: { id: "", content: "<p>Mir sind Voll Däbii!</p>" } },
       ],
       root: { props: { title: "Test Page" } },
     };
