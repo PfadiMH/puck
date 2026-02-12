@@ -6,6 +6,7 @@ import Image from "next/image";
 import Link from "next/link";
 
 type ButtonItem = {
+  id?: string;
   content: string;
   url?: string;
   color: "primary" | "secondary";
@@ -80,23 +81,25 @@ function ButtonGroup({ alignment, size, spacing, icon, iconPosition, buttons }: 
         button.url ? (
           <Button
             key={idx}
+            id={button.id}
             asChild
             size={size}
             color={button.color}
             className="gap-2"
           >
-            <Link href={button.url} aria-label={button.content || "Button"}>
+            <Link href={button.url} {...(!button.content && icon ? { "aria-label": "Button" } : {})}>
               <ButtonContent button={button} icon={icon} iconPosition={iconPosition} size={size} />
             </Link>
           </Button>
         ) : (
           <Button
             key={idx}
+            id={button.id}
             type="button"
             size={size}
             color={button.color}
             className="gap-2"
-            aria-label={button.content || "Button"}
+            {...(!button.content && icon ? { "aria-label": "Button" } : {})}
           >
             <ButtonContent button={button} icon={icon} iconPosition={iconPosition} size={size} />
           </Button>
@@ -154,6 +157,10 @@ export const buttonGroupConfig: ComponentConfig<ButtonGroupProps> = {
       label: "Buttons",
       getItemSummary: (item) => item.content || "Empty Button",
       arrayFields: {
+        id: {
+          type: "text",
+          label: "ID (optional)",
+        },
         content: {
           type: "text",
           label: "Button Text",
