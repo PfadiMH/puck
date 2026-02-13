@@ -1,4 +1,5 @@
 import { FooterRender } from "@components/footer/FooterRender";
+import { PresunBreak } from "@components/graphics/SectionBreakSvgs";
 import { NavbarRender } from "@components/navbar/NavbarRender";
 import { EditPageButton } from "@components/page/EditPageButton";
 import { FooterData } from "@lib/config/footer.config";
@@ -18,15 +19,16 @@ async function PageRender({
   pageData,
   footerData,
 }: PageRenderProps) {
-  // Footer theme is the opposite of the last section's theme
+  // Insert a section break before the footer when the last section is sun-themed,
+  // to visually transition into the footer's fixed mud theme.
   const lastSectionTheme = getLastSectionTheme(pageData);
-  const footerTheme = lastSectionTheme === "sun" ? "mud" : "sun";
 
   return (
     <>
       <NavbarRender data={navbarData} />
       <Render config={pageConfig} data={pageData} />
-<FooterRender data={footerData} theme={footerTheme} />
+      {lastSectionTheme === "sun" && <PresunBreak />}
+      <FooterRender data={footerData} />
       <EditPageButton />
     </>
   );

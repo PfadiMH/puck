@@ -7,7 +7,7 @@ export type FooterTextProps = {
 
 export function FooterText({ text, fullWidth }: FooterTextProps) {
   return (
-    <div className={fullWidth ? "col-span-full" : ""}>
+    <div className={fullWidth ? "col-span-full" : undefined}>
       <p className="text-contrast-ground/70 text-sm">{text}</p>
     </div>
   );

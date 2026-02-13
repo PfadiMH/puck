@@ -39,14 +39,21 @@ export function applySectionTheming(data: PageData): {
 
 /**
  * Calculates the theme of the last section on the page by counting
- * SectionDivider components. Used to determine the footer's theme
- * (which should be the opposite).
+ * SectionDivider components. Trailing SectionDividers (with no content
+ * after them) are ignored since they don't create a visible section.
  */
 export function getLastSectionTheme(data: PageData): Theme {
   let theme: Theme = "mud";
+  let pendingToggle = false;
+
   for (const item of data.content) {
     if (item.type === "SectionDivider") {
-      theme = theme === "sun" ? "mud" : "sun";
+      pendingToggle = !pendingToggle;
+    } else {
+      if (pendingToggle) {
+        theme = theme === "sun" ? "mud" : "sun";
+        pendingToggle = false;
+      }
     }
   }
   return theme;

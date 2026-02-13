@@ -10,10 +10,7 @@ function FooterColumns({
 }: WithPuckProps<FooterColumnsProps>) {
   const DropZone = renderDropZone;
 
-  // Responsive grid: 1 col on mobile, 2 on sm, 3 on lg
-  const gridClass = isEditing
-    ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8"
-    : "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8";
+  const gridClass = "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8";
 
   return (
     <div className={gridClass}>

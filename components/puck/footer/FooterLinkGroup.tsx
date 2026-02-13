@@ -1,5 +1,18 @@
 import { ComponentConfig } from "@puckeditor/core";
 
+const ALLOWED_PROTOCOLS = ["http:", "https:", "mailto:", "tel:"];
+
+function sanitizeUrl(url: string): string {
+  if (!url) return "#";
+  try {
+    const parsed = new URL(url, "https://placeholder.invalid");
+    if (!ALLOWED_PROTOCOLS.includes(parsed.protocol)) return "#";
+    return url;
+  } catch {
+    return "#";
+  }
+}
+
 export type FooterLinkGroupProps = {
   heading: string;
   links: { label: string; url: string }[];
@@ -18,7 +31,7 @@ export function FooterLinkGroup({ heading, links }: FooterLinkGroupProps) {
             .map((link, i) => (
               <li key={i}>
                 <a
-                  href={link.url || "#"}
+                  href={sanitizeUrl(link.url)}
                   className="text-contrast-ground/80 hover:text-contrast-ground transition-colors"
                 >
                   {link.label}

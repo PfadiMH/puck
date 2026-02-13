@@ -19,6 +19,7 @@ export type FooterProps = {
   FooterLinkGroup: FooterLinkGroupProps;
   FooterText: FooterTextProps;
 };
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type -- Puck's Data generic requires {} here; Record<string, never> is incompatible with its internal types
 export type FooterRootProps = {};
 export type FooterConfig = Config<FooterProps, FooterRootProps>;
 export type FooterData = Data<FooterProps, FooterRootProps>;
