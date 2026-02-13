@@ -4,6 +4,7 @@ const ALLOWED_PROTOCOLS = ["http:", "https:", "mailto:", "tel:"];
 
 function sanitizeUrl(url: string): string {
   if (!url) return "#";
+  if (url.startsWith("//")) return "#";
   try {
     const parsed = new URL(url, "https://placeholder.invalid");
     if (!ALLOWED_PROTOCOLS.includes(parsed.protocol)) return "#";
