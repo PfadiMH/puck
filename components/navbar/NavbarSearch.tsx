@@ -195,6 +195,7 @@ export function NavbarSearch({ compact = false }: NavbarSearchProps) {
                 close();
               }
             }}
+            aria-label="Suchen"
             placeholder="Suchen"
             className="flex-1 outline-none text-base bg-transparent text-contrast-ground placeholder:text-contrast-ground/40"
           />
