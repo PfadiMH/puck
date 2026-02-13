@@ -16,6 +16,7 @@ export type NavbarProps = {
 };
 export type NavbarRootProps = {
   logo?: string;
+  enableSearch?: string;
 };
 export type NavbarConfig = Config<NavbarProps, NavbarRootProps>;
 export type NavbarData = Data<NavbarProps, NavbarRootProps>;
@@ -24,6 +25,13 @@ export const navbarConfig: NavbarConfig = {
   root: {
     fields: {
       logo: uploadFileField,
+      enableSearch: {
+        type: "radio",
+        options: [
+          { label: "Enabled", value: "true" },
+          { label: "Disabled", value: "false" },
+        ],
+      },
     },
   },
   // @keep-sorted
