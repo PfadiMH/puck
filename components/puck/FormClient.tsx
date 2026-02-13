@@ -317,7 +317,7 @@ export function FormClient({
                 } as React.CSSProperties
               }
             >
-              <altcha-widget ref={altchaRef} challengeurl="/api/forms/challenge" hidefooter />
+              <altcha-widget ref={altchaRef} challengeurl="/api/challenge" hidefooter />
             </div>
           )}
 
