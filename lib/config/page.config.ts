@@ -2,7 +2,6 @@ import { ActivityProps, activityConfig } from "@components/puck/Activity";
 import { CardProps, cardConfig } from "@components/puck/Card";
 import { FlexProps, flexConfig } from "@components/puck/Flex";
 import { GraphicProps, graphicConfig } from "@components/puck/Graphic";
-import { HeadingProps, headingConfig } from "@components/puck/Heading";
 import { HeroProps, heroConfig } from "@components/puck/Hero";
 import { IFrameProps, iframeConfig } from "@components/puck/IFrame";
 import { RichTextProps, richTextConfig } from "@components/puck/RichText";
@@ -27,7 +26,6 @@ export type PageProps = {
   Card: CardProps;
   Flex: FlexProps;
   Graphic: GraphicProps;
-  Heading: HeadingProps;
   Hero: HeroProps;
   IFrame: IFrameProps;
   MultiColumn: MultiColumnProps;
@@ -48,7 +46,6 @@ export const pageConfig: PageConfig = sectionThemedConfig({
     Card: cardConfig,
     Flex: flexConfig,
     Graphic: graphicConfig,
-    Heading: headingConfig,
     Hero: heroConfig,
     IFrame: iframeConfig,
     MultiColumn: multiColumnConfig,
