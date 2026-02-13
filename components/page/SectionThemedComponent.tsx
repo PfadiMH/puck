@@ -5,10 +5,11 @@ import { PropsWithChildren } from "react";
 export function SectionThemedComponent({
   children,
   theme,
-}: PropsWithChildren<{ theme: Theme }>) {
+  id,
+}: PropsWithChildren<{ theme: Theme; id?: string }>) {
   return (
     <SectionThemeProvider theme={theme}>
-      <div className={`${theme}-theme bg-ground content-main overflow-hidden`}>
+      <div id={id} className={`${theme}-theme bg-ground content-main overflow-hidden`}>
         {children}
       </div>
     </SectionThemeProvider>
