@@ -7,7 +7,7 @@ import { CustomField } from "@puckeditor/core";
 type TimePickerProps = string;
 
 const hours = Array.from({ length: 24 }, (_, i) =>
-  i.toString().padStart(2, "0")
+  i.toString().padStart(2, "0"),
 );
 const minutes = ["00", "15", "30", "45"];
 
@@ -37,7 +37,7 @@ function TimePicker({
     "text-contrast-ground",
     "hover:border-primary/50",
     "focus:outline-none focus:ring-2 focus:ring-primary/60 focus:border-primary",
-    "disabled:cursor-not-allowed disabled:opacity-50"
+    "disabled:cursor-not-allowed disabled:opacity-50",
   );
 
   return (
@@ -54,7 +54,7 @@ function TimePicker({
           </option>
         ))}
       </select>
-      <span className="text-contrast-ground/50 font-medium">:</span>
+      <span className="text-contrast-ground/90 font-medium">:</span>
       <select
         value={minute || "00"}
         onChange={(e) => handleMinuteChange(e.target.value)}
@@ -67,7 +67,7 @@ function TimePicker({
           </option>
         ))}
       </select>
-      <span className="text-contrast-ground/50 text-sm">Uhr</span>
+      <span className="text-contrast-ground/90 text-sm">Uhr</span>
     </div>
   );
 }
