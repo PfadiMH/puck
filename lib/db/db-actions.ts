@@ -82,12 +82,18 @@ export async function getSearchIndex(): Promise<SearchIndexEntry[]> {
     }
   }
 
-  const pages = await Promise.all(
+  const settled = await Promise.allSettled(
     [...urls].map(async (url) => ({
       url,
       page: await dbService.getPage(url),
     })),
   );
+  const pages = settled
+    .filter(
+      (r): r is PromiseFulfilledResult<{ url: string; page: PageData | undefined }> =>
+        r.status === "fulfilled",
+    )
+    .map((r) => r.value);
 
   return pages.flatMap(({ url, page }) => {
     if (!page) return [];

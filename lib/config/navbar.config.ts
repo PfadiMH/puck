@@ -44,6 +44,6 @@ export const navbarConfig: NavbarConfig = {
 export const defaultNavbarData: NavbarData = {
   content: [],
   root: {
-    props: {},
+    props: { enableSearch: "false" },
   },
 };

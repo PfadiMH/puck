@@ -43,17 +43,22 @@ export function SearchHighlighter() {
   const marksRef = useRef<HTMLElement[]>([]);
 
   useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const highlight = params.get("highlight");
+    const highlight = searchParams.get("highlight");
     if (!highlight) return;
 
-    const componentId = params.get("cid") ?? undefined;
+    const componentId = searchParams.get("cid") ?? undefined;
     const terms = highlight.trim().split(/\s+/);
 
     const escaped = terms.map((t) =>
       t.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"),
     );
     const pattern = new RegExp(`(${escaped.join("|")})`, "gi");
+
+    const dismiss = () => {
+      clearMarks(marksRef.current);
+      marksRef.current = [];
+      cleanUrl();
+    };
 
     const timerId = setTimeout(() => {
       const container = componentId
@@ -130,21 +135,12 @@ export function SearchHighlighter() {
           behavior: "smooth",
           block: "center",
         });
+        document.addEventListener("click", dismiss, { once: true });
       }
     }, 150);
 
-    const dismiss = () => {
-      clearMarks(marksRef.current);
-      marksRef.current = [];
-      cleanUrl();
-    };
-    const timer = setTimeout(() => {
-      document.addEventListener("click", dismiss, { once: true });
-    }, 200);
-
     return () => {
       clearTimeout(timerId);
-      clearTimeout(timer);
       document.removeEventListener("click", dismiss);
       clearMarks(marksRef.current);
       marksRef.current = [];

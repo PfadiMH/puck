@@ -27,6 +27,11 @@ function getDisplayTitle(title: string, path: string): string {
   return title;
 }
 
+function buildResultHref(result: { path: string; snippet: string; componentId: string }, query: string): string {
+  const term = extractHighlightTerm(result.snippet, query);
+  return `${result.path}?highlight=${encodeURIComponent(term)}&cid=${encodeURIComponent(result.componentId)}`;
+}
+
 function extractHighlightTerm(snippet: string, query: string): string {
   const cleaned = snippet.replace(/^\.{3}|\.{3}$/g, "").trim();
   const lower = query.toLowerCase().trim();
@@ -69,6 +74,7 @@ export function NavbarSearch({ compact = false }: NavbarSearchProps) {
   const [query, setQuery] = useState("");
   const [selectedIndex, setSelectedIndex] = useState(-1);
   const inputRef = useRef<HTMLInputElement>(null);
+  const resultRefs = useRef<(HTMLAnchorElement | null)[]>([]);
   const router = useRouter();
 
   const {
@@ -113,6 +119,12 @@ export function NavbarSearch({ compact = false }: NavbarSearchProps) {
     }
   }, [open]);
 
+  useEffect(() => {
+    if (selectedIndex >= 0) {
+      resultRefs.current[selectedIndex]?.scrollIntoView({ block: "nearest" });
+    }
+  }, [selectedIndex]);
+
   if (!open) {
     return compact ? (
       <button
@@ -142,6 +154,8 @@ export function NavbarSearch({ compact = false }: NavbarSearchProps) {
       onClick={close}
     >
       <div
+        role="dialog"
+        aria-modal="true"
         className="fixed top-[10%] left-1/2 -translate-x-1/2 w-[90vw] max-w-[500px] bg-ground rounded-xl shadow-lg overflow-hidden border border-contrast-ground/10"
         onClick={(e) => e.stopPropagation()}
       >
@@ -177,10 +191,7 @@ export function NavbarSearch({ compact = false }: NavbarSearchProps) {
               ) {
                 e.preventDefault();
                 const r = results[selectedIndex];
-                const term = extractHighlightTerm(r.snippet, query);
-                router.push(
-                  `${r.path}?highlight=${encodeURIComponent(term)}&cid=${encodeURIComponent(r.componentId)}`,
-                );
+                router.push(buildResultHref(r, query));
                 close();
               }
             }}
@@ -219,7 +230,8 @@ export function NavbarSearch({ compact = false }: NavbarSearchProps) {
               results.map((result, i) => (
                 <li key={result.id}>
                   <Link
-                    href={`${result.path}?highlight=${encodeURIComponent(extractHighlightTerm(result.snippet, query))}&cid=${encodeURIComponent(result.componentId)}`}
+                    ref={(el) => { resultRefs.current[i] = el; }}
+                    href={buildResultHref(result, query)}
                     onClick={close}
                     className={clsx(
                       "flex flex-col gap-0.5 w-full text-left px-3 py-2.5 rounded-lg transition-colors no-underline",
