@@ -1,5 +1,5 @@
 import { CustomFieldRenderProps } from "@lib/custom-field-types";
-import { Upload } from "lucide-react";
+import { Upload, X } from "lucide-react";
 import { CustomField } from "@puckeditor/core";
 
 type UploadFileProps = string | undefined;
@@ -37,12 +37,33 @@ function UploadFile({
         </span>
       </label>
       {value && (
-        <div className="mt-4">
+        <div style={{ marginTop: "16px", position: "relative" }}>
           <img
             src={value}
             alt="Uploaded file"
             className="max-w-full h-auto rounded-lg"
           />
+          <button
+            type="button"
+            onClick={() => onChange(undefined)}
+            style={{
+              position: "absolute",
+              top: "4px",
+              right: "4px",
+              backgroundColor: "#6b7280",
+              color: "white",
+              borderRadius: "50%",
+              padding: "4px",
+              border: "none",
+              cursor: "pointer",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+            aria-label="Remove image"
+          >
+            <X style={{ width: "16px", height: "16px" }} />
+          </button>
         </div>
       )}
     </div>
