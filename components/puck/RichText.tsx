@@ -61,6 +61,19 @@ export const richTextConfig: ComponentConfig<RichTextProps> = {
   fields: {
     content: {
       type: "richtext",
+      renderMenu: ({ children }) => (
+        <div
+          data-puck-rte-menu
+          className="_RichTextMenu_k97eh_1 _RichTextMenu--form_k97eh_7"
+          onMouseDown={(e) => {
+            if ((e.target as HTMLElement).closest("button, [role=menuitem]")) {
+              e.preventDefault();
+            }
+          }}
+        >
+          {children}
+        </div>
+      ),
     },
   },
   defaultProps: {
