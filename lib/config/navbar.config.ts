@@ -27,6 +27,7 @@ export const navbarConfig: NavbarConfig = {
       logo: uploadFileField,
       enableSearch: {
         type: "radio",
+        label: "Enable Search",
         options: [
           { label: "Enabled", value: "true" },
           { label: "Disabled", value: "false" },
