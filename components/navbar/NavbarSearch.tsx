@@ -131,7 +131,7 @@ export function NavbarSearch({ compact = false }: NavbarSearchProps) {
         type="button"
         onClick={() => setOpen(true)}
         className="flex items-center justify-center w-10 h-10 text-black rounded-full border border-black/80 hover:border-black transition-colors"
-        aria-label="Search"
+        aria-label="Suchen"
       >
         <Search className="w-4 h-4" />
       </button>
@@ -140,7 +140,7 @@ export function NavbarSearch({ compact = false }: NavbarSearchProps) {
         type="button"
         onClick={() => setOpen(true)}
         className="flex items-center gap-2 px-4 py-2 text-black rounded-xl border border-black/80 hover:border-black transition-colors min-w-[140px]"
-        aria-label="Search"
+        aria-label="Suchen"
       >
         <Search className="w-4 h-4" />
         <span className="text-sm">Suchen</span>
