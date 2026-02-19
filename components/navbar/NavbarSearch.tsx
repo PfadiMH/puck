@@ -203,6 +203,7 @@ export function NavbarSearch({ compact = false }: NavbarSearchProps) {
             type="button"
             onClick={close}
             className="p-1 text-contrast-ground/40 hover:text-contrast-ground transition-colors"
+            aria-label="Close search"
           >
             <X className="w-4 h-4" />
           </button>
