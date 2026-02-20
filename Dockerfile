@@ -2,7 +2,7 @@
 FROM oven/bun:1 AS deps
 WORKDIR /app
 COPY package.json bun.lock ./
-RUN bun install --frozen-lockfile
+RUN bun install
 
 # Stage 2: Build the application
 FROM oven/bun:1 AS builder
@@ -25,7 +25,6 @@ RUN addgroup --system --gid 1001 nodejs && \
 
 RUN apk add --no-cache curl
 
-COPY --from=builder /app/public ./public
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 
