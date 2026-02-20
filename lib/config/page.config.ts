@@ -1,9 +1,9 @@
 import { ActivityProps, activityConfig } from "@components/puck/Activity";
 import { FormProps, formConfig } from "@components/puck/Form";
 import { GraphicProps, graphicConfig } from "@components/puck/Graphic";
-import { HeadingProps, headingConfig } from "@components/puck/Heading";
 import { HeroProps, heroConfig } from "@components/puck/Hero";
 import { IFrameProps, iframeConfig } from "@components/puck/IFrame";
+import { RichTextProps, richTextConfig } from "@components/puck/RichText";
 import {
   MultiColumnProps,
   multiColumnConfig,
@@ -12,7 +12,6 @@ import {
   SectionDividerProps,
   sectionDividerConfig,
 } from "@components/puck/SectionDivider";
-import { TextProps, textConfig } from "@components/puck/Text";
 import {
   VerticalSpaceProps,
   verticalSpaceConfig,
@@ -25,12 +24,11 @@ export type PageProps = {
   Activity: ActivityProps;
   Form: FormProps;
   Graphic: GraphicProps;
-  Heading: HeadingProps;
   Hero: HeroProps;
   IFrame: IFrameProps;
+  RichText: RichTextProps;
   MultiColumn: MultiColumnProps;
   SectionDivider: SectionDividerProps;
-  Text: TextProps;
   VerticalSpace: VerticalSpaceProps;
 };
 export type PageRootProps = {
@@ -45,12 +43,11 @@ export const pageConfig: PageConfig = sectionThemedConfig({
     Activity: activityConfig,
     Form: formConfig,
     Graphic: graphicConfig,
-    Heading: headingConfig,
     Hero: heroConfig,
     IFrame: iframeConfig,
+    RichText: richTextConfig,
     MultiColumn: multiColumnConfig,
     SectionDivider: sectionDividerConfig,
-    Text: textConfig,
     VerticalSpace: verticalSpaceConfig,
   },
 });

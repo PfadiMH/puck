@@ -15,6 +15,7 @@ export const env = createEnv({
     SMTP_PASS: z.string().optional(),
     SMTP_FROM: z.string().optional(),
     ALTCHA_HMAC_KEY: z.string().optional(),
+    AUTH_KEYCLOAK_IDP_HINT: z.string().optional(),
     // S3-Compatible Storage
     S3_ENDPOINT: z.string().optional(),
     S3_REGION: z.string().optional(),
@@ -39,6 +40,7 @@ export const env = createEnv({
     SMTP_PASS: process.env.SMTP_PASS,
     SMTP_FROM: process.env.SMTP_FROM,
     ALTCHA_HMAC_KEY: process.env.ALTCHA_HMAC_KEY,
+    AUTH_KEYCLOAK_IDP_HINT: process.env.AUTH_KEYCLOAK_IDP_HINT,
     // S3-Compatible Storage
     S3_ENDPOINT: process.env.S3_ENDPOINT,
     S3_REGION: process.env.S3_REGION,
