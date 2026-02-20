@@ -114,6 +114,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       pull-requests: write
+      packages: write
     steps:
       - name: Remove preview
         uses: appleboy/ssh-action@v1
@@ -138,6 +139,34 @@ jobs:
                 --quiet \
                 --eval "db.getSiblingDB('puck-pr-${PR_NUM}').dropDatabase()"
             fi
+
+      - name: Delete preview image from GHCR
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const prNumber = context.payload.pull_request.number;
+            const tag = `pr-${prNumber}`;
+
+            // List versions and find the one with our PR tag
+            const versions = await github.rest.packages.getAllPackageVersionsForPackageOwnedByOrg({
+              package_type: 'container',
+              package_name: 'puck',
+              org: context.repo.owner,
+            });
+
+            const version = versions.data.find(v =>
+              v.metadata?.container?.tags?.includes(tag)
+            );
+
+            if (version) {
+              await github.rest.packages.deletePackageVersionForOrg({
+                package_type: 'container',
+                package_name: 'puck',
+                org: context.repo.owner,
+                package_version_id: version.id,
+              });
+              core.info(`Deleted GHCR image puck:${tag}`);
+            }
 
       - name: Comment on PR
         uses: actions/github-script@v7
