@@ -83,7 +83,7 @@ export function NavbarSearch({ compact = false }: NavbarSearchProps) {
     isError,
   } = useQuery<SearchIndexEntry[]>({
     queryKey: ["search-index"],
-    queryFn: getSearchIndex,
+    queryFn: () => getSearchIndex(),
     enabled: open,
     staleTime: 5 * 60 * 1000,
   });
@@ -156,6 +156,7 @@ export function NavbarSearch({ compact = false }: NavbarSearchProps) {
       <div
         role="dialog"
         aria-modal="true"
+        aria-label="Suchen"
         className="fixed top-[10%] left-1/2 -translate-x-1/2 w-[90vw] max-w-[500px] bg-ground rounded-xl shadow-lg overflow-hidden border border-contrast-ground/10"
         onClick={(e) => e.stopPropagation()}
       >
@@ -203,7 +204,7 @@ export function NavbarSearch({ compact = false }: NavbarSearchProps) {
             type="button"
             onClick={close}
             className="p-1 text-contrast-ground/40 hover:text-contrast-ground transition-colors"
-            aria-label="Close search"
+            aria-label="Schliessen"
           >
             <X className="w-4 h-4" />
           </button>
