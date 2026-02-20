@@ -1,7 +1,43 @@
 import react from "@vitejs/plugin-react";
 import { playwright } from "@vitest/browser-playwright";
 import path from "path";
+import type { Plugin } from "vite";
 import { defineConfig } from "vitest/config";
+
+/**
+ * Custom vite plugin to resolve tsconfig path aliases and mock next/image.
+ * Using a plugin instead of resolve.alias because the alias config does not
+ * reliably propagate to the browser vite server in CI (Linux).
+ */
+function resolveAliases(): Plugin {
+  const aliases: Record<string, string> = {
+    "@components": path.resolve(__dirname, "./components"),
+    "@lib": path.resolve(__dirname, "./lib"),
+    "@app": path.resolve(__dirname, "./app"),
+  };
+
+  return {
+    name: "resolve-aliases",
+    async resolveId(source, importer, options) {
+      // Mock next/image — it relies on Next.js context unavailable in vitest
+      if (source === "next/image") {
+        return path.resolve(__dirname, "./testing/__mocks__/next-image.tsx");
+      }
+
+      // Resolve tsconfig path aliases
+      for (const [prefix, target] of Object.entries(aliases)) {
+        if (source === prefix || source.startsWith(prefix + "/")) {
+          const rewritten = source.replace(prefix, target);
+          const resolved = await this.resolve(rewritten, importer, {
+            ...options,
+            skipSelf: true,
+          });
+          return resolved;
+        }
+      }
+    },
+  };
+}
 
 export default defineConfig({
   test: {
@@ -20,18 +56,7 @@ export default defineConfig({
         },
       },
       {
-        plugins: [react()],
-        resolve: {
-          alias: {
-            "@components": path.resolve(__dirname, "./components"),
-            "@lib": path.resolve(__dirname, "./lib"),
-            "@app": path.resolve(__dirname, "./app"),
-            "next/image": path.resolve(
-              __dirname,
-              "./testing/__mocks__/next-image.tsx"
-            ),
-          },
-        },
+        plugins: [resolveAliases(), react()],
         define: {
           "process.env": JSON.stringify(process.env),
         },
