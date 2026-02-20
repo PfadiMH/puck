@@ -5,9 +5,14 @@ import {
   defaultSecurityConfig,
   SecurityConfig,
 } from "@lib/security/security-config";
+import type {
+  FileRecord,
+  FileRecordDb,
+  FileRecordInput,
+} from "@lib/storage/file-record";
 import { Data } from "@puckeditor/core";
-import { Db, MongoClient } from "mongodb";
-import { DatabaseService } from "./db";
+import { Db, Filter, MongoClient } from "mongodb";
+import { DatabaseService, FileQueryOptions, FileQueryResult } from "./db";
 
 /**
  * MongoDB implementation of DatabaseService.
@@ -19,6 +24,7 @@ export class MongoService implements DatabaseService {
   private db: Db;
   private puckDataCollectionName = "puck-data";
   private securityCollectionName = "security";
+  private filesCollectionName = "files";
   private initPromise: Promise<void>;
 
   constructor(connectionString: string, dbName: string) {
@@ -65,6 +71,19 @@ export class MongoService implements DatabaseService {
       console.log("Security Config not found, creating with default data");
       await this.saveSecurityConfig(defaultSecurityConfig);
     }
+
+    // Ensure files collection has indexes
+    const filesCollections = await this.db
+      .listCollections({ name: this.filesCollectionName })
+      .toArray();
+    if (filesCollections.length === 0) {
+      await this.db.createCollection(this.filesCollectionName);
+    }
+    // Create indexes for file queries (idempotent)
+    const filesCollection = this.db.collection(this.filesCollectionName);
+    await filesCollection.createIndex({ createdAt: -1 });
+    await filesCollection.createIndex({ folder: 1 });
+    await filesCollection.createIndex({ tags: 1 });
   }
 
   async connect(): Promise<void> {
@@ -160,5 +179,161 @@ export class MongoService implements DatabaseService {
         { $set: { data: securityConfig, type: "securityConfig" } },
         { upsert: true }
       );
+  }
+
+  async saveFile(file: FileRecordInput): Promise<FileRecord> {
+    const record: FileRecordDb = {
+      ...file,
+      _id: crypto.randomUUID(),
+      createdAt: new Date(),
+    };
+    await this.db
+      .collection<FileRecordDb>(this.filesCollectionName)
+      .insertOne(record);
+    return {
+      ...record,
+      createdAt: record.createdAt.toISOString(),
+    };
+  }
+
+  async getFile(id: string): Promise<FileRecord | null> {
+    const result = await this.db
+      .collection<FileRecordDb>(this.filesCollectionName)
+      .findOne({ _id: id } as Partial<FileRecordDb>);
+    if (!result) return null;
+    return { ...result, createdAt: result.createdAt.toISOString() };
+  }
+
+  async getAllFiles(): Promise<FileRecord[]> {
+    const results = await this.db
+      .collection<FileRecordDb>(this.filesCollectionName)
+      .find()
+      .sort({ createdAt: -1 })
+      .toArray();
+    return results.map((r) => ({
+      ...r,
+      createdAt: r.createdAt.toISOString(),
+    }));
+  }
+
+  async deleteFile(id: string): Promise<void> {
+    await this.db
+      .collection<FileRecordDb>(this.filesCollectionName)
+      .deleteOne({ _id: id } as Partial<FileRecordDb>);
+  }
+
+  async updateFile(
+    id: string,
+    updates: { folder?: string; tags?: string[] }
+  ): Promise<FileRecord | null> {
+    const result = await this.db
+      .collection<FileRecordDb>(this.filesCollectionName)
+      .findOneAndUpdate(
+        { _id: id } as Partial<FileRecordDb>,
+        { $set: updates },
+        { returnDocument: "after" }
+      );
+
+    if (!result) return null;
+    return { ...result, createdAt: result.createdAt.toISOString() };
+  }
+
+  async getAllFolders(): Promise<string[]> {
+    const folders = await this.db
+      .collection<FileRecordDb>(this.filesCollectionName)
+      .distinct("folder");
+
+    // Always include root, filter nulls, sort
+    const validFolders = folders.filter((f): f is string => typeof f === "string" && f.length > 0);
+    const folderSet = new Set<string>(["/", ...validFolders]);
+    return [...folderSet].sort();
+  }
+
+  private buildFileFilter(options: Omit<FileQueryOptions, "limit" | "cursor">): Filter<FileRecordDb> {
+    const filter: Filter<FileRecordDb> = {};
+
+    if (options.folder && options.folder !== "/") {
+      filter.folder = options.folder;
+    }
+
+    if (options.search) {
+      // Search in filename and tags
+      filter.$or = [
+        { filename: { $regex: options.search, $options: "i" } },
+        { tags: { $regex: options.search, $options: "i" } },
+      ];
+    }
+
+    if (options.tags && options.tags.length > 0) {
+      filter.tags = { $in: options.tags };
+    }
+
+    return filter;
+  }
+
+  async queryFiles(options: FileQueryOptions): Promise<FileQueryResult> {
+    const limit = options.limit || 50;
+    const baseFilter = this.buildFileFilter(options);
+
+    // Get total count (without cursor filter)
+    const total = await this.db
+      .collection<FileRecordDb>(this.filesCollectionName)
+      .countDocuments(baseFilter);
+
+    // Build final filter with cursor pagination if needed
+    let finalFilter: Filter<FileRecordDb> = baseFilter;
+
+    if (options.cursor) {
+      const cursorDoc = await this.db
+        .collection<FileRecordDb>(this.filesCollectionName)
+        .findOne({ _id: options.cursor } as Partial<FileRecordDb>);
+
+      if (cursorDoc) {
+        // Cursor filter: get items after the cursor (sorted by createdAt desc, _id desc)
+        const cursorFilter: Filter<FileRecordDb> = {
+          $or: [
+            { createdAt: { $lt: cursorDoc.createdAt } },
+            {
+              createdAt: cursorDoc.createdAt,
+              _id: { $lt: options.cursor },
+            },
+          ],
+        } as Filter<FileRecordDb>;
+
+        // Combine base filter with cursor filter using $and
+        // This ensures both conditions are met without mutating the original filter
+        finalFilter =
+          Object.keys(baseFilter).length > 0
+            ? { $and: [baseFilter, cursorFilter] }
+            : cursorFilter;
+      }
+    }
+
+    const results = await this.db
+      .collection<FileRecordDb>(this.filesCollectionName)
+      .find(finalFilter)
+      .sort({ createdAt: -1, _id: -1 })
+      .limit(limit + 1) // Fetch one extra to check if there are more
+      .toArray();
+
+    const hasMore = results.length > limit;
+    const files = results.slice(0, limit);
+    const nextCursor = hasMore && files.length > 0 ? files[files.length - 1]._id : null;
+
+    return {
+      files: files.map((r) => ({
+        ...r,
+        createdAt: r.createdAt.toISOString(),
+      })),
+      nextCursor,
+      total,
+    };
+  }
+
+  async countFiles(options: Omit<FileQueryOptions, "limit" | "cursor">): Promise<number> {
+    const filter = this.buildFileFilter(options);
+    return this.db
+      .collection<FileRecordDb>(this.filesCollectionName)
+      .countDocuments(filter);
   }
 }

@@ -1,3 +1,8 @@
+/**
+ * @deprecated This component uses base64 encoding which bloats the database.
+ * Use `filePickerField` from `@components/puck-fields/file-picker` instead,
+ * which uses S3 storage for better performance and scalability.
+ */
 import { CustomFieldRenderProps } from "@lib/custom-field-types";
 import { Upload } from "lucide-react";
 import { CustomField } from "@puckeditor/core";

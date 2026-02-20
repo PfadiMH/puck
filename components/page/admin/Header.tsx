@@ -46,6 +46,12 @@ function Header() {
           </PermissionGuard>
         </div>
 
+        <PermissionGuard policy={{ all: ["files:read"] }}>
+          <Button size="medium" onClick={() => router.push("/admin/files")}>
+            Files
+          </Button>
+        </PermissionGuard>
+
         <PermissionGuard policy={{ all: ["page:create"] }}>
           <DialogRoot>
             <DialogTrigger>
