@@ -56,6 +56,8 @@ export default defineConfig({
             "lucide-react",
             "isomorphic-dompurify",
             "class-variance-authority",
+            "use-sync-external-store",
+            "use-sync-external-store/shim",
           ],
         },
       },
