@@ -24,18 +24,20 @@ type PageEditorProps = {
 
 export function PageEditor({ path, data }: PageEditorProps) {
   return (
-    <Puck
-      config={pageConfig}
-      data={data}
-      headerPath={path}
-      overrides={{
-        header: () => (
-          <PuckHeader
-            headerTitle={<HeaderTitle path={path} />}
-            headerActions={<PageHeaderActions path={path} />}
-          />
-        ),
-      }}
-    />
+    <div className="puck-editor-wrapper">
+      <Puck
+        config={pageConfig}
+        data={data}
+        headerPath={path}
+        overrides={{
+          header: () => (
+            <PuckHeader
+              headerTitle={<HeaderTitle path={path} />}
+              headerActions={<PageHeaderActions path={path} />}
+            />
+          ),
+        }}
+      />
+    </div>
   );
 }
