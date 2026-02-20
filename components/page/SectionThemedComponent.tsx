@@ -7,7 +7,8 @@ import { PropsWithChildren } from "react";
 export function SectionThemedComponent({
   children,
   theme,
-}: PropsWithChildren<{ theme: Theme }>) {
+  id,
+}: PropsWithChildren<{ theme: Theme; id?: string }>) {
   const isNested = useIsNestedTheme();
 
   if (isNested) {
@@ -16,7 +17,7 @@ export function SectionThemedComponent({
 
   return (
     <SectionThemeProvider theme={theme} isNested={true}>
-      <div className={`${theme}-theme bg-ground content-main overflow-hidden`}>
+      <div id={id} className={`${theme}-theme bg-ground content-main overflow-hidden`}>
         {children}
       </div>
     </SectionThemeProvider>
