@@ -59,10 +59,11 @@ function sectionThemedComponentConfig<K extends keyof PageConfig["components"]>(
     ...props
   }: ComponentProps<typeof config.render> &
     JSX.IntrinsicAttributes & {
+      id?: string;
       theme?: Theme;
     }) => {
     return (
-      <SectionThemedComponent theme={props.theme ?? "mud"}>
+      <SectionThemedComponent theme={props.theme ?? "mud"} id={props.id}>
         <config.render {...props} />
       </SectionThemedComponent>
     );
