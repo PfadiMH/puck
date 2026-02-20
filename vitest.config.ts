@@ -1,7 +1,6 @@
 import react from "@vitejs/plugin-react";
 import { playwright } from "@vitest/browser-playwright";
 import path from "path";
-import tsconfigPaths from "vite-tsconfig-paths";
 import { defineConfig } from "vitest/config";
 
 export default defineConfig({
@@ -21,7 +20,14 @@ export default defineConfig({
         },
       },
       {
-        plugins: [react(), tsconfigPaths()],
+        plugins: [react()],
+        resolve: {
+          alias: {
+            "@components": path.resolve(__dirname, "./components"),
+            "@lib": path.resolve(__dirname, "./lib"),
+            "@app": path.resolve(__dirname, "./app"),
+          },
+        },
         define: {
           "process.env": JSON.stringify(process.env),
         },
@@ -36,6 +42,7 @@ export default defineConfig({
           include: ["testing/**/*.test.browser.{tsx,ts}"],
         },
         optimizeDeps: {
+          noDiscovery: true,
           include: [
             "vitest-browser-react",
             "@tanstack/react-query",
@@ -43,6 +50,10 @@ export default defineConfig({
             "sonner",
             "clsx",
             "tailwind-merge",
+            "next/image",
+            "lucide-react",
+            "isomorphic-dompurify",
+            "class-variance-authority",
           ],
         },
       },
