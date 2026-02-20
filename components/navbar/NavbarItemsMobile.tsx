@@ -2,6 +2,7 @@
 import { NavbarHamburgerSvg } from "@components/graphics/NavbarHamburgerSvg";
 import ClickAwayListener from "@components/misc/ClickAwayListener";
 import { NavbarLogo } from "@components/navbar/NavbarLogo";
+import { NavbarSearch } from "@components/navbar/NavbarSearch";
 import { NavbarData } from "@lib/config/navbar.config";
 import { ReactNode, useId, useRef, useState } from "react";
 
@@ -32,10 +33,11 @@ export function NavbarItemsMobile({
         <div className="relative z-20 w-28 h-28 mb-[-50px]">
           {logo && <NavbarLogo logo={logo} />}
         </div>
-        <div className="flex items-center justify-end">
+        <div className="flex items-center justify-end gap-2 mr-2">
+          {data.root.props?.enableSearch === "true" && <NavbarSearch compact />}
           <button
             ref={buttonRef}
-            className="text-gray-500 w-10 h-10 relative mr-5 focus:outline-none border rounded-full border-dashed"
+            className="text-gray-500 w-10 h-10 relative mr-3 focus:outline-none border rounded-full border-dashed"
             onClick={() => setOpen(!open)}
             aria-expanded={open}
             aria-controls={navbarOverlayId}

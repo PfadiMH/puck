@@ -6,9 +6,10 @@ import { PropsWithChildren } from "react";
 export const SectionThemeProvider = ({
   children,
   theme,
-}: PropsWithChildren<{ theme: Theme }>) => {
+  isNested = false,
+}: PropsWithChildren<{ theme: Theme; isNested?: boolean }>) => {
   return (
-    <SectionThemeContext.Provider value={{ theme }}>
+    <SectionThemeContext.Provider value={{ theme, isNested }}>
       {children}
     </SectionThemeContext.Provider>
   );
