@@ -2,11 +2,13 @@ import { FooterRender } from "@components/footer/FooterRender";
 import { PresunBreak } from "@components/graphics/SectionBreakSvgs";
 import { NavbarRender } from "@components/navbar/NavbarRender";
 import { EditPageButton } from "@components/page/EditPageButton";
+import { SearchHighlighter } from "@components/search/SearchHighlighter";
 import { FooterData } from "@lib/config/footer.config";
 import { NavbarData } from "@lib/config/navbar.config";
 import { pageConfig, PageData } from "@lib/config/page.config";
 import { getLastSectionTheme } from "@lib/section-theming";
 import { Render } from "@puckeditor/core";
+import { Suspense } from "react";
 
 export interface PageRenderProps {
   navbarData: NavbarData;
@@ -30,6 +32,9 @@ async function PageRender({
       {lastSectionTheme === "sun" && <PresunBreak />}
       <FooterRender data={footerData} />
       <EditPageButton />
+      <Suspense>
+        <SearchHighlighter />
+      </Suspense>
     </>
   );
 }

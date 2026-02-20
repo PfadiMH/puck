@@ -22,6 +22,14 @@ export default defineConfig({
       },
       {
         plugins: [react(), tsconfigPaths()],
+        resolve: {
+          alias: {
+            "next/image": path.resolve(
+              __dirname,
+              "./testing/__mocks__/next-image.tsx"
+            ),
+          },
+        },
         define: {
           "process.env": JSON.stringify(process.env),
         },
@@ -43,6 +51,8 @@ export default defineConfig({
             "sonner",
             "clsx",
             "tailwind-merge",
+            "lucide-react",
+            "isomorphic-dompurify",
           ],
         },
       },

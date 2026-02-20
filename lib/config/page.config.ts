@@ -1,13 +1,21 @@
-import { FlexProps, flexConfig } from "@components/puck/Flex";
+import { ActivityProps, activityConfig } from "@components/puck/Activity";
+import {
+  ButtonGroupProps,
+  buttonGroupConfig,
+} from "@components/puck/ButtonGroup";
+import { CardProps, cardConfig } from "@components/puck/Card";
 import { GraphicProps, graphicConfig } from "@components/puck/Graphic";
-import { HeadingProps, headingConfig } from "@components/puck/Heading";
 import { HeroProps, heroConfig } from "@components/puck/Hero";
 import { IFrameProps, iframeConfig } from "@components/puck/IFrame";
+import { RichTextProps, richTextConfig } from "@components/puck/RichText";
+import {
+  MultiColumnProps,
+  multiColumnConfig,
+} from "@components/puck/MultiColumn";
 import {
   SectionDividerProps,
   sectionDividerConfig,
 } from "@components/puck/SectionDivider";
-import { TextProps, textConfig } from "@components/puck/Text";
 import {
   VerticalSpaceProps,
   verticalSpaceConfig,
@@ -17,13 +25,15 @@ import type { Config, Data } from "@puckeditor/core";
 
 // @keep-sorted
 export type PageProps = {
-  Flex: FlexProps;
+  Activity: ActivityProps;
+  ButtonGroup: ButtonGroupProps;
+  Card: CardProps;
   Graphic: GraphicProps;
-  Heading: HeadingProps;
   Hero: HeroProps;
   IFrame: IFrameProps;
+  RichText: RichTextProps;
+  MultiColumn: MultiColumnProps;
   SectionDivider: SectionDividerProps;
-  Text: TextProps;
   VerticalSpace: VerticalSpaceProps;
 };
 export type PageRootProps = {
@@ -35,13 +45,15 @@ export type PageData = Data<PageProps, PageRootProps>;
 export const pageConfig: PageConfig = sectionThemedConfig({
   // @keep-sorted
   components: {
-    Flex: flexConfig,
+    Activity: activityConfig,
+    ButtonGroup: buttonGroupConfig,
+    Card: cardConfig,
     Graphic: graphicConfig,
-    Heading: headingConfig,
     Hero: heroConfig,
     IFrame: iframeConfig,
+    RichText: richTextConfig,
+    MultiColumn: multiColumnConfig,
     SectionDivider: sectionDividerConfig,
-    Text: textConfig,
     VerticalSpace: verticalSpaceConfig,
   },
 });
