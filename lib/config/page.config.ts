@@ -1,8 +1,12 @@
-import { FlexProps, flexConfig } from "@components/puck/Flex";
+import { ActivityProps, activityConfig } from "@components/puck/Activity";
 import { GraphicProps, graphicConfig } from "@components/puck/Graphic";
 import { HeadingProps, headingConfig } from "@components/puck/Heading";
 import { HeroProps, heroConfig } from "@components/puck/Hero";
 import { IFrameProps, iframeConfig } from "@components/puck/IFrame";
+import {
+  MultiColumnProps,
+  multiColumnConfig,
+} from "@components/puck/MultiColumn";
 import {
   SectionDividerProps,
   sectionDividerConfig,
@@ -17,11 +21,12 @@ import type { Config, Data } from "@puckeditor/core";
 
 // @keep-sorted
 export type PageProps = {
-  Flex: FlexProps;
+  Activity: ActivityProps;
   Graphic: GraphicProps;
   Heading: HeadingProps;
   Hero: HeroProps;
   IFrame: IFrameProps;
+  MultiColumn: MultiColumnProps;
   SectionDivider: SectionDividerProps;
   Text: TextProps;
   VerticalSpace: VerticalSpaceProps;
@@ -35,11 +40,12 @@ export type PageData = Data<PageProps, PageRootProps>;
 export const pageConfig: PageConfig = sectionThemedConfig({
   // @keep-sorted
   components: {
-    Flex: flexConfig,
+    Activity: activityConfig,
     Graphic: graphicConfig,
     Heading: headingConfig,
     Hero: heroConfig,
     IFrame: iframeConfig,
+    MultiColumn: multiColumnConfig,
     SectionDivider: sectionDividerConfig,
     Text: textConfig,
     VerticalSpace: verticalSpaceConfig,

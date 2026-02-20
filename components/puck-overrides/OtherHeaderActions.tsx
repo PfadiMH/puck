@@ -25,23 +25,29 @@ function OtherHeaderActions<UserConfig extends Config>({
   });
 
   return (
-    <div className="flex gap-4 items-center justify-between">
-      <UndoRedoButtons />
+    <div className="flex flex-col gap-3 sm:flex-row sm:gap-4 sm:items-center sm:justify-between">
+      {/* Undo/Redo - Hidden on mobile in collapsed menu, shown on desktop */}
+      <div className="hidden sm:block">
+        <UndoRedoButtons />
+      </div>
 
-      <div className="flex flex-wrap gap-2">
+      {/* Action buttons - Stack on mobile, row on desktop */}
+      <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap">
         <Button
           onClick={() => router.push("/admin")}
           color="secondary"
           size="small"
+          className="w-full sm:w-auto"
         >
           To Admin
         </Button>
       </div>
 
+      {/* Save button - Full width on mobile, auto on desktop */}
       <Button
         onClick={() => saveMutation(data)}
         color="primary"
-        className="flex gap-2 items-center"
+        className="flex gap-2 items-center justify-center w-full sm:w-auto"
         disabled={isPending}
       >
         Save Changes
