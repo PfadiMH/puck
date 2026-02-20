@@ -5,6 +5,7 @@ import {
 } from "@components/puck/ButtonGroup";
 import { CardProps, cardConfig } from "@components/puck/Card";
 import { FlexProps, flexConfig } from "@components/puck/Flex";
+import { FormProps, formConfig } from "@components/puck/Form";
 import { GraphicProps, graphicConfig } from "@components/puck/Graphic";
 import { HeroProps, heroConfig } from "@components/puck/Hero";
 import { IFrameProps, iframeConfig } from "@components/puck/IFrame";
@@ -30,6 +31,7 @@ export type PageProps = {
   ButtonGroup: ButtonGroupProps;
   Card: CardProps;
   Flex: FlexProps;
+  Form: FormProps;
   Graphic: GraphicProps;
   Hero: HeroProps;
   IFrame: IFrameProps;
@@ -51,6 +53,7 @@ export const pageConfig: PageConfig = sectionThemedConfig({
     ButtonGroup: buttonGroupConfig,
     Card: cardConfig,
     Flex: flexConfig,
+    Form: formConfig,
     Graphic: graphicConfig,
     Hero: heroConfig,
     IFrame: iframeConfig,
