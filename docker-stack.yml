@@ -1,0 +1,167 @@
+version: "3.8"
+
+services:
+  traefik:
+    image: traefik:v3
+    command:
+      - --providers.swarm=true
+      - --providers.swarm.exposedByDefault=false
+      - --entrypoints.web.address=:80
+      - --entrypoints.web.http.redirections.entryPoint.to=websecure
+      - --entrypoints.web.http.redirections.entryPoint.scheme=https
+      - --entrypoints.web.http.redirections.entryPoint.permanent=true
+      - --entrypoints.websecure.address=:443
+      - --entrypoints.websecure.http3.advertisedPort=443
+      - --entrypoints.websecure.http.tls.certResolver=letsencrypt
+      - --certificatesresolvers.letsencrypt.acme.httpchallenge=true
+      - --certificatesresolvers.letsencrypt.acme.httpchallenge.entrypoint=web
+      - --certificatesresolvers.letsencrypt.acme.email=battino46@gmail.com
+      - --certificatesresolvers.letsencrypt.acme.storage=/letsencrypt/acme.json
+    ports:
+      - target: 80
+        published: 80
+        mode: host
+      - target: 443
+        published: 443
+        mode: host
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - traefik-certs:/letsencrypt
+    networks:
+      - public
+    deploy:
+      placement:
+        constraints: [node.role == manager]
+
+  app:
+    image: ghcr.io/pfadimh/puck:latest
+    environment:
+      DATABASE_TYPE: mongodb
+      MONGODB_CONNECTION_STRING: mongodb://admin:${MONGO_PASSWORD}@mongodb:27017
+      MONGODB_DB_NAME: puck-prod
+      AUTH_SECRET: ${AUTH_SECRET}
+      AUTH_TRUST_HOST: "true"
+      AUTH_URL: https://prod.pfadimh.ch
+      INTERNAL_API_BASE_URL: https://prod.pfadimh.ch
+      S3_ENDPOINT: ${S3_ENDPOINT}
+      S3_REGION: ${S3_REGION}
+      S3_BUCKET: ${S3_BUCKET}
+      S3_ACCESS_KEY_ID: ${S3_ACCESS_KEY_ID}
+      S3_SECRET_ACCESS_KEY: ${S3_SECRET_ACCESS_KEY}
+      S3_PUBLIC_URL: https://prod.pfadimh.ch/api/files
+      AUTH_KEYCLOAK_ID: ${AUTH_KEYCLOAK_ID}
+      AUTH_KEYCLOAK_SECRET: ${AUTH_KEYCLOAK_SECRET}
+      AUTH_KEYCLOAK_ISSUER: https://sso.pfadimh.ch/realms/pfadimh-sso
+      AUTH_KEYCLOAK_IDP_HINT: ${AUTH_KEYCLOAK_IDP_HINT:-}
+    networks:
+      - public
+      - internal
+    deploy:
+      replicas: 1
+      update_config:
+        order: start-first
+        failure_action: rollback
+        delay: 10s
+        monitor: 30s
+      rollback_config:
+        order: stop-first
+      labels:
+        - traefik.enable=true
+        - traefik.docker.network=puck_public
+        - traefik.http.routers.app.rule=Host(`prod.pfadimh.ch`)
+        - traefik.http.routers.app.entrypoints=websecure
+        - traefik.http.routers.app.tls.certresolver=letsencrypt
+        - traefik.http.services.app.loadbalancer.server.port=3000
+
+  mongodb:
+    image: mongo:7
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD}
+    volumes:
+      - mongodb-data:/data/db
+    networks:
+      - internal
+    deploy:
+      replicas: 1
+
+  keycloak-db:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: keycloak
+      POSTGRES_USER: keycloak
+      POSTGRES_PASSWORD: ${KEYCLOAK_DB_PASSWORD}
+    volumes:
+      - keycloak-db-data:/var/lib/postgresql/data
+    networks:
+      - internal
+    deploy:
+      replicas: 1
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:latest
+    command: start
+    environment:
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://keycloak-db:5432/keycloak
+      KC_DB_USERNAME: keycloak
+      KC_DB_PASSWORD: ${KEYCLOAK_DB_PASSWORD}
+      KC_HOSTNAME: sso.pfadimh.ch
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD}
+      KC_PROXY_HEADERS: xforwarded
+      KC_HTTP_ENABLED: "true"
+      KC_HEALTH_ENABLED: "true"
+    networks:
+      - public
+      - internal
+    deploy:
+      replicas: 1
+      labels:
+        - traefik.enable=true
+        - traefik.docker.network=puck_public
+        - traefik.http.routers.keycloak.rule=Host(`sso.pfadimh.ch`) && (PathPrefix(`/realms`) || PathPrefix(`/admin`) || PathPrefix(`/js`) || PathPrefix(`/resources`))
+        - traefik.http.routers.keycloak.entrypoints=websecure
+        - traefik.http.routers.keycloak.tls.certresolver=letsencrypt
+        - traefik.http.services.keycloak.loadbalancer.server.port=8080
+
+  sso-helper:
+    image: sso-helper:latest
+    environment:
+      FINAL_APP_REDIRECT_URL: https://sso.pfadimh.ch/realms/pfadimh-sso/broker/oidc/endpoint
+      AUTHORIZE_BASE_URL: https://db.scout.ch/oauth/authorize
+      PROXY_REDIRECT_URI: https://sso.pfadimh.ch/callback
+      TOKEN_ENDPOINT_URL: https://db.scout.ch/oauth/token
+      USERINFO_ENDPOINT_URL: https://db.scout.ch/oauth/userinfo
+      ISSUER_BASE_URL: https://sso.pfadimh.ch/realms/pfadimh-sso
+      CLIENT_ID: ${SSO_HELPER_CLIENT_ID}
+      CLIENT_SECRET: ${SSO_HELPER_CLIENT_SECRET}
+      BASE_URL: https://sso.pfadimh.ch
+      SECRET: ${SSO_HELPER_SECRET}
+      CONFIGURATION_JSON: '{"groups":[{"group_id":1145,"roles":["Group::Kantonalverband::PowerUser"],"profile":"member"},{"group_id":1172,"roles":["Group::Abteilung::Abteilungsleitung","Group::Abteilung::Webmaster"],"profile":"leader"},{"group_id":1887,"roles":["Group::Pfadi::Adressverwaltung","Group::Pfadi::Mitleitung"],"profile":"leader"},{"group_id":11689,"roles":["Group::KantonalesGremium::Mitglied"],"profile":"member"},{"group_id":11990,"roles":["Group::BundesKommission::Mitglied"],"profile":"member"},{"group_id":12460,"roles":["Group::AbteilungsGremium::Leitung"],"profile":"admin"}]}'
+    networks:
+      - public
+    deploy:
+      replicas: 1
+      labels:
+        - traefik.enable=true
+        - traefik.http.routers.sso-helper.rule=Host(`sso.pfadimh.ch`) && (PathPrefix(`/authenticate`) || PathPrefix(`/callback`) || PathPrefix(`/token`) || PathPrefix(`/userinfo`) || PathPrefix(`/proxy-admin`))
+        - traefik.http.routers.sso-helper.entrypoints=websecure
+        - traefik.http.routers.sso-helper.tls.certresolver=letsencrypt
+        - traefik.http.services.sso-helper.loadbalancer.server.port=3000
+
+networks:
+  public:
+    driver: overlay
+  internal:
+    driver: overlay
+    internal: true
+
+volumes:
+  traefik-certs:
+  mongodb-data:
+    external: true
+    name: mongodb-prod-ugudot-data
+  keycloak-db-data:
+    external: true
+    name: keycloak-db-wna4ve-data
