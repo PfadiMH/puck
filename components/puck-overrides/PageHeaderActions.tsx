@@ -36,13 +36,17 @@ function PageHeaderActions({ path }: PageHeaderActionsProps) {
   });
 
   return (
-    <div className="flex gap-4 items-center justify-between">
-      <UndoRedoButtons />
+    <div className="flex flex-col gap-3 sm:flex-row sm:gap-4 sm:items-center sm:justify-between">
+      {/* Undo/Redo - Hidden on mobile in collapsed menu, shown on desktop */}
+      <div className="hidden sm:block">
+        <UndoRedoButtons />
+      </div>
 
-      <div className="flex flex-wrap gap-2">
+      {/* Action buttons - Stack on mobile, row on desktop */}
+      <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap">
         <DialogRoot>
           <DialogTrigger>
-            <Button color="secondary" size="small">
+            <Button color="secondary" size="small" className="w-full sm:w-auto">
               Delete
             </Button>
           </DialogTrigger>
@@ -58,6 +62,7 @@ function PageHeaderActions({ path }: PageHeaderActionsProps) {
           onClick={() => router.push("/admin")}
           color="secondary"
           size="small"
+          className="w-full sm:w-auto"
         >
           To Admin
         </Button>
@@ -66,14 +71,17 @@ function PageHeaderActions({ path }: PageHeaderActionsProps) {
           onClick={() => router.push(path)}
           color="secondary"
           size="small"
+          className="w-full sm:w-auto"
         >
           View Page
         </Button>
       </div>
+
+      {/* Save button - Full width on mobile, auto on desktop */}
       <Button
         onClick={() => savePageMutation()}
         color="primary"
-        className="flex gap-2 items-center"
+        className="flex gap-2 items-center justify-center w-full sm:w-auto"
         disabled={isPending}
       >
         Save Changes
