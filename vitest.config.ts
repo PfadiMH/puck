@@ -22,6 +22,14 @@ export default defineConfig({
       },
       {
         plugins: [react(), tsconfigPaths()],
+        resolve: {
+          alias: {
+            "next/image": path.resolve(
+              __dirname,
+              "./testing/__mocks__/next-image.tsx"
+            ),
+          },
+        },
         define: {
           "process.env": JSON.stringify(process.env),
         },
@@ -29,13 +37,13 @@ export default defineConfig({
           browser: {
             enabled: true,
             provider: playwright(),
+            // https://vitest.dev/config/browser/playwright
             instances: [{ browser: "chromium" }],
           },
           setupFiles: "./vitest.setup.ts",
           include: ["testing/**/*.test.browser.{tsx,ts}"],
         },
         optimizeDeps: {
-          entries: [],
           include: [
             "vitest-browser-react",
             "@tanstack/react-query",
@@ -43,7 +51,6 @@ export default defineConfig({
             "sonner",
             "clsx",
             "tailwind-merge",
-            "next/image",
             "lucide-react",
             "isomorphic-dompurify",
           ],
