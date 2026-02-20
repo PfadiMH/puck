@@ -22,6 +22,14 @@ export default defineConfig({
       },
       {
         plugins: [react(), tsconfigPaths()],
+        resolve: {
+          alias: {
+            "next/image": path.resolve(
+              __dirname,
+              "./testing/__mocks__/next-image.tsx"
+            ),
+          },
+        },
         define: {
           "process.env": JSON.stringify(process.env),
         },
@@ -36,7 +44,6 @@ export default defineConfig({
           include: ["testing/**/*.test.browser.{tsx,ts}"],
         },
         optimizeDeps: {
-          entries: [],
           include: [
             "vitest-browser-react",
             "@tanstack/react-query",
@@ -44,10 +51,8 @@ export default defineConfig({
             "sonner",
             "clsx",
             "tailwind-merge",
-            "next/image",
             "lucide-react",
             "isomorphic-dompurify",
-            "class-variance-authority",
           ],
         },
       },
