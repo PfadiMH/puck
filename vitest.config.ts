@@ -1,6 +1,7 @@
 import react from "@vitejs/plugin-react";
 import { playwright } from "@vitest/browser-playwright";
 import path from "path";
+import tsconfigPaths from "vite-tsconfig-paths";
 import { defineConfig } from "vitest/config";
 
 export default defineConfig({
@@ -20,12 +21,9 @@ export default defineConfig({
         },
       },
       {
-        plugins: [react()],
+        plugins: [react(), tsconfigPaths()],
         resolve: {
           alias: {
-            "@components": path.resolve(__dirname, "./components"),
-            "@lib": path.resolve(__dirname, "./lib"),
-            "@app": path.resolve(__dirname, "./app"),
             "next/image": path.resolve(
               __dirname,
               "./testing/__mocks__/next-image.tsx"
@@ -46,29 +44,15 @@ export default defineConfig({
         },
         optimizeDeps: {
           entries: [],
-          // List ALL npm deps used by browser tests and their transitive
-          // component imports. This prevents vite from discovering deps at
-          // runtime, which triggers re-optimization and causes a race
-          // condition where test files loaded during re-optimization fail
-          // to resolve aliases.
           include: [
             "vitest-browser-react",
-            "@puckeditor/core",
             "@tanstack/react-query",
-            "react",
-            "react-dom",
-            "react/jsx-dev-runtime",
-            "react/jsx-runtime",
             "react-scroll-parallax",
-
+            "sonner",
             "clsx",
             "tailwind-merge",
             "lucide-react",
             "isomorphic-dompurify",
-            "sonner",
-            "date-fns",
-            "radix-ui",
-            "react-day-picker",
           ],
         },
       },
