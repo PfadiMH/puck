@@ -10,13 +10,20 @@ const { handlers, signIn, signOut, auth } = NextAuth({
   basePath: "/auth",
   providers: [
     ...(USE_MOCK_AUTH ? [getMockAuthProvider()] : []),
-    Keycloak({
-      authorization: {
-        params: {
-          scope: "openid profile email with_roles",
-        },
-      },
-    }),
+    ...(!USE_MOCK_AUTH
+      ? [
+          Keycloak({
+            authorization: {
+              params: {
+                scope: "openid profile email roles",
+                ...(env.AUTH_KEYCLOAK_IDP_HINT && {
+                  kc_idp_hint: env.AUTH_KEYCLOAK_IDP_HINT,
+                }),
+              },
+            },
+          }),
+        ]
+      : []),
   ],
   callbacks: {
     async jwt({ token, profile, user, trigger, session }) {
