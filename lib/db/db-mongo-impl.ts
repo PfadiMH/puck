@@ -25,11 +25,12 @@ export class MongoService implements DatabaseService {
   private puckDataCollectionName = "puck-data";
   private securityCollectionName = "security";
   private filesCollectionName = "files";
+  private initPromise: Promise<void>;
 
   constructor(connectionString: string, dbName: string) {
     this.client = new MongoClient(connectionString);
     this.db = this.client.db(dbName);
-    this.initialize();
+    this.initPromise = this.initialize();
   }
 
   private async initialize(): Promise<void> {
@@ -90,6 +91,8 @@ export class MongoService implements DatabaseService {
   }
 
   async disconnect(): Promise<void> {
+    // Wait for initialization to complete before closing
+    await this.initPromise;
     await this.client.close();
   }
 

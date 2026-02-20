@@ -1,3 +1,4 @@
+import { ActivityProps, activityConfig } from "@components/puck/Activity";
 import { FlexProps, flexConfig } from "@components/puck/Flex";
 import { GraphicProps, graphicConfig } from "@components/puck/Graphic";
 import { HeadingProps, headingConfig } from "@components/puck/Heading";
@@ -17,6 +18,7 @@ import type { Config, Data } from "@puckeditor/core";
 
 // @keep-sorted
 export type PageProps = {
+  Activity: ActivityProps;
   Flex: FlexProps;
   Graphic: GraphicProps;
   Heading: HeadingProps;
@@ -35,6 +37,7 @@ export type PageData = Data<PageProps, PageRootProps>;
 export const pageConfig: PageConfig = sectionThemedConfig({
   // @keep-sorted
   components: {
+    Activity: activityConfig,
     Flex: flexConfig,
     Graphic: graphicConfig,
     Heading: headingConfig,
