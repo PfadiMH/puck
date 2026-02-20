@@ -4,6 +4,7 @@ import {
   buttonGroupConfig,
 } from "@components/puck/ButtonGroup";
 import { CardProps, cardConfig } from "@components/puck/Card";
+import { FlexProps, flexConfig } from "@components/puck/Flex";
 import { FormProps, formConfig } from "@components/puck/Form";
 import { GraphicProps, graphicConfig } from "@components/puck/Graphic";
 import { HeroProps, heroConfig } from "@components/puck/Hero";
@@ -29,12 +30,13 @@ export type PageProps = {
   Activity: ActivityProps;
   ButtonGroup: ButtonGroupProps;
   Card: CardProps;
+  Flex: FlexProps;
   Form: FormProps;
   Graphic: GraphicProps;
   Hero: HeroProps;
   IFrame: IFrameProps;
-  RichText: RichTextProps;
   MultiColumn: MultiColumnProps;
+  RichText: RichTextProps;
   SectionDivider: SectionDividerProps;
   VerticalSpace: VerticalSpaceProps;
 };
@@ -50,12 +52,13 @@ export const pageConfig: PageConfig = sectionThemedConfig({
     Activity: activityConfig,
     ButtonGroup: buttonGroupConfig,
     Card: cardConfig,
+    Flex: flexConfig,
     Form: formConfig,
     Graphic: graphicConfig,
     Hero: heroConfig,
     IFrame: iframeConfig,
-    RichText: richTextConfig,
     MultiColumn: multiColumnConfig,
+    RichText: richTextConfig,
     SectionDivider: sectionDividerConfig,
     VerticalSpace: verticalSpaceConfig,
   },

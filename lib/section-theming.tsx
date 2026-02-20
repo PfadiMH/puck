@@ -37,6 +37,28 @@ export function applySectionTheming(data: PageData): {
   return { data: { ...data, content: newContent }, didChange };
 }
 
+/**
+ * Calculates the theme of the last section on the page by counting
+ * SectionDivider components. Trailing SectionDividers (with no content
+ * after them) are ignored since they don't create a visible section.
+ */
+export function getLastSectionTheme(data: PageData): Theme {
+  let theme: Theme = "mud";
+  let pendingToggle = false;
+
+  for (const item of data.content) {
+    if (item.type === "SectionDivider") {
+      pendingToggle = !pendingToggle;
+    } else {
+      if (pendingToggle) {
+        theme = theme === "sun" ? "mud" : "sun";
+        pendingToggle = false;
+      }
+    }
+  }
+  return theme;
+}
+
 function RootRender<Props extends PropsWithChildren>({
   children,
   puck: { isEditing },
