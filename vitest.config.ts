@@ -42,6 +42,7 @@ export default defineConfig({
           include: ["testing/**/*.test.browser.{tsx,ts}"],
         },
         optimizeDeps: {
+          noDiscovery: true,
           include: [
             "vitest-browser-react",
             "@tanstack/react-query",
