@@ -1,0 +1,183 @@
+name: Preview
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, closed]
+
+concurrency:
+  group: preview-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  deploy-preview:
+    if: >
+      github.event.action != 'closed' &&
+      github.event.pull_request.user.type != 'Bot'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push preview image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          tags: ghcr.io/pfadimh/puck:pr-${{ github.event.pull_request.number }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Deploy preview
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.DEPLOY_HOST }}
+          username: root
+          key: ${{ secrets.DEPLOY_SSH_KEY }}
+          script: |
+            set -e
+            PR_NUM=${{ github.event.pull_request.number }}
+            IMAGE=ghcr.io/pfadimh/puck:pr-${PR_NUM}
+            SERVICE_NAME=puck-preview-${PR_NUM}
+            DOMAIN=pr-${PR_NUM}.dev.pfadimh.ch
+
+            docker pull ${IMAGE}
+
+            if docker service inspect ${SERVICE_NAME} >/dev/null 2>&1; then
+              docker service update \
+                --image ${IMAGE} \
+                --update-order start-first \
+                --update-failure-action rollback \
+                ${SERVICE_NAME}
+            else
+              source /opt/puck/.env
+
+              docker service create \
+                --name ${SERVICE_NAME} \
+                --network puck_public \
+                --network puck_internal \
+                --env MOCK_AUTH=true \
+                --env AUTH_SECRET=preview-secret-${PR_NUM} \
+                --env AUTH_TRUST_HOST=true \
+                --env AUTH_URL=https://${DOMAIN} \
+                --env INTERNAL_API_BASE_URL=https://${DOMAIN} \
+                --env "MONGODB_CONNECTION_STRING=mongodb://admin:${MONGO_PASSWORD}@puck_mongodb:27017" \
+                --env MONGODB_DB_NAME=puck-pr-${PR_NUM} \
+                --label traefik.enable=true \
+                --label traefik.docker.network=puck_public \
+                --label "traefik.http.routers.preview-${PR_NUM}.rule=Host(\`${DOMAIN}\`)" \
+                --label traefik.http.routers.preview-${PR_NUM}.entrypoints=websecure \
+                --label traefik.http.routers.preview-${PR_NUM}.tls.certresolver=letsencrypt \
+                --label traefik.http.services.preview-${PR_NUM}.loadbalancer.server.port=3000 \
+                ${IMAGE}
+            fi
+
+      - name: Comment on PR
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const prNumber = context.payload.pull_request.number;
+            const sha = context.payload.pull_request.head.sha.substring(0, 7);
+            const url = `https://pr-${prNumber}.dev.pfadimh.ch`;
+            const isNew = context.payload.action === 'opened' || context.payload.action === 'reopened';
+
+            let body;
+            if (isNew) {
+              body = `**Preview** — [${url}](${url})\nMock auth, commit \`${sha}\``;
+            } else {
+              body = `Preview updated — \`${sha}\` is live at [${url}](${url})`;
+            }
+
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: prNumber,
+              body,
+            });
+
+  cleanup-preview:
+    if: >
+      github.event.action == 'closed' &&
+      github.event.pull_request.user.type != 'Bot'
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+      packages: write
+    steps:
+      - name: Remove preview
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.DEPLOY_HOST }}
+          username: root
+          key: ${{ secrets.DEPLOY_SSH_KEY }}
+          script: |
+            set -e
+            PR_NUM=${{ github.event.pull_request.number }}
+            SERVICE_NAME=puck-preview-${PR_NUM}
+
+            if docker service inspect ${SERVICE_NAME} >/dev/null 2>&1; then
+              docker service rm ${SERVICE_NAME}
+            fi
+
+            source /opt/puck/.env
+            MONGO_CONTAINER=$(docker ps -q -f name=puck_mongodb)
+            if [ -n "${MONGO_CONTAINER}" ]; then
+              docker exec ${MONGO_CONTAINER} mongosh \
+                -u admin -p "${MONGO_PASSWORD}" \
+                --quiet \
+                --eval "db.getSiblingDB('puck-pr-${PR_NUM}').dropDatabase()"
+            fi
+
+      - name: Delete preview image from GHCR
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const prNumber = context.payload.pull_request.number;
+            const tag = `pr-${prNumber}`;
+
+            // List versions and find the one with our PR tag
+            const versions = await github.rest.packages.getAllPackageVersionsForPackageOwnedByOrg({
+              package_type: 'container',
+              package_name: 'puck',
+              org: context.repo.owner,
+            });
+
+            const version = versions.data.find(v =>
+              v.metadata?.container?.tags?.includes(tag)
+            );
+
+            if (version) {
+              await github.rest.packages.deletePackageVersionForOrg({
+                package_type: 'container',
+                package_name: 'puck',
+                org: context.repo.owner,
+                package_version_id: version.id,
+              });
+              core.info(`Deleted GHCR image puck:${tag}`);
+            }
+
+      - name: Comment on PR
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const prNumber = context.payload.pull_request.number;
+            const merged = context.payload.pull_request.merged;
+
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: prNumber,
+              body: `Preview removed — PR ${merged ? 'merged' : 'closed'}.`,
+            });

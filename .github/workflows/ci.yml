@@ -104,3 +104,40 @@ jobs:
               --update-failure-action rollback \
               --update-delay 10s \
               puck_app
+
+      - name: Clean up old GHCR images
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const KEEP = 5;
+
+            const versions = await github.rest.packages.getAllPackageVersionsForPackageOwnedByOrg({
+              package_type: 'container',
+              package_name: 'puck',
+              org: context.repo.owner,
+              per_page: 100,
+            });
+
+            // Filter to only sha-tagged production images (40-char hex, no 'latest', no 'pr-')
+            const prodVersions = versions.data.filter(v => {
+              const tags = v.metadata?.container?.tags || [];
+              return tags.some(t => /^[0-9a-f]{40}$/.test(t)) && !tags.includes('latest');
+            });
+
+            // Sort by created_at descending, skip the newest KEEP
+            const toDelete = prodVersions
+              .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
+              .slice(KEEP);
+
+            for (const version of toDelete) {
+              const tags = version.metadata?.container?.tags || [];
+              await github.rest.packages.deletePackageVersionForOrg({
+                package_type: 'container',
+                package_name: 'puck',
+                org: context.repo.owner,
+                package_version_id: version.id,
+              });
+              core.info(`Deleted puck:${tags.join(', ')} (${version.id})`);
+            }
+
+            core.info(`Kept ${KEEP} most recent, deleted ${toDelete.length} old images`);

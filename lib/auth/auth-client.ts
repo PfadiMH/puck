@@ -4,7 +4,7 @@ import NextAuth from "next-auth";
 import Keycloak from "next-auth/providers/keycloak";
 import { getMockAuthProvider } from "./mock-auth-config";
 
-const USE_MOCK_AUTH = env.MOCK_AUTH === "true" && env.NODE_ENV !== "production";
+const USE_MOCK_AUTH = env.MOCK_AUTH === "true";
 
 const { handlers, signIn, signOut, auth } = NextAuth({
   basePath: "/auth",
