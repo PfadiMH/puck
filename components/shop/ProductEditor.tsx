@@ -265,7 +265,7 @@ export function ProductEditor({
           <label className="block text-sm font-medium mb-1">Bilder</label>
           <div className="flex flex-wrap gap-2">
             {images.map((url, i) => (
-              <div key={i} className="relative group">
+              <div key={`${url}-${i}`} className="relative group">
                 <img
                   src={url}
                   alt=""
@@ -474,16 +474,17 @@ export function ProductEditor({
                         />
                       </td>
                       <td className="px-3 py-2">
-                        <input
+                         <input
                           type="number"
                           min="0"
                           value={variant.stock}
-                          onChange={(e) =>
+                          onChange={(e) => {
+                            const parsed = parseInt(e.target.value, 10);
                             updateVariantStock(
                               idx,
-                              parseInt(e.target.value) || 0
-                            )
-                          }
+                              Number.isNaN(parsed) ? 0 : Math.max(0, parsed)
+                            );
+                          }}
                           className="w-full bg-transparent border border-contrast-ground/15 rounded px-2 py-1 text-sm focus:outline-none focus:ring-1 focus:ring-primary/60"
                         />
                       </td>

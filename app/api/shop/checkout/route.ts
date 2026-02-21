@@ -35,16 +35,19 @@ export async function POST(request: NextRequest) {
 
     // Validate each item has required fields
     for (const item of items) {
+      const ci = item as CartItem;
       if (
         !item ||
         typeof item !== "object" ||
-        typeof (item as CartItem).productId !== "string" ||
-        typeof (item as CartItem).variantIndex !== "number" ||
-        !Number.isFinite((item as CartItem).variantIndex) ||
-        !Number.isInteger((item as CartItem).variantIndex) ||
-        typeof (item as CartItem).quantity !== "number" ||
-        !Number.isFinite((item as CartItem).quantity) ||
-        (item as CartItem).quantity <= 0
+        typeof ci.productId !== "string" ||
+        typeof ci.variantIndex !== "number" ||
+        !Number.isFinite(ci.variantIndex) ||
+        !Number.isInteger(ci.variantIndex) ||
+        typeof ci.quantity !== "number" ||
+        !Number.isFinite(ci.quantity) ||
+        ci.quantity <= 0 ||
+        typeof ci.selectedOptions !== "object" ||
+        ci.selectedOptions === null
       ) {
         return NextResponse.json(
           { error: "Ungültiger Artikel im Warenkorb" },
@@ -54,6 +57,15 @@ export async function POST(request: NextRequest) {
     }
 
     const cartItems = items as CartItem[];
+
+    // Fetch all products in parallel to avoid O(n) sequential DB calls
+    const uniqueProductIds = [...new Set(cartItems.map((ci) => ci.productId))];
+    const productResults = await Promise.all(
+      uniqueProductIds.map((id) => dbService.getProduct(id))
+    );
+    const productMap = new Map(
+      uniqueProductIds.map((id, i) => [id, productResults[i]])
+    );
 
     // Validate items against DB (prevent price tampering)
     const lineItems: {
@@ -75,7 +87,7 @@ export async function POST(request: NextRequest) {
     const itemsCompact: [string, number, number][] = [];
 
     for (const cartItem of cartItems) {
-      const product = await dbService.getProduct(cartItem.productId);
+      const product = productMap.get(cartItem.productId);
 
       if (!product || !product.active) {
         return NextResponse.json(
@@ -105,7 +117,9 @@ export async function POST(request: NextRequest) {
 
       // Use DB price, not client price. ?? preserves legitimate 0 prices.
       const price = variant.price ?? product.price;
-      const optionsStr = Object.values(cartItem.selectedOptions).join(" / ");
+      const optionsStr = Object.values(cartItem.selectedOptions ?? {}).join(
+        " / "
+      );
 
       lineItems.push({
         price_data: {

@@ -141,12 +141,25 @@ export function CartDrawer() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ items }),
       });
+      if (!res.ok) {
+        let errorMsg = `Fehler (${res.status})`;
+        try {
+          const data = await res.json();
+          if (data.error) errorMsg = data.error;
+        } catch {
+          // Non-JSON error body — use status text
+        }
+        const { toast } = await import("sonner");
+        toast.error(errorMsg);
+        setIsCheckingOut(false);
+        return;
+      }
       const data = await res.json();
       if (data.url) {
         window.location.href = data.url;
       } else {
         const { toast } = await import("sonner");
-        toast.error(data.error || "Fehler beim Erstellen der Bestellung");
+        toast.error("Fehler beim Erstellen der Bestellung");
         setIsCheckingOut(false);
       }
     } catch {

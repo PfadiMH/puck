@@ -83,7 +83,12 @@ function parseItemsFromMetadata(
   try {
     // Single-key format
     if (metadata["items"]) {
-      return JSON.parse(metadata["items"]);
+      const parsed: unknown = JSON.parse(metadata["items"]);
+      if (!Array.isArray(parsed)) {
+        console.error("Parsed items metadata is not an array");
+        return [];
+      }
+      return parsed;
     }
 
     // Chunked format
@@ -93,7 +98,12 @@ function parseItemsFromMetadata(
       for (let i = 0; i < chunkCount; i++) {
         fullJson += metadata[`items_${i}`] || "";
       }
-      return JSON.parse(fullJson);
+      const parsed: unknown = JSON.parse(fullJson);
+      if (!Array.isArray(parsed)) {
+        console.error("Parsed chunked items metadata is not an array");
+        return [];
+      }
+      return parsed;
     }
 
     // Legacy per-key format (for sessions created before this update)

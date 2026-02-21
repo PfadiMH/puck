@@ -14,31 +14,20 @@ export function SuccessContent() {
   const cleared = useRef(false);
   const [verified, setVerified] = useState(false);
 
-  // Verify the session with Stripe before clearing the cart
-  // to prevent accidental cart wipes from fake/bookmarked URLs
+  // Local plausibility check on session_id format before clearing cart.
+  // Not a server-side verification — blast radius is localStorage only.
   useEffect(() => {
     if (!sessionId || cleared.current) return;
 
-    async function verifyAndClear() {
-      try {
-        // Lightweight check: if the session_id looks like a valid Stripe ID
-        // (starts with cs_test_ or cs_live_ and has sufficient length)
-        const isPlausible =
-          sessionId!.length > 20 &&
-          (sessionId!.startsWith("cs_test_") ||
-            sessionId!.startsWith("cs_live_"));
+    const isPlausible =
+      sessionId.length > 20 &&
+      (sessionId.startsWith("cs_test_") || sessionId.startsWith("cs_live_"));
 
-        if (isPlausible) {
-          clearCart();
-          cleared.current = true;
-          setVerified(true);
-        }
-      } catch {
-        // On any error, still show the success page but don't clear cart
-      }
+    if (isPlausible) {
+      clearCart();
+      cleared.current = true;
+      setVerified(true);
     }
-
-    verifyAndClear();
   }, [sessionId, clearCart]);
 
   return (
