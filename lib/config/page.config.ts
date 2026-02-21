@@ -22,6 +22,7 @@ import {
   VerticalSpaceProps,
   verticalSpaceConfig,
 } from "@components/puck/VerticalSpace";
+import { WebshopProps, webshopConfig } from "@components/puck/Webshop";
 import { sectionThemedConfig } from "@lib/section-theming";
 import type { Config, Data } from "@puckeditor/core";
 
@@ -39,6 +40,7 @@ export type PageProps = {
   RichText: RichTextProps;
   SectionDivider: SectionDividerProps;
   VerticalSpace: VerticalSpaceProps;
+  Webshop: WebshopProps;
 };
 export type PageRootProps = {
   title: string;
@@ -61,6 +63,7 @@ export const pageConfig: PageConfig = sectionThemedConfig({
     RichText: richTextConfig,
     SectionDivider: sectionDividerConfig,
     VerticalSpace: verticalSpaceConfig,
+    Webshop: webshopConfig,
   },
 });
 

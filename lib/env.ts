@@ -16,6 +16,9 @@ export const env = createEnv({
     SMTP_FROM: z.string().optional(),
     ALTCHA_HMAC_KEY: z.string().optional(),
     AUTH_KEYCLOAK_IDP_HINT: z.string().optional(),
+    // Stripe
+    STRIPE_SECRET_KEY: z.string().optional(),
+    STRIPE_WEBHOOK_SECRET: z.string().optional(),
     // S3-Compatible Storage
     S3_ENDPOINT: z.string().optional(),
     S3_REGION: z.string().optional(),
@@ -25,7 +28,7 @@ export const env = createEnv({
     S3_PUBLIC_URL: z.string().optional(),
   },
   client: {
-    // Add NEXT_PUBLIC_ variables here
+    NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: z.string().optional(),
   },
   runtimeEnv: {
     AUTH_SECRET: process.env.AUTH_SECRET,
@@ -41,6 +44,11 @@ export const env = createEnv({
     SMTP_FROM: process.env.SMTP_FROM,
     ALTCHA_HMAC_KEY: process.env.ALTCHA_HMAC_KEY,
     AUTH_KEYCLOAK_IDP_HINT: process.env.AUTH_KEYCLOAK_IDP_HINT,
+    // Stripe
+    STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY,
+    STRIPE_WEBHOOK_SECRET: process.env.STRIPE_WEBHOOK_SECRET,
+    NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY:
+      process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY,
     // S3-Compatible Storage
     S3_ENDPOINT: process.env.S3_ENDPOINT,
     S3_REGION: process.env.S3_REGION,

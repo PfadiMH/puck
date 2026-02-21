@@ -1,6 +1,7 @@
 "use client";
 import { NavbarHamburgerSvg } from "@components/graphics/NavbarHamburgerSvg";
 import ClickAwayListener from "@components/misc/ClickAwayListener";
+import { NavbarCartIcon } from "@components/navbar/NavbarCartIcon";
 import { NavbarLogo } from "@components/navbar/NavbarLogo";
 import { NavbarSearch } from "@components/navbar/NavbarSearch";
 import { NavbarData } from "@lib/config/navbar.config";
@@ -35,6 +36,7 @@ export function NavbarItemsMobile({
         </div>
         <div className="flex items-center justify-end gap-2 mr-2">
           {data.root.props?.enableSearch === "true" && <NavbarSearch compact />}
+          <NavbarCartIcon compact />
           <button
             ref={buttonRef}
             className="text-gray-500 w-10 h-10 relative mr-3 focus:outline-none border rounded-full border-dashed"

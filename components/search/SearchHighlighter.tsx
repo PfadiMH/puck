@@ -43,10 +43,10 @@ export function SearchHighlighter() {
   const marksRef = useRef<HTMLElement[]>([]);
 
   useEffect(() => {
-    const highlight = searchParams.get("highlight");
+    const highlight = searchParams?.get("highlight");
     if (!highlight) return;
 
-    const componentId = searchParams.get("cid") ?? undefined;
+    const componentId = searchParams?.get("cid") ?? undefined;
     const terms = highlight.trim().split(/\s+/);
 
     const escaped = terms.map((t) =>

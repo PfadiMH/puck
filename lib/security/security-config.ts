@@ -15,6 +15,8 @@ export const assignablePermissions = [
   "page:update",
   "role-permissions:read",
   "role-permissions:update",
+  "shop:read",
+  "shop:update",
 ] as const;
 
 /**
@@ -52,6 +54,8 @@ export const defaultSecurityConfig: SecurityConfig = {
         "files:read",
         "files:create",
         "files:delete",
+        "shop:read",
+        "shop:update",
       ],
     },
     {
