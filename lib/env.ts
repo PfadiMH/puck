@@ -74,5 +74,14 @@ export const env = createEnv({
           message: "S3_PUBLIC_URL is required when S3 storage is configured",
         });
       }
+
+      // Stripe: webhook secret required when Stripe is configured
+      if (v.STRIPE_SECRET_KEY && !v.STRIPE_WEBHOOK_SECRET) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message:
+            "STRIPE_WEBHOOK_SECRET is required when STRIPE_SECRET_KEY is configured",
+        });
+      }
     }),
 });

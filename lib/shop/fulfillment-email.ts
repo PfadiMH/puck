@@ -37,6 +37,51 @@ function escapeHtml(text: string): string {
   return text.replace(/[&<>"']/g, (c) => entities[c]);
 }
 
+// --- Shared helpers for DRY email building ---
+
+function buildItemRowsHtml(items: OrderItem[]): string {
+  return items
+    .map((item) => {
+      const opts = Object.values(item.options).join(", ");
+      return `
+        <tr style="border-bottom: 1px solid #eee;">
+          <td style="padding: 10px;">${escapeHtml(item.name)}${opts ? `<br><small style="color:#888;">${escapeHtml(opts)}</small>` : ""}</td>
+          <td style="padding: 10px; text-align: center;">${item.quantity}</td>
+          <td style="padding: 10px; text-align: right;">${formatPrice(item.price * item.quantity)}</td>
+        </tr>`;
+    })
+    .join("");
+}
+
+function buildItemRowsText(items: OrderItem[]): string[] {
+  return items.map((item) => {
+    const opts = Object.values(item.options).join(", ");
+    return `  ${item.quantity}x ${item.name}${opts ? ` (${opts})` : ""} — ${formatPrice(item.price * item.quantity)}`;
+  });
+}
+
+function buildItemTableHtml(items: OrderItem[], total: number): string {
+  return `
+      <table style="width: 100%; border-collapse: collapse; margin-top: 15px;">
+        <thead>
+          <tr style="background: #f4a019; color: white;">
+            <th style="padding: 10px; text-align: left;">Artikel</th>
+            <th style="padding: 10px; text-align: center;">Menge</th>
+            <th style="padding: 10px; text-align: right;">Preis</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${buildItemRowsHtml(items)}
+        </tbody>
+        <tfoot>
+          <tr>
+            <td colspan="2" style="padding: 12px; text-align: right; font-weight: bold;">Total:</td>
+            <td style="padding: 12px; text-align: right; font-weight: bold; font-size: 16px;">${formatPrice(total)}</td>
+          </tr>
+        </tfoot>
+      </table>`;
+}
+
 function buildFulfillmentEmail(order: OrderDetails): {
   html: string;
   text: string;
@@ -61,30 +106,9 @@ function buildFulfillmentEmail(order: OrderDetails): {
     );
   }
 
-  textLines.push("", "Artikel:", "");
-
-  for (const item of order.items) {
-    const opts = Object.values(item.options).join(", ");
-    textLines.push(
-      `  ${item.quantity}x ${item.name}${opts ? ` (${opts})` : ""} — ${formatPrice(item.price * item.quantity)}`
-    );
-  }
-
+  textLines.push("", "Artikel:", "", ...buildItemRowsText(order.items));
   textLines.push("", `Total: ${formatPrice(order.total)}`, "");
   textLines.push(`Stripe Session: ${order.stripeSessionId}`);
-
-  // HTML version
-  const itemRowsHtml = order.items
-    .map((item) => {
-      const opts = Object.values(item.options).join(", ");
-      return `
-        <tr style="border-bottom: 1px solid #eee;">
-          <td style="padding: 10px;">${escapeHtml(item.name)}${opts ? `<br><small style="color:#888;">${escapeHtml(opts)}</small>` : ""}</td>
-          <td style="padding: 10px; text-align: center;">${item.quantity}</td>
-          <td style="padding: 10px; text-align: right;">${formatPrice(item.price * item.quantity)}</td>
-        </tr>`;
-    })
-    .join("");
 
   const addressHtml = order.shippingAddress
     ? `
@@ -105,24 +129,7 @@ function buildFulfillmentEmail(order: OrderDetails): {
       </h1>
       <p style="color: #666;">Kunde: <strong>${escapeHtml(order.customerEmail)}</strong></p>
       ${addressHtml}
-      <table style="width: 100%; border-collapse: collapse; margin-top: 15px;">
-        <thead>
-          <tr style="background: #f4a019; color: white;">
-            <th style="padding: 10px; text-align: left;">Artikel</th>
-            <th style="padding: 10px; text-align: center;">Menge</th>
-            <th style="padding: 10px; text-align: right;">Preis</th>
-          </tr>
-        </thead>
-        <tbody>
-          ${itemRowsHtml}
-        </tbody>
-        <tfoot>
-          <tr>
-            <td colspan="2" style="padding: 12px; text-align: right; font-weight: bold;">Total:</td>
-            <td style="padding: 12px; text-align: right; font-weight: bold; font-size: 16px;">${formatPrice(order.total)}</td>
-          </tr>
-        </tfoot>
-      </table>
+      ${buildItemTableHtml(order.items, order.total)}
       <p style="margin-top: 25px; padding-top: 15px; border-top: 1px solid #eee; color: #999; font-size: 12px;">
         Stripe Session: ${escapeHtml(order.stripeSessionId)}
       </p>
@@ -143,28 +150,10 @@ function buildConfirmationEmail(order: OrderDetails): {
     "",
     "Artikel:",
     "",
+    ...buildItemRowsText(order.items),
   ];
 
-  for (const item of order.items) {
-    const opts = Object.values(item.options).join(", ");
-    textLines.push(
-      `  ${item.quantity}x ${item.name}${opts ? ` (${opts})` : ""} — ${formatPrice(item.price * item.quantity)}`
-    );
-  }
-
   textLines.push("", `Total: ${formatPrice(order.total)}`);
-
-  const itemRowsHtml = order.items
-    .map((item) => {
-      const opts = Object.values(item.options).join(", ");
-      return `
-        <tr style="border-bottom: 1px solid #eee;">
-          <td style="padding: 10px;">${escapeHtml(item.name)}${opts ? `<br><small style="color:#888;">${escapeHtml(opts)}</small>` : ""}</td>
-          <td style="padding: 10px; text-align: center;">${item.quantity}</td>
-          <td style="padding: 10px; text-align: right;">${formatPrice(item.price * item.quantity)}</td>
-        </tr>`;
-    })
-    .join("");
 
   const html = `
     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
@@ -172,22 +161,7 @@ function buildConfirmationEmail(order: OrderDetails): {
         Bestellbestätigung
       </h1>
       <p>Vielen Dank für deine Bestellung!</p>
-      <table style="width: 100%; border-collapse: collapse; margin-top: 15px;">
-        <thead>
-          <tr style="background: #f4a019; color: white;">
-            <th style="padding: 10px; text-align: left;">Artikel</th>
-            <th style="padding: 10px; text-align: center;">Menge</th>
-            <th style="padding: 10px; text-align: right;">Preis</th>
-          </tr>
-        </thead>
-        <tbody>${itemRowsHtml}</tbody>
-        <tfoot>
-          <tr>
-            <td colspan="2" style="padding: 12px; text-align: right; font-weight: bold;">Total:</td>
-            <td style="padding: 12px; text-align: right; font-weight: bold; font-size: 16px;">${formatPrice(order.total)}</td>
-          </tr>
-        </tfoot>
-      </table>
+      ${buildItemTableHtml(order.items, order.total)}
       <p style="margin-top: 25px; color: #888; font-size: 13px;">
         Bei Fragen melde dich gerne bei uns.
       </p>
@@ -223,6 +197,10 @@ async function sendEmail(
         smtpUser && smtpPass
           ? { user: smtpUser, pass: smtpPass }
           : undefined,
+      // Timeouts to prevent hanging in webhook context
+      connectionTimeout: 10_000,
+      greetingTimeout: 10_000,
+      socketTimeout: 30_000,
     });
 
     await transporter.sendMail({ from: smtpFrom, to, subject, html, text });

@@ -76,7 +76,7 @@ export function CartDrawer() {
         }
 
         const status: CartItemStatus = {};
-        const currentPrice = variant.price || product.price;
+        const currentPrice = variant.price ?? product.price;
 
         if (currentPrice !== item.price) {
           status.priceChanged = currentPrice;

@@ -9,19 +9,6 @@ export interface ProductVariant {
   stock: number;
 }
 
-export interface ProductDb {
-  _id: string;
-  name: string;
-  description: string;
-  images: string[];
-  price: number;
-  options: ProductOption[];
-  variants: ProductVariant[];
-  active: boolean;
-  createdAt: string;
-  updatedAt: string;
-}
-
 export interface Product {
   _id: string;
   name: string;
@@ -34,6 +21,13 @@ export interface Product {
   createdAt: string;
   updatedAt: string;
 }
+
+/**
+ * Database representation of a product.
+ * Identical to Product — both use string _id (MongoDB ObjectIds are serialized).
+ * Kept as a separate type alias for clarity at the DB layer boundary.
+ */
+export type ProductDb = Product;
 
 export interface ProductInput {
   name: string;

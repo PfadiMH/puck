@@ -91,12 +91,34 @@ export function ProductEditor({
   const [active, setActive] = useState(product?.active ?? true);
   const [saving, setSaving] = useState(false);
   const [showFilePicker, setShowFilePicker] = useState(false);
+  // Raw string state for variant prices (avoids reformatting on every keystroke)
+  const [variantPriceStrings, setVariantPriceStrings] = useState<
+    Record<number, string>
+  >(() => {
+    const initial: Record<number, string> = {};
+    const v = product?.variants ?? [{ options: {}, price: 0, stock: 0 }];
+    v.forEach((variant, idx) => {
+      initial[idx] = (variant.price / 100).toFixed(2);
+    });
+    return initial;
+  });
 
   const basePrice = Math.round(parseFloat(price || "0") * 100);
 
   // Regenerate variants when options change
   const regenerateVariants = useCallback(() => {
-    setVariants((prev) => generateVariants(options, prev, basePrice));
+    setVariants((prev) => {
+      const newVariants = generateVariants(options, prev, basePrice);
+      // Sync variant price strings for new/changed variants
+      setVariantPriceStrings((prevStrings) => {
+        const next: Record<number, string> = {};
+        newVariants.forEach((v, idx) => {
+          next[idx] = prevStrings[idx] ?? (v.price / 100).toFixed(2);
+        });
+        return next;
+      });
+      return newVariants;
+    });
   }, [options, basePrice]);
 
   useEffect(() => {
@@ -126,6 +148,7 @@ export function ProductEditor({
   }
 
   function updateVariantPrice(index: number, priceStr: string) {
+    setVariantPriceStrings((prev) => ({ ...prev, [index]: priceStr }));
     const updated = [...variants];
     updated[index] = {
       ...updated[index],
@@ -157,11 +180,18 @@ export function ProductEditor({
     }
 
     // Validate options
+    const seenNames = new Set<string>();
     for (const opt of options) {
       if (!opt.name.trim()) {
         toast.error("Alle Optionen brauchen einen Namen");
         return;
       }
+      const normalizedName = opt.name.trim().toLowerCase();
+      if (seenNames.has(normalizedName)) {
+        toast.error("Optionsnamen müssen eindeutig sein");
+        return;
+      }
+      seenNames.add(normalizedName);
       if (opt.values.some((v) => !v.trim())) {
         toast.error("Alle Optionswerte müssen ausgefüllt sein");
         return;
@@ -436,7 +466,7 @@ export function ProductEditor({
                         <input
                           type="number"
                           step="0.05"
-                          value={(variant.price / 100).toFixed(2)}
+                          value={variantPriceStrings[idx] ?? (variant.price / 100).toFixed(2)}
                           onChange={(e) =>
                             updateVariantPrice(idx, e.target.value)
                           }

@@ -47,15 +47,32 @@ export function CartProvider({ children }: PropsWithChildren) {
   const [isCartOpen, setCartOpen] = useState(false);
   const [shopOnPage, setShopOnPage] = useState(false);
 
-  // Hydrate from localStorage
+  // Hydrate from localStorage with validation
   useEffect(() => {
     try {
       const stored = localStorage.getItem(STORAGE_KEY);
       if (stored) {
-        setItems(JSON.parse(stored));
+        const parsed: unknown = JSON.parse(stored);
+        // Validate it's an array with expected shape
+        if (Array.isArray(parsed)) {
+          const valid = parsed.filter(
+            (item): item is CartItem =>
+              item != null &&
+              typeof item === "object" &&
+              typeof item.productId === "string" &&
+              typeof item.variantIndex === "number" &&
+              typeof item.quantity === "number" &&
+              Number.isFinite(item.quantity) &&
+              item.quantity > 0 &&
+              typeof item.name === "string" &&
+              typeof item.price === "number" &&
+              Number.isFinite(item.price)
+          );
+          setItems(valid);
+        }
       }
     } catch {
-      // Ignore parse errors
+      // Ignore parse errors — start with empty cart
     }
     setHydrated(true);
   }, []);
@@ -77,7 +94,7 @@ export function CartProvider({ children }: PropsWithChildren) {
         return prev.map((i) =>
           i.productId === item.productId &&
           i.variantIndex === item.variantIndex
-            ? { ...i, quantity: i.quantity + item.quantity }
+            ? { ...i, ...item, quantity: i.quantity + item.quantity }
             : i
         );
       }

@@ -13,7 +13,13 @@ export default async function ShopSuccessPage() {
   return (
     <>
       <NavbarRender data={navbarData} />
-      <Suspense>
+      <Suspense
+        fallback={
+          <main className="min-h-[60vh] flex items-center justify-center">
+            <div className="text-contrast-ground/40">Laden...</div>
+          </main>
+        }
+      >
         <SuccessContent />
       </Suspense>
       <FooterRender data={footerData} />

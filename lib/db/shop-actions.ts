@@ -17,6 +17,7 @@ export async function getActiveProducts(): Promise<Product[]> {
 }
 
 export async function getProduct(id: string): Promise<Product | null> {
+  await requireServerPermission({ all: ["shop:read"] });
   return dbService.getProduct(id);
 }
 

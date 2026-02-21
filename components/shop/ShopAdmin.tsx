@@ -305,6 +305,7 @@ export function ShopAdmin() {
             <Button
               size="medium"
               color="primary"
+              className="!bg-brand-red hover:!bg-brand-red/90 active:!bg-brand-red/80"
               onClick={() => {
                 if (deletingProduct) {
                   deleteMutation.mutate(deletingProduct._id);

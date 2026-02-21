@@ -37,9 +37,6 @@ function ImageCarousel({
   const offsetRef = useRef(0);
   // Whether we're in an active interaction (no CSS transition)
   const interactingRef = useRef(false);
-  // Force re-render for strip transform updates during interactions
-  const [, forceRender] = useState(0);
-  const kick = useCallback(() => forceRender((n) => n + 1), []);
   // Zoom preview state (declared early so wheel handler can dismiss it)
   const [zoom, setZoom] = useState<{
     bgPos: string;
@@ -78,6 +75,30 @@ function ImageCarousel({
     [lastSlide, getWidth]
   );
 
+  /**
+   * Imperatively apply the strip transform to the DOM.
+   * Reads refs directly — never called during render.
+   * This avoids the react-hooks/refs violation from reading refs in JSX.
+   */
+  const applyTransform = useCallback(
+    (slideIndex: number) => {
+      if (!stripRef.current) return;
+      const tx = interactingRef.current
+        ? `calc(-${slideIndex * 100}% + ${offsetRef.current}px)`
+        : `${-slideIndex * 100}%`;
+      stripRef.current.style.transform = `translateX(${tx})`;
+      stripRef.current.style.transition = interactingRef.current
+        ? "none"
+        : "transform 300ms ease-out";
+    },
+    [] // no deps — reads refs imperatively
+  );
+
+  // Apply transform whenever current slide changes (after React render)
+  useEffect(() => {
+    applyTransform(current);
+  }, [current, applyTransform]);
+
   /** Snap to nearest valid slide based on current offset */
   const snap = useCallback(
     (velocity = 0) => {
@@ -92,21 +113,27 @@ function ImageCarousel({
       const target = Math.max(0, Math.min(lastSlide, current + slidesDelta));
       offsetRef.current = 0;
       interactingRef.current = false;
+      if (target === current) {
+        // Same slide — no state change, apply transform manually
+        applyTransform(current);
+      }
       setCurrent(target);
-      kick();
     },
-    [current, lastSlide, getWidth, kick]
+    [current, lastSlide, getWidth, applyTransform]
   );
 
   // --- Arrow navigation ---
   const goTo = useCallback(
     (idx: number) => {
+      const target = Math.max(0, Math.min(lastSlide, idx));
       offsetRef.current = 0;
       interactingRef.current = false;
-      setCurrent(Math.max(0, Math.min(lastSlide, idx)));
-      kick();
+      if (target === current) {
+        applyTransform(current);
+      }
+      setCurrent(target);
     },
-    [lastSlide, kick]
+    [lastSlide, current, applyTransform]
   );
 
   // --- Mouse drag ---
@@ -127,9 +154,9 @@ function ImageCarousel({
       isDragging.current = true;
       interactingRef.current = true;
       offsetRef.current = 0;
-      kick();
+      applyTransform(current);
     },
-    [hasMultiple, kick]
+    [hasMultiple, current, applyTransform]
   );
 
   useEffect(() => {
@@ -148,7 +175,7 @@ function ImageCarousel({
 
       const totalDx = e.clientX - dragStartX.current;
       offsetRef.current = clampOffset(totalDx, current, true);
-      kick();
+      applyTransform(current);
     };
 
     const onMouseUp = () => {
@@ -166,7 +193,7 @@ function ImageCarousel({
       window.removeEventListener("mousemove", onMouseMove);
       window.removeEventListener("mouseup", onMouseUp);
     };
-  }, [hasMultiple, current, clampOffset, getWidth, snap, kick]);
+  }, [hasMultiple, current, clampOffset, getWidth, snap, applyTransform]);
 
   // --- Touch swipe ---
   const touchStartX = useRef(0);
@@ -190,9 +217,9 @@ function ImageCarousel({
       touchDirectionLocked.current = null;
       interactingRef.current = true;
       offsetRef.current = 0;
-      kick();
+      applyTransform(current);
     },
-    [hasMultiple, kick]
+    [hasMultiple, current, applyTransform]
   );
 
   const handleTouchMove = useCallback(
@@ -212,7 +239,7 @@ function ImageCarousel({
         touchActive.current = false;
         interactingRef.current = false;
         offsetRef.current = 0;
-        kick();
+        applyTransform(current);
         return;
       }
 
@@ -229,9 +256,9 @@ function ImageCarousel({
       touchLastTime.current = now;
 
       offsetRef.current = clampOffset(dx, current, true);
-      kick();
+      applyTransform(current);
     },
-    [hasMultiple, current, clampOffset, kick]
+    [hasMultiple, current, clampOffset, applyTransform]
   );
 
   const handleTouchEnd = useCallback(() => {
@@ -269,7 +296,7 @@ function ImageCarousel({
       interactingRef.current = true;
       offsetRef.current = newOffset;
       setZoom(null);
-      kick();
+      applyTransform(current);
 
       // Snap after gesture settles
       clearTimeout(wheelTimeout.current);
@@ -283,7 +310,7 @@ function ImageCarousel({
       el.removeEventListener("wheel", onWheel);
       clearTimeout(wheelTimeout.current);
     };
-  }, [hasMultiple, current, clampOffset, snap, kick, setZoom]);
+  }, [hasMultiple, current, clampOffset, snap, applyTransform, setZoom]);
 
   // --- Zoom preview ---
   const handleZoomMove = useCallback(
@@ -315,18 +342,6 @@ function ImageCarousel({
     }
   }, [snap]);
 
-  // --- Compute strip transform ---
-  const translateX = interactingRef.current
-    ? `calc(-${current * 100}% + ${offsetRef.current}px)`
-    : `${-current * 100}%`;
-
-  const stripStyle: React.CSSProperties = {
-    display: "flex",
-    transform: `translateX(${translateX})`,
-    transition: interactingRef.current ? "none" : "transform 300ms ease-out",
-    willChange: "transform",
-  };
-
   const zoomSize = size === "klein" ? 200 : size === "mittel" ? 280 : 350;
 
   return (
@@ -347,8 +362,12 @@ function ImageCarousel({
       >
         {images.length > 0 ? (
           <>
-            {/* Sliding strip of all images */}
-            <div ref={stripRef} style={stripStyle} className="h-full">
+            {/* Sliding strip — transform managed imperatively via applyTransform */}
+            <div
+              ref={stripRef}
+              style={{ display: "flex", willChange: "transform" }}
+              className="h-full"
+            >
               {images.map((src, i) => (
                 <img
                   key={i}
@@ -448,21 +467,30 @@ function ProductCard({
   size: WebshopSize;
 }) {
   const { addItem, setCartOpen } = useCart();
+
+  // Lazy state initializer — avoids extra render from useEffect
   const [selectedOptions, setSelectedOptions] = useState<
     Record<string, string>
-  >({});
-  const [added, setAdded] = useState(false);
-
-  // Initialize default selections
-  useEffect(() => {
+  >(() => {
     const defaults: Record<string, string> = {};
     for (const opt of product.options) {
-      if (opt.values.length > 0) {
-        defaults[opt.name] = opt.values[0];
-      }
+      if (opt.values.length > 0) defaults[opt.name] = opt.values[0];
     }
-    setSelectedOptions(defaults);
-  }, [product.options]);
+    return defaults;
+  });
+  const [added, setAdded] = useState(false);
+
+  // Timer refs for cleanup on unmount
+  const addTimerRef = useRef<ReturnType<typeof setTimeout>>(undefined);
+  const cartTimerRef = useRef<ReturnType<typeof setTimeout>>(undefined);
+
+  // Clean up timers on unmount
+  useEffect(() => {
+    return () => {
+      clearTimeout(addTimerRef.current);
+      clearTimeout(cartTimerRef.current);
+    };
+  }, []);
 
   function getSelectedVariantIndex(): number {
     if (product.variants.length <= 1) return 0;
@@ -480,7 +508,8 @@ function ProductCard({
 
   const variant = getSelectedVariant();
   const variantIndex = getSelectedVariantIndex();
-  const currentPrice = variant?.price || product.price;
+  // ?? preserves legitimate 0 prices (|| would treat 0 as falsy)
+  const currentPrice = variant?.price ?? product.price;
   const inStock = variant ? variant.stock > 0 : false;
 
   function handleAdd() {
@@ -495,9 +524,12 @@ function ProductCard({
       image: product.images[0],
     });
     setAdded(true);
-    setTimeout(() => setAdded(false), 1500);
+    // Clear previous timers before setting new ones
+    clearTimeout(addTimerRef.current);
+    clearTimeout(cartTimerRef.current);
+    addTimerRef.current = setTimeout(() => setAdded(false), 1500);
     // Brief delay so the user sees the button feedback before drawer opens
-    setTimeout(() => setCartOpen(true), 300);
+    cartTimerRef.current = setTimeout(() => setCartOpen(true), 300);
   }
 
   return (

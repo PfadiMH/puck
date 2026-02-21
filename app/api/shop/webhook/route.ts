@@ -16,6 +16,15 @@ export async function POST(request: NextRequest) {
     );
   }
 
+  // Fail fast if webhook secret is not configured
+  if (!env.STRIPE_WEBHOOK_SECRET) {
+    console.error("STRIPE_WEBHOOK_SECRET is not configured");
+    return NextResponse.json(
+      { error: "Webhook not configured" },
+      { status: 503 }
+    );
+  }
+
   const body = await request.text();
   const signature = request.headers.get("stripe-signature");
 
@@ -31,7 +40,7 @@ export async function POST(request: NextRequest) {
     event = stripe.webhooks.constructEvent(
       body,
       signature,
-      env.STRIPE_WEBHOOK_SECRET || ""
+      env.STRIPE_WEBHOOK_SECRET
     );
   } catch (err) {
     console.error("Webhook signature verification failed:", err);
@@ -55,16 +64,59 @@ export async function POST(request: NextRequest) {
   return NextResponse.json({ received: true });
 }
 
+/** Parse compact items array from session metadata, handling chunked data. */
+function parseItemsFromMetadata(
+  metadata: Record<string, string>
+): [string, number, number][] {
+  try {
+    // Single-key format
+    if (metadata["items"]) {
+      return JSON.parse(metadata["items"]);
+    }
+
+    // Chunked format
+    const chunkCount = parseInt(metadata["items_chunks"] || "0");
+    if (chunkCount > 0) {
+      let fullJson = "";
+      for (let i = 0; i < chunkCount; i++) {
+        fullJson += metadata[`items_${i}`] || "";
+      }
+      return JSON.parse(fullJson);
+    }
+
+    // Legacy per-key format (for sessions created before this update)
+    const legacyCount = parseInt(metadata["item_count"] || "0");
+    if (legacyCount > 0) {
+      const items: [string, number, number][] = [];
+      for (let i = 0; i < legacyCount; i++) {
+        const productId = metadata[`item_${i}_productId`];
+        const variantIndex = parseInt(metadata[`item_${i}_variantIndex`] || "0");
+        const quantity = parseInt(metadata[`item_${i}_quantity`] || "0");
+        if (productId && !isNaN(variantIndex) && !isNaN(quantity) && quantity > 0) {
+          items.push([productId, variantIndex, quantity]);
+        } else {
+          console.warn(`Webhook: Skipping invalid legacy item at index ${i}`);
+        }
+      }
+      return items;
+    }
+  } catch (error) {
+    console.error("Failed to parse items from metadata:", error);
+  }
+
+  return [];
+}
+
 async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
   const metadata = session.metadata || {};
-  const itemCount = parseInt(metadata["item_count"] || "0");
+  const rawItems = parseItemsFromMetadata(metadata);
 
-  if (itemCount === 0) {
+  if (rawItems.length === 0) {
     console.warn("Webhook: No items in session metadata");
     return;
   }
 
-  // Parse items from metadata
+  // Resolve items from DB for up-to-date name/price/options
   const items: {
     productId: string;
     variantIndex: number;
@@ -74,14 +126,33 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
     options: Record<string, string>;
   }[] = [];
 
-  for (let i = 0; i < itemCount; i++) {
+  for (const [productId, variantIndex, quantity] of rawItems) {
+    if (!productId || !Number.isFinite(variantIndex) || !Number.isFinite(quantity) || quantity <= 0) {
+      console.warn(`Webhook: Skipping invalid item [${productId}, ${variantIndex}, ${quantity}]`);
+      continue;
+    }
+
+    const product = await dbService.getProduct(productId);
+    if (!product) {
+      console.warn(`Webhook: Product ${productId} not found — skipping`);
+      continue;
+    }
+
+    const variant = product.variants[variantIndex];
+    if (!variant) {
+      console.warn(
+        `Webhook: Variant ${variantIndex} not found for product ${productId} — skipping`
+      );
+      continue;
+    }
+
     items.push({
-      productId: metadata[`item_${i}_productId`],
-      variantIndex: parseInt(metadata[`item_${i}_variantIndex`]),
-      quantity: parseInt(metadata[`item_${i}_quantity`]),
-      name: metadata[`item_${i}_name`],
-      price: parseInt(metadata[`item_${i}_price`]),
-      options: JSON.parse(metadata[`item_${i}_options`] || "{}"),
+      productId,
+      variantIndex,
+      quantity,
+      name: product.name,
+      price: variant.price ?? product.price,
+      options: variant.options,
     });
   }
 
@@ -140,16 +211,29 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
     stripeSessionId: session.id,
   };
 
-  // Send emails
+  // Send emails and log failures
   const shopSettings = await dbService.getShopSettings();
 
   if (shopSettings.fulfillmentEmail) {
-    await sendFulfillmentEmail(shopSettings.fulfillmentEmail, orderDetails);
+    const sent = await sendFulfillmentEmail(
+      shopSettings.fulfillmentEmail,
+      orderDetails
+    );
+    if (!sent) {
+      console.error(
+        `Failed to send fulfillment email for session ${session.id}`
+      );
+    }
   } else {
     console.warn("No fulfillment email configured — order email not sent");
   }
 
   if (orderDetails.customerEmail !== "unknown") {
-    await sendConfirmationEmail(orderDetails);
+    const sent = await sendConfirmationEmail(orderDetails);
+    if (!sent) {
+      console.error(
+        `Failed to send confirmation email for session ${session.id}`
+      );
+    }
   }
 }
