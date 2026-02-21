@@ -40,7 +40,10 @@ export async function POST(request: NextRequest) {
         typeof item !== "object" ||
         typeof (item as CartItem).productId !== "string" ||
         typeof (item as CartItem).variantIndex !== "number" ||
+        !Number.isFinite((item as CartItem).variantIndex) ||
+        !Number.isInteger((item as CartItem).variantIndex) ||
         typeof (item as CartItem).quantity !== "number" ||
+        !Number.isFinite((item as CartItem).quantity) ||
         (item as CartItem).quantity <= 0
       ) {
         return NextResponse.json(
@@ -149,9 +152,18 @@ export async function POST(request: NextRequest) {
     // Resolve origin for success/cancel URLs.
     // Fall back to configured base URL if headers are missing (e.g. server-side proxy).
     const headersList = await headers();
+    let refererOrigin: string | null = null;
+    const referer = headersList.get("referer");
+    if (referer) {
+      try {
+        refererOrigin = new URL(referer).origin;
+      } catch {
+        // Malformed referer — ignore
+      }
+    }
     const origin =
       headersList.get("origin") ||
-      headersList.get("referer")?.replace(/\/[^/]*$/, "") ||
+      refererOrigin ||
       env.INTERNAL_API_BASE_URL;
 
     if (!origin) {

@@ -3,6 +3,7 @@
 import Button from "@components/ui/Button";
 import cn from "@lib/cn";
 import type { Product } from "@lib/shop/types";
+import { formatPrice } from "@lib/shop/utils";
 import {
   AlertTriangle,
   Loader2,
@@ -14,10 +15,6 @@ import {
 } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useCart } from "./CartProvider";
-
-function formatPrice(rappen: number) {
-  return `CHF ${(rappen / 100).toFixed(2)}`;
-}
 
 /** Cart item with validation info overlaid */
 interface CartItemStatus {
@@ -284,6 +281,7 @@ export function CartDrawer() {
                               item.quantity - 1
                             )
                           }
+                          aria-label="Menge verringern"
                         >
                           <Minus className="w-3.5 h-3.5" />
                         </button>
@@ -299,6 +297,7 @@ export function CartDrawer() {
                               item.quantity + 1
                             )
                           }
+                          aria-label="Menge erhöhen"
                         >
                           <Plus className="w-3.5 h-3.5" />
                         </button>
@@ -308,6 +307,7 @@ export function CartDrawer() {
                             removeItem(item.productId, item.variantIndex)
                           }
                           title="Entfernen"
+                          aria-label="Artikel entfernen"
                         >
                           <Trash2 className="w-4 h-4" />
                         </button>

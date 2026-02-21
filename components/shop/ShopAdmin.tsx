@@ -24,6 +24,7 @@ import {
   saveShopSettings,
 } from "@lib/db/shop-actions";
 import type { Product, ShopSettings } from "@lib/shop/types";
+import { formatPrice } from "@lib/shop/utils";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Package, Pencil, Plus, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -67,6 +68,7 @@ export function ShopAdmin() {
     mutationFn: (id: string) => deleteProduct(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin-products"] });
+      setDeletingProduct(null);
       toast.success("Produkt gelöscht");
     },
     onError: () => toast.error("Fehler beim Löschen"),
@@ -80,10 +82,6 @@ export function ShopAdmin() {
     },
     onError: () => toast.error("Fehler beim Speichern"),
   });
-
-  function formatPrice(rappen: number) {
-    return `CHF ${(rappen / 100).toFixed(2)}`;
-  }
 
   function getTotalStock(product: Product) {
     if (product.variants.length === 0) return 0;
@@ -306,14 +304,14 @@ export function ShopAdmin() {
               size="medium"
               color="primary"
               className="!bg-brand-red hover:!bg-brand-red/90 active:!bg-brand-red/80"
+              disabled={deleteMutation.isPending}
               onClick={() => {
                 if (deletingProduct) {
                   deleteMutation.mutate(deletingProduct._id);
-                  setDeletingProduct(null);
                 }
               }}
             >
-              Löschen
+              {deleteMutation.isPending ? "Löschen..." : "Löschen"}
             </Button>
           </DialogActions>
         </Dialog>

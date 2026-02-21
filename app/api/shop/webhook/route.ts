@@ -54,6 +54,18 @@ export async function POST(request: NextRequest) {
     const session = event.data.object as Stripe.Checkout.Session;
 
     try {
+      // Idempotency: skip if this session was already processed
+      const alreadyProcessed = await dbService.isSessionProcessed(session.id);
+      if (alreadyProcessed) {
+        console.log(
+          `Webhook: session ${session.id} already processed — skipping`
+        );
+        return NextResponse.json({ received: true });
+      }
+
+      // Mark as processed before acting to prevent concurrent double-processing
+      await dbService.markSessionProcessed(session.id);
+
       await handleCheckoutCompleted(session);
     } catch (error) {
       console.error("Error handling checkout completion:", error);
@@ -176,18 +188,8 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
     0
   );
 
-  // shipping_details is available on the expanded session object
-  const sessionAny = session as unknown as Record<string, unknown>;
-  const shipping = sessionAny.shipping_details as {
-    name?: string;
-    address?: {
-      line1?: string;
-      line2?: string;
-      city?: string;
-      postal_code?: string;
-      country?: string;
-    };
-  } | null;
+  // shipping_details moved to collected_information in Stripe SDK v20
+  const shipping = session.collected_information?.shipping_details ?? null;
 
   const orderDetails = {
     items: items.map((i) => ({

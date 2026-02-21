@@ -34,6 +34,7 @@ export class MongoService implements DatabaseService {
   private filesCollectionName = "files";
   private productsCollectionName = "products";
   private shopSettingsCollectionName = "shop-settings";
+  private processedSessionsCollectionName = "processed_sessions";
   private initPromise: Promise<void>;
 
   constructor(connectionString: string, dbName: string) {
@@ -104,6 +105,22 @@ export class MongoService implements DatabaseService {
     const productsCollection = this.db.collection(this.productsCollectionName);
     await productsCollection.createIndex({ active: 1 });
     await productsCollection.createIndex({ createdAt: -1 });
+
+    // Ensure processed_sessions collection with TTL index (auto-cleanup after 72h)
+    const psCollections = await this.db
+      .listCollections({ name: this.processedSessionsCollectionName })
+      .toArray();
+    if (psCollections.length === 0) {
+      await this.db.createCollection(this.processedSessionsCollectionName);
+    }
+    const psCollection = this.db.collection(
+      this.processedSessionsCollectionName
+    );
+    await psCollection.createIndex({ sessionId: 1 }, { unique: true });
+    await psCollection.createIndex(
+      { processedAt: 1 },
+      { expireAfterSeconds: 72 * 60 * 60 }
+    );
   }
 
   async connect(): Promise<void> {
@@ -467,5 +484,22 @@ export class MongoService implements DatabaseService {
       }
     );
     return result.modifiedCount === 1;
+  }
+
+  async isSessionProcessed(sessionId: string): Promise<boolean> {
+    const doc = await this.db
+      .collection(this.processedSessionsCollectionName)
+      .findOne({ sessionId });
+    return !!doc;
+  }
+
+  async markSessionProcessed(sessionId: string): Promise<void> {
+    await this.db
+      .collection(this.processedSessionsCollectionName)
+      .updateOne(
+        { sessionId },
+        { $setOnInsert: { sessionId, processedAt: new Date() } },
+        { upsert: true }
+      );
   }
 }

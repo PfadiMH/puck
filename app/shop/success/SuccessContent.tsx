@@ -47,7 +47,7 @@ export function SuccessContent() {
         <CheckCircle className="w-16 h-16 text-primary mx-auto mb-6" />
         <h1 className="text-3xl font-bold mb-3">Bestellung erfolgreich!</h1>
         <p className="text-contrast-ground/60 mb-8">
-          {verified || cleared.current
+          {verified
             ? "Vielen Dank für deine Bestellung. Du erhältst in Kürze eine Bestätigungs-E-Mail."
             : "Vielen Dank für deine Bestellung."}
         </p>

@@ -3,14 +3,11 @@
 import { useCart } from "@components/shop/CartProvider";
 import cn from "@lib/cn";
 import type { Product } from "@lib/shop/types";
+import { formatPrice } from "@lib/shop/utils";
 import type { WebshopSize } from "./Webshop";
 import { useQuery } from "@tanstack/react-query";
 import { Check, ChevronLeft, ChevronRight, Package } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
-
-function formatPrice(rappen: number) {
-  return `CHF ${(rappen / 100).toFixed(2)}`;
-}
 
 /** Fixed card pixel widths */
 const sizePixels: Record<WebshopSize, number> = {
@@ -501,13 +498,8 @@ function ProductCard({
     );
   }
 
-  function getSelectedVariant() {
-    const idx = getSelectedVariantIndex();
-    return idx >= 0 ? product.variants[idx] : null;
-  }
-
-  const variant = getSelectedVariant();
   const variantIndex = getSelectedVariantIndex();
+  const variant = variantIndex >= 0 ? product.variants[variantIndex] : null;
   // ?? preserves legitimate 0 prices (|| would treat 0 as falsy)
   const currentPrice = variant?.price ?? product.price;
   const inStock = variant ? variant.stock > 0 : false;

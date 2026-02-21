@@ -60,6 +60,9 @@ export interface DatabaseService {
     variantIndex: number,
     quantity: number
   ): Promise<boolean>;
+  // Webhook idempotency
+  isSessionProcessed(sessionId: string): Promise<boolean>;
+  markSessionProcessed(sessionId: string): Promise<void>;
 }
 
 function getDatabaseService(): DatabaseService {

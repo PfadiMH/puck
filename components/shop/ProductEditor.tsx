@@ -208,7 +208,7 @@ export function ProductEditor({
         options: options.filter((o) => o.name.trim() && o.values.length > 0),
         variants: variants.map((v) => ({
           ...v,
-          price: v.price || basePrice,
+          price: v.price ?? basePrice,
         })),
         active,
       };

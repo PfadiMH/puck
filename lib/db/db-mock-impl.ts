@@ -214,4 +214,14 @@ export class MockDatabaseService implements DatabaseService {
     product.variants[variantIndex].stock -= quantity;
     return true;
   }
+
+  private processedSessions = new Set<string>();
+
+  async isSessionProcessed(sessionId: string): Promise<boolean> {
+    return this.processedSessions.has(sessionId);
+  }
+
+  async markSessionProcessed(sessionId: string): Promise<void> {
+    this.processedSessions.add(sessionId);
+  }
 }

@@ -1,4 +1,5 @@
 import { env } from "@lib/env";
+import { formatPrice } from "./utils";
 
 interface OrderItem {
   name: string;
@@ -20,10 +21,6 @@ interface OrderDetails {
     country: string;
   };
   stripeSessionId: string;
-}
-
-function formatPrice(rappen: number) {
-  return `CHF ${(rappen / 100).toFixed(2)}`;
 }
 
 function escapeHtml(text: string): string {
