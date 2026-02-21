@@ -1,3 +1,4 @@
+import { NavbarCartIcon } from "@components/navbar/NavbarCartIcon";
 import { NavbarLogo } from "@components/navbar/NavbarLogo";
 import { NavbarSearch } from "@components/navbar/NavbarSearch";
 import { navbarConfig, NavbarData } from "@lib/config/navbar.config";
@@ -56,6 +57,7 @@ export function NavbarItemsDesktop({ data }: NavbarComponentsProps) {
             <NavbarSearch />
           </div>
         )}
+        <NavbarCartIcon />
       </div>
     </div>
   );

@@ -2,6 +2,13 @@ import { defaultFooterData } from "@lib/config/footer.config";
 import { defaultNavbarData } from "@lib/config/navbar.config";
 import { defaultSecurityConfig } from "@lib/security/security-config";
 import type {
+  Product,
+  ProductDb,
+  ProductInput,
+  ShopSettings,
+} from "@lib/shop/types";
+import { defaultShopSettings } from "@lib/shop/types";
+import type {
   FileRecord,
   FileRecordDb,
   FileRecordInput,
@@ -10,6 +17,8 @@ import type { DatabaseService, FileQueryOptions, FileQueryResult } from "./db";
 
 export class MockDatabaseService implements DatabaseService {
   private files: FileRecordDb[] = [];
+  private products: ProductDb[] = [];
+  private shopSettings: ShopSettings = { ...defaultShopSettings };
 
   async savePage() {}
   async deletePage() {}
@@ -136,5 +145,83 @@ export class MockDatabaseService implements DatabaseService {
       }
     }
     return [...folders].sort();
+  }
+
+  // --- Shop ---
+
+  async getProducts(): Promise<Product[]> {
+    return [...this.products].sort(
+      (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+    );
+  }
+
+  async getActiveProducts(): Promise<Product[]> {
+    return this.products
+      .filter((p) => p.active)
+      .sort(
+        (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+      );
+  }
+
+  async getProduct(id: string): Promise<Product | null> {
+    return this.products.find((p) => p._id === id) ?? null;
+  }
+
+  async saveProduct(product: ProductInput): Promise<Product> {
+    const now = new Date().toISOString();
+    const doc: ProductDb = {
+      _id: crypto.randomUUID(),
+      ...product,
+      createdAt: now,
+      updatedAt: now,
+    };
+    this.products.push(doc);
+    return doc;
+  }
+
+  async updateProduct(id: string, product: ProductInput): Promise<Product | null> {
+    const index = this.products.findIndex((p) => p._id === id);
+    if (index === -1) return null;
+    this.products[index] = {
+      ...this.products[index],
+      ...product,
+      updatedAt: new Date().toISOString(),
+    };
+    return this.products[index];
+  }
+
+  async deleteProduct(id: string): Promise<void> {
+    this.products = this.products.filter((p) => p._id !== id);
+  }
+
+  async getShopSettings(): Promise<ShopSettings> {
+    return { ...this.shopSettings };
+  }
+
+  async saveShopSettings(settings: ShopSettings): Promise<void> {
+    this.shopSettings = { ...settings };
+  }
+
+  async decrementStock(
+    productId: string,
+    variantIndex: number,
+    quantity: number
+  ): Promise<boolean> {
+    const product = this.products.find((p) => p._id === productId);
+    if (!product) return false;
+    if (!product.variants[variantIndex]) return false;
+    if (product.variants[variantIndex].stock < quantity) return false;
+    product.variants[variantIndex].stock -= quantity;
+    return true;
+  }
+
+  private processedSessions = new Set<string>();
+
+  async isSessionProcessed(sessionId: string): Promise<boolean> {
+    return this.processedSessions.has(sessionId);
+  }
+
+  async markSessionProcessed(sessionId: string): Promise<void> {
+    this.processedSessions.add(sessionId);
   }
 }

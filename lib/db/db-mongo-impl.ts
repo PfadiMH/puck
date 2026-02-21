@@ -6,6 +6,13 @@ import {
   SecurityConfig,
 } from "@lib/security/security-config";
 import type {
+  Product,
+  ProductDb,
+  ProductInput,
+  ShopSettings,
+} from "@lib/shop/types";
+import { defaultShopSettings } from "@lib/shop/types";
+import type {
   FileRecord,
   FileRecordDb,
   FileRecordInput,
@@ -25,6 +32,9 @@ export class MongoService implements DatabaseService {
   private puckDataCollectionName = "puck-data";
   private securityCollectionName = "security";
   private filesCollectionName = "files";
+  private productsCollectionName = "products";
+  private shopSettingsCollectionName = "shop-settings";
+  private processedSessionsCollectionName = "processed_sessions";
   private initPromise: Promise<void>;
 
   constructor(connectionString: string, dbName: string) {
@@ -84,6 +94,33 @@ export class MongoService implements DatabaseService {
     await filesCollection.createIndex({ createdAt: -1 });
     await filesCollection.createIndex({ folder: 1 });
     await filesCollection.createIndex({ tags: 1 });
+
+    // Ensure products collection has indexes
+    const productsCollections = await this.db
+      .listCollections({ name: this.productsCollectionName })
+      .toArray();
+    if (productsCollections.length === 0) {
+      await this.db.createCollection(this.productsCollectionName);
+    }
+    const productsCollection = this.db.collection(this.productsCollectionName);
+    await productsCollection.createIndex({ active: 1 });
+    await productsCollection.createIndex({ createdAt: -1 });
+
+    // Ensure processed_sessions collection with TTL index (auto-cleanup after 72h)
+    const psCollections = await this.db
+      .listCollections({ name: this.processedSessionsCollectionName })
+      .toArray();
+    if (psCollections.length === 0) {
+      await this.db.createCollection(this.processedSessionsCollectionName);
+    }
+    const psCollection = this.db.collection(
+      this.processedSessionsCollectionName
+    );
+    await psCollection.createIndex({ sessionId: 1 }, { unique: true });
+    await psCollection.createIndex(
+      { processedAt: 1 },
+      { expireAfterSeconds: 72 * 60 * 60 }
+    );
   }
 
   async connect(): Promise<void> {
@@ -335,5 +372,134 @@ export class MongoService implements DatabaseService {
     return this.db
       .collection<FileRecordDb>(this.filesCollectionName)
       .countDocuments(filter);
+  }
+
+  // --- Shop ---
+
+  private productCol() {
+    return this.db.collection<ProductDb>(this.productsCollectionName);
+  }
+
+  private toProduct(r: ProductDb): Product {
+    return {
+      _id: r._id,
+      name: r.name,
+      description: r.description,
+      images: r.images,
+      price: r.price,
+      options: r.options,
+      variants: r.variants,
+      active: r.active,
+      createdAt: r.createdAt,
+      updatedAt: r.updatedAt,
+    };
+  }
+
+  async getProducts(): Promise<Product[]> {
+    const results = await this.productCol()
+      .find()
+      .sort({ createdAt: -1 })
+      .toArray();
+    return results.map((r) => this.toProduct(r));
+  }
+
+  async getActiveProducts(): Promise<Product[]> {
+    const results = await this.productCol()
+      .find({ active: true })
+      .sort({ createdAt: -1 })
+      .toArray();
+    return results.map((r) => this.toProduct(r));
+  }
+
+  async getProduct(id: string): Promise<Product | null> {
+    const result = await this.productCol().findOne({
+      _id: id,
+    } as Partial<ProductDb>);
+    if (!result) return null;
+    return this.toProduct(result);
+  }
+
+  async saveProduct(product: ProductInput): Promise<Product> {
+    const now = new Date().toISOString();
+    const doc: ProductDb = {
+      _id: crypto.randomUUID(),
+      ...product,
+      createdAt: now,
+      updatedAt: now,
+    };
+    await this.productCol().insertOne(doc);
+    return this.toProduct(doc);
+  }
+
+  async updateProduct(id: string, product: ProductInput): Promise<Product | null> {
+    const now = new Date().toISOString();
+    const result = await this.productCol().findOneAndUpdate(
+      { _id: id } as Partial<ProductDb>,
+      {
+        $set: {
+          ...product,
+          updatedAt: now,
+        },
+      },
+      { returnDocument: "after" }
+    );
+    if (!result) return null;
+    return this.toProduct(result);
+  }
+
+  async deleteProduct(id: string): Promise<void> {
+    await this.productCol().deleteOne({ _id: id } as Partial<ProductDb>);
+  }
+
+  async getShopSettings(): Promise<ShopSettings> {
+    const result = await this.db
+      .collection(this.shopSettingsCollectionName)
+      .findOne({ type: "shopSettings" });
+    if (!result) return defaultShopSettings;
+    return result.data;
+  }
+
+  async saveShopSettings(settings: ShopSettings): Promise<void> {
+    await this.db
+      .collection(this.shopSettingsCollectionName)
+      .updateOne(
+        { type: "shopSettings" },
+        { $set: { data: settings, type: "shopSettings" } },
+        { upsert: true }
+      );
+  }
+
+  async decrementStock(
+    productId: string,
+    variantIndex: number,
+    quantity: number
+  ): Promise<boolean> {
+    const result = await this.productCol().updateOne(
+      {
+        _id: productId,
+        [`variants.${variantIndex}.stock`]: { $gte: quantity },
+      } as Partial<ProductDb>,
+      {
+        $inc: { [`variants.${variantIndex}.stock`]: -quantity },
+      }
+    );
+    return result.modifiedCount === 1;
+  }
+
+  async isSessionProcessed(sessionId: string): Promise<boolean> {
+    const doc = await this.db
+      .collection(this.processedSessionsCollectionName)
+      .findOne({ sessionId });
+    return !!doc;
+  }
+
+  async markSessionProcessed(sessionId: string): Promise<void> {
+    await this.db
+      .collection(this.processedSessionsCollectionName)
+      .updateOne(
+        { sessionId },
+        { $setOnInsert: { sessionId, processedAt: new Date() } },
+        { upsert: true }
+      );
   }
 }

@@ -3,6 +3,7 @@ import type { NavbarData } from "@lib/config/navbar.config";
 import type { PageData } from "@lib/config/page.config";
 import { env } from "@lib/env";
 import type { SecurityConfig } from "@lib/security/security-config";
+import type { Product, ProductInput, ShopSettings } from "@lib/shop/types";
 import type { FileRecord, FileRecordInput } from "@lib/storage/file-record";
 import type { Data } from "@puckeditor/core";
 import { MockDatabaseService } from "./db-mock-impl";
@@ -45,6 +46,23 @@ export interface DatabaseService {
     updates: { folder?: string; tags?: string[] }
   ): Promise<FileRecord | null>;
   getAllFolders(): Promise<string[]>;
+  // Shop
+  getProducts(): Promise<Product[]>;
+  getActiveProducts(): Promise<Product[]>;
+  getProduct(id: string): Promise<Product | null>;
+  saveProduct(product: ProductInput): Promise<Product>;
+  updateProduct(id: string, product: ProductInput): Promise<Product | null>;
+  deleteProduct(id: string): Promise<void>;
+  getShopSettings(): Promise<ShopSettings>;
+  saveShopSettings(settings: ShopSettings): Promise<void>;
+  decrementStock(
+    productId: string,
+    variantIndex: number,
+    quantity: number
+  ): Promise<boolean>;
+  // Webhook idempotency
+  isSessionProcessed(sessionId: string): Promise<boolean>;
+  markSessionProcessed(sessionId: string): Promise<void>;
 }
 
 function getDatabaseService(): DatabaseService {

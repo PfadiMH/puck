@@ -52,6 +52,12 @@ function Header() {
           </Button>
         </PermissionGuard>
 
+        <PermissionGuard policy={{ all: ["shop:read"] }}>
+          <Button size="medium" onClick={() => router.push("/admin/shop")}>
+            Shop
+          </Button>
+        </PermissionGuard>
+
         <PermissionGuard policy={{ all: ["page:create"] }}>
           <DialogRoot>
             <DialogTrigger>
