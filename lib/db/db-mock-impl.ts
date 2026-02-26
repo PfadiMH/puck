@@ -1,5 +1,6 @@
 import { defaultFooterData } from "@lib/config/footer.config";
 import { defaultNavbarData } from "@lib/config/navbar.config";
+import type { OrganigrammCache } from "@lib/hitobito/types";
 import { defaultSecurityConfig } from "@lib/security/security-config";
 import type {
   Product,
@@ -223,5 +224,19 @@ export class MockDatabaseService implements DatabaseService {
 
   async markSessionProcessed(sessionId: string): Promise<void> {
     this.processedSessions.add(sessionId);
+  }
+
+  // --- Hitobito Organigramm cache ---
+
+  private organigrammCache = new Map<number, OrganigrammCache>();
+
+  async getOrganigrammCache(
+    rootGroupId: number
+  ): Promise<OrganigrammCache | null> {
+    return this.organigrammCache.get(rootGroupId) ?? null;
+  }
+
+  async saveOrganigrammCache(cache: OrganigrammCache): Promise<void> {
+    this.organigrammCache.set(cache.rootGroupId, cache);
   }
 }

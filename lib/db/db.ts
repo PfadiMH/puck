@@ -2,6 +2,7 @@ import type { FooterData } from "@lib/config/footer.config";
 import type { NavbarData } from "@lib/config/navbar.config";
 import type { PageData } from "@lib/config/page.config";
 import { env } from "@lib/env";
+import type { OrganigrammCache } from "@lib/hitobito/types";
 import type { SecurityConfig } from "@lib/security/security-config";
 import type { Product, ProductInput, ShopSettings } from "@lib/shop/types";
 import type { FileRecord, FileRecordInput } from "@lib/storage/file-record";
@@ -63,6 +64,11 @@ export interface DatabaseService {
   // Webhook idempotency
   isSessionProcessed(sessionId: string): Promise<boolean>;
   markSessionProcessed(sessionId: string): Promise<void>;
+  // Hitobito Organigramm cache
+  getOrganigrammCache(
+    rootGroupId: number
+  ): Promise<OrganigrammCache | null>;
+  saveOrganigrammCache(cache: OrganigrammCache): Promise<void>;
 }
 
 function getDatabaseService(): DatabaseService {

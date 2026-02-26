@@ -1,6 +1,7 @@
 import { defaultFooterData, FooterData } from "@lib/config/footer.config";
 import { defaultNavbarData, NavbarData } from "@lib/config/navbar.config";
 import { PageData } from "@lib/config/page.config";
+import type { OrganigrammCache } from "@lib/hitobito/types";
 import {
   defaultSecurityConfig,
   SecurityConfig,
@@ -35,6 +36,7 @@ export class MongoService implements DatabaseService {
   private productsCollectionName = "products";
   private shopSettingsCollectionName = "shop-settings";
   private processedSessionsCollectionName = "processed_sessions";
+  private hitobitoCollectionName = "hitobito-cache";
   private initPromise: Promise<void>;
 
   constructor(connectionString: string, dbName: string) {
@@ -121,6 +123,17 @@ export class MongoService implements DatabaseService {
       { processedAt: 1 },
       { expireAfterSeconds: 72 * 60 * 60 }
     );
+
+    // Ensure hitobito-cache collection has indexes
+    const hitobitoCollections = await this.db
+      .listCollections({ name: this.hitobitoCollectionName })
+      .toArray();
+    if (hitobitoCollections.length === 0) {
+      await this.db.createCollection(this.hitobitoCollectionName);
+    }
+    await this.db
+      .collection(this.hitobitoCollectionName)
+      .createIndex({ rootGroupId: 1 }, { unique: true });
   }
 
   async connect(): Promise<void> {
@@ -499,6 +512,38 @@ export class MongoService implements DatabaseService {
       .updateOne(
         { sessionId },
         { $setOnInsert: { sessionId, processedAt: new Date() } },
+        { upsert: true }
+      );
+  }
+
+  // --- Hitobito Organigramm cache ---
+
+  async getOrganigrammCache(
+    rootGroupId: number
+  ): Promise<OrganigrammCache | null> {
+    const result = await this.db
+      .collection(this.hitobitoCollectionName)
+      .findOne({ rootGroupId });
+    if (!result) return null;
+    return {
+      rootGroupId: result.rootGroupId,
+      fetchedAt: result.fetchedAt,
+      data: result.data,
+    };
+  }
+
+  async saveOrganigrammCache(cache: OrganigrammCache): Promise<void> {
+    await this.db
+      .collection(this.hitobitoCollectionName)
+      .updateOne(
+        { rootGroupId: cache.rootGroupId },
+        {
+          $set: {
+            rootGroupId: cache.rootGroupId,
+            fetchedAt: cache.fetchedAt,
+            data: cache.data,
+          },
+        },
         { upsert: true }
       );
   }
