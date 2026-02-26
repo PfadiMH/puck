@@ -26,6 +26,9 @@ export const env = createEnv({
     S3_ACCESS_KEY_ID: z.string().optional(),
     S3_SECRET_ACCESS_KEY: z.string().optional(),
     S3_PUBLIC_URL: z.string().optional(),
+    // Hitobito (MiData) API
+    HITOBITO_BASE_URL: z.string().optional(),
+    HITOBITO_API_TOKEN: z.string().optional(),
   },
   client: {
     NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: z.string().optional(),
@@ -56,6 +59,9 @@ export const env = createEnv({
     S3_ACCESS_KEY_ID: process.env.S3_ACCESS_KEY_ID,
     S3_SECRET_ACCESS_KEY: process.env.S3_SECRET_ACCESS_KEY,
     S3_PUBLIC_URL: process.env.S3_PUBLIC_URL,
+    // Hitobito (MiData) API
+    HITOBITO_BASE_URL: process.env.HITOBITO_BASE_URL,
+    HITOBITO_API_TOKEN: process.env.HITOBITO_API_TOKEN,
   },
   skipValidation: !!process.env.SKIP_ENV_VALIDATION,
   emptyStringAsUndefined: true,
@@ -81,6 +87,18 @@ export const env = createEnv({
           code: z.ZodIssueCode.custom,
           message:
             "STRIPE_WEBHOOK_SECRET is required when STRIPE_SECRET_KEY is configured",
+        });
+      }
+
+      // Hitobito: both URL and token required together
+      if (
+        (v.HITOBITO_BASE_URL && !v.HITOBITO_API_TOKEN) ||
+        (!v.HITOBITO_BASE_URL && v.HITOBITO_API_TOKEN)
+      ) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message:
+            "HITOBITO_BASE_URL and HITOBITO_API_TOKEN must both be set together",
         });
       }
     }),

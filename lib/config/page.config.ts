@@ -15,6 +15,10 @@ import {
   multiColumnConfig,
 } from "@components/puck/MultiColumn";
 import {
+  OrganigrammProps,
+  organigrammConfig,
+} from "@components/puck/Organigramm";
+import {
   SectionDividerProps,
   sectionDividerConfig,
 } from "@components/puck/SectionDivider";
@@ -37,6 +41,7 @@ export type PageProps = {
   Hero: HeroProps;
   IFrame: IFrameProps;
   MultiColumn: MultiColumnProps;
+  Organigramm: OrganigrammProps;
   RichText: RichTextProps;
   SectionDivider: SectionDividerProps;
   VerticalSpace: VerticalSpaceProps;
@@ -60,6 +65,7 @@ export const pageConfig: PageConfig = sectionThemedConfig({
     Hero: heroConfig,
     IFrame: iframeConfig,
     MultiColumn: multiColumnConfig,
+    Organigramm: organigrammConfig,
     RichText: richTextConfig,
     SectionDivider: sectionDividerConfig,
     VerticalSpace: verticalSpaceConfig,
