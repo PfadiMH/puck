@@ -4,6 +4,8 @@ export const assignablePermissions = [
   "asset:create",
   "asset:delete",
   "asset:update",
+  "calendar:read",
+  "calendar:update",
   "files:create",
   "files:delete",
   "files:read",
@@ -56,6 +58,8 @@ export const defaultSecurityConfig: SecurityConfig = {
         "files:delete",
         "shop:read",
         "shop:update",
+        "calendar:read",
+        "calendar:update",
       ],
     },
     {

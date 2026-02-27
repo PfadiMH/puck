@@ -97,6 +97,7 @@ export function RoleModal({
     Assets: ["asset:create", "asset:update", "asset:delete"],
     Roles: ["role-permissions:read", "role-permissions:update"],
     Navigation: ["navbar:update", "footer:update"],
+    Kalender: ["calendar:read", "calendar:update"],
     Global: ["global-admin"],
   } as const;
 
