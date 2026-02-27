@@ -1,8 +1,10 @@
+import { CalendarActivityClient } from "@components/calendar/CalendarActivityClient";
+import { calendarGroupSelectorField } from "@components/puck-fields/calendar-group-selector";
 import { datePickerField } from "@components/puck-fields/date-picker";
 import { iconSelectorField } from "@components/puck-fields/icon-selector";
 import { timePickerField } from "@components/puck-fields/time-picker";
 import { getPackingIcon } from "@lib/packing-icons";
-import { ComponentConfig } from "@puckeditor/core";
+import type { ComponentConfig, Fields } from "@puckeditor/core";
 import { Calendar, Clock, MapPin, Backpack, Info } from "lucide-react";
 
 export type MitnehmenItem = {
@@ -16,6 +18,8 @@ export type LocationInfo = {
 };
 
 export type ActivityProps = {
+  mode: "manual" | "calendar";
+  calendarGroup?: string;
   date: string;
   startTime: string;
   endTime: string;
@@ -99,7 +103,7 @@ function LocationDisplay({
   );
 }
 
-function Activity({
+function ManualActivity({
   date,
   startTime,
   endTime,
@@ -107,7 +111,7 @@ function Activity({
   endLocation,
   mitnehmen,
   bemerkung,
-}: ActivityProps) {
+}: Omit<ActivityProps, "mode" | "calendarGroup">) {
   const hasEndLocation = endLocation?.name && endLocation.name.trim() !== "";
   const hasLocation = location?.name && location.name.trim() !== "";
   const hasMitnehmen =
@@ -208,69 +212,123 @@ function Activity({
   );
 }
 
+function Activity({
+  mode,
+  calendarGroup,
+  date,
+  startTime,
+  endTime,
+  location,
+  endLocation,
+  mitnehmen,
+  bemerkung,
+}: ActivityProps) {
+  if (mode === "calendar" && calendarGroup) {
+    return <CalendarActivityClient group={calendarGroup} />;
+  }
+
+  return (
+    <ManualActivity
+      date={date}
+      startTime={startTime}
+      endTime={endTime}
+      location={location}
+      endLocation={endLocation}
+      mitnehmen={mitnehmen}
+      bemerkung={bemerkung}
+    />
+  );
+}
+
+// All possible fields (used by resolveFields to pick the right subset)
+const allFields: Fields<ActivityProps> = {
+  mode: {
+    type: "select",
+    label: "Modus",
+    options: [
+      { label: "Manuell", value: "manual" },
+      { label: "Kalender (automatisch)", value: "calendar" },
+    ],
+  },
+  calendarGroup: calendarGroupSelectorField,
+  date: datePickerField,
+  startTime: {
+    ...timePickerField,
+    label: "Startzeit",
+  },
+  endTime: {
+    ...timePickerField,
+    label: "Endzeit",
+  },
+  location: {
+    type: "object",
+    label: "Ort",
+    objectFields: {
+      name: {
+        type: "text",
+        label: "Ortsname",
+      },
+      mapsLink: {
+        type: "text",
+        label: "Google Maps Link (optional)",
+      },
+    },
+  },
+  endLocation: {
+    type: "object",
+    label: "Endort (optional, für Wanderungen etc.)",
+    objectFields: {
+      name: {
+        type: "text",
+        label: "Ortsname",
+      },
+      mapsLink: {
+        type: "text",
+        label: "Google Maps Link (optional)",
+      },
+    },
+  },
+  mitnehmen: {
+    type: "array",
+    label: "Mitnehmen",
+    arrayFields: {
+      name: {
+        type: "text",
+        label: "Gegenstand",
+      },
+      icon: iconSelectorField,
+    },
+    getItemSummary: (item) => item.name || "Neuer Gegenstand",
+    defaultItemProps: {
+      name: "",
+      icon: undefined,
+    },
+  },
+  bemerkung: {
+    type: "textarea",
+    label: "Bemerkung (optional)",
+  },
+};
+
 export const activityConfig: ComponentConfig<ActivityProps> = {
   label: "Aktivität",
   render: Activity,
-  fields: {
-    date: datePickerField,
-    startTime: {
-      ...timePickerField,
-      label: "Startzeit",
-    },
-    endTime: {
-      ...timePickerField,
-      label: "Endzeit",
-    },
-    location: {
-      type: "object",
-      label: "Ort",
-      objectFields: {
-        name: {
-          type: "text",
-          label: "Ortsname",
-        },
-        mapsLink: {
-          type: "text",
-          label: "Google Maps Link (optional)",
-        },
-      },
-    },
-    endLocation: {
-      type: "object",
-      label: "Endort (optional, für Wanderungen etc.)",
-      objectFields: {
-        name: {
-          type: "text",
-          label: "Ortsname",
-        },
-        mapsLink: {
-          type: "text",
-          label: "Google Maps Link (optional)",
-        },
-      },
-    },
-    mitnehmen: {
-      type: "array",
-      label: "Mitnehmen",
-      arrayFields: {
-        name: {
-          type: "text",
-          label: "Gegenstand",
-        },
-        icon: iconSelectorField,
-      },
-      getItemSummary: (item) => item.name || "Neuer Gegenstand",
-      defaultItemProps: {
-        name: "",
-        icon: undefined,
-      },
-    },
-    bemerkung: {
-      type: "textarea",
-      label: "Bemerkung (optional)",
-    },
+  resolveFields: (data) => {
+    if (data.props.mode === "calendar") {
+      // In calendar mode, only show mode selector and group selector
+      return {
+        mode: allFields.mode,
+        calendarGroup: allFields.calendarGroup,
+      } as Fields<ActivityProps>;
+    }
+    // In manual mode, show all fields except calendarGroup
+    const { calendarGroup: _, ...manualFields } = allFields;
+    return manualFields as Fields<ActivityProps>;
   },
+  fields: allFields,
   defaultProps: {
+    mode: "manual",
+    calendarGroup: undefined,
     // Use local date to avoid UTC timezone shift
     date: (() => {
       const now = new Date();

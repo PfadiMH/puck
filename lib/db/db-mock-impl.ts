@@ -1,3 +1,11 @@
+import type {
+  CalendarEvent,
+  CalendarEventDb,
+  CalendarEventInput,
+  CalendarGroup,
+  CalendarGroupDb,
+  CalendarGroupInput,
+} from "@lib/calendar/types";
 import { defaultFooterData } from "@lib/config/footer.config";
 import { defaultNavbarData } from "@lib/config/navbar.config";
 import type { OrganigrammCache } from "@lib/hitobito/types";
@@ -238,5 +246,130 @@ export class MockDatabaseService implements DatabaseService {
 
   async saveOrganigrammCache(cache: OrganigrammCache): Promise<void> {
     this.organigrammCache.set(cache.rootGroupId, cache);
+  }
+
+  // --- Calendar ---
+
+  private calendarGroups: CalendarGroupDb[] = [];
+  private calendarEvents: CalendarEventDb[] = [];
+
+  async getCalendarGroups(): Promise<CalendarGroup[]> {
+    return [...this.calendarGroups].sort((a, b) => a.order - b.order);
+  }
+
+  async getCalendarGroup(id: string): Promise<CalendarGroup | null> {
+    return this.calendarGroups.find((g) => g._id === id) ?? null;
+  }
+
+  async saveCalendarGroup(
+    group: CalendarGroupInput
+  ): Promise<CalendarGroup> {
+    const doc: CalendarGroupDb = {
+      _id: crypto.randomUUID(),
+      ...group,
+    };
+    this.calendarGroups.push(doc);
+    return doc;
+  }
+
+  async updateCalendarGroup(
+    id: string,
+    group: CalendarGroupInput
+  ): Promise<CalendarGroup | null> {
+    const index = this.calendarGroups.findIndex((g) => g._id === id);
+    if (index === -1) return null;
+    this.calendarGroups[index] = { ...this.calendarGroups[index], ...group };
+    return this.calendarGroups[index];
+  }
+
+  async deleteCalendarGroup(id: string): Promise<void> {
+    this.calendarGroups = this.calendarGroups.filter((g) => g._id !== id);
+  }
+
+  async getCalendarEvents(): Promise<CalendarEvent[]> {
+    return [...this.calendarEvents].sort((a, b) => {
+      const dateCmp = a.date.localeCompare(b.date);
+      if (dateCmp !== 0) return dateCmp;
+      return a.startTime.localeCompare(b.startTime);
+    });
+  }
+
+  async getCalendarEvent(id: string): Promise<CalendarEvent | null> {
+    return this.calendarEvents.find((e) => e._id === id) ?? null;
+  }
+
+  async getEventsByGroup(groupSlug: string): Promise<CalendarEvent[]> {
+    return this.calendarEvents
+      .filter((e) => e.groups.includes(groupSlug) || e.allGroups)
+      .sort((a, b) => {
+        const dateCmp = a.date.localeCompare(b.date);
+        if (dateCmp !== 0) return dateCmp;
+        return a.startTime.localeCompare(b.startTime);
+      });
+  }
+
+  async getNextUpcomingEvent(
+    groupSlug: string
+  ): Promise<CalendarEvent | null> {
+    const today = new Date();
+    const todayStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
+    const upcoming = this.calendarEvents
+      .filter(
+        (e) =>
+          e.date >= todayStr &&
+          (e.groups.includes(groupSlug) || e.allGroups)
+      )
+      .sort((a, b) => {
+        const dateCmp = a.date.localeCompare(b.date);
+        if (dateCmp !== 0) return dateCmp;
+        return a.startTime.localeCompare(b.startTime);
+      });
+    return upcoming[0] ?? null;
+  }
+
+  async getAllUpcomingEvents(): Promise<CalendarEvent[]> {
+    const today = new Date();
+    const todayStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
+    return this.calendarEvents
+      .filter((e) => e.date >= todayStr)
+      .sort((a, b) => {
+        const dateCmp = a.date.localeCompare(b.date);
+        if (dateCmp !== 0) return dateCmp;
+        return a.startTime.localeCompare(b.startTime);
+      });
+  }
+
+  async saveCalendarEvent(
+    event: CalendarEventInput
+  ): Promise<CalendarEvent> {
+    const now = new Date().toISOString();
+    const id = crypto.randomUUID();
+    const doc: CalendarEventDb = {
+      _id: id,
+      uid: `event-${id}@pfadimh.ch`,
+      ...event,
+      createdAt: now,
+      updatedAt: now,
+    };
+    this.calendarEvents.push(doc);
+    return doc;
+  }
+
+  async updateCalendarEvent(
+    id: string,
+    event: CalendarEventInput
+  ): Promise<CalendarEvent | null> {
+    const index = this.calendarEvents.findIndex((e) => e._id === id);
+    if (index === -1) return null;
+    this.calendarEvents[index] = {
+      ...this.calendarEvents[index],
+      ...event,
+      updatedAt: new Date().toISOString(),
+    };
+    return this.calendarEvents[index];
+  }
+
+  async deleteCalendarEvent(id: string): Promise<void> {
+    this.calendarEvents = this.calendarEvents.filter((e) => e._id !== id);
   }
 }

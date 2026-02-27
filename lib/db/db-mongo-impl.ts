@@ -1,3 +1,11 @@
+import type {
+  CalendarEvent,
+  CalendarEventDb,
+  CalendarEventInput,
+  CalendarGroup,
+  CalendarGroupDb,
+  CalendarGroupInput,
+} from "@lib/calendar/types";
 import { defaultFooterData, FooterData } from "@lib/config/footer.config";
 import { defaultNavbarData, NavbarData } from "@lib/config/navbar.config";
 import { PageData } from "@lib/config/page.config";
@@ -37,6 +45,8 @@ export class MongoService implements DatabaseService {
   private shopSettingsCollectionName = "shop-settings";
   private processedSessionsCollectionName = "processed_sessions";
   private hitobitoCollectionName = "hitobito-cache";
+  private calendarGroupsCollectionName = "calendar-groups";
+  private calendarEventsCollectionName = "calendar-events";
   private initPromise: Promise<void>;
 
   constructor(connectionString: string, dbName: string) {
@@ -134,6 +144,29 @@ export class MongoService implements DatabaseService {
     await this.db
       .collection(this.hitobitoCollectionName)
       .createIndex({ rootGroupId: 1 }, { unique: true });
+
+    // Ensure calendar-groups collection has indexes
+    const calGroupCollections = await this.db
+      .listCollections({ name: this.calendarGroupsCollectionName })
+      .toArray();
+    if (calGroupCollections.length === 0) {
+      await this.db.createCollection(this.calendarGroupsCollectionName);
+    }
+    const calGroupCol = this.db.collection(this.calendarGroupsCollectionName);
+    await calGroupCol.createIndex({ slug: 1 }, { unique: true });
+    await calGroupCol.createIndex({ order: 1 });
+
+    // Ensure calendar-events collection has indexes
+    const calEventCollections = await this.db
+      .listCollections({ name: this.calendarEventsCollectionName })
+      .toArray();
+    if (calEventCollections.length === 0) {
+      await this.db.createCollection(this.calendarEventsCollectionName);
+    }
+    const calEventCol = this.db.collection(this.calendarEventsCollectionName);
+    await calEventCol.createIndex({ groups: 1 });
+    await calEventCol.createIndex({ date: 1, startTime: 1 });
+    await calEventCol.createIndex({ allGroups: 1 });
   }
 
   async connect(): Promise<void> {
@@ -546,5 +579,155 @@ export class MongoService implements DatabaseService {
         },
         { upsert: true }
       );
+  }
+
+  // --- Calendar ---
+
+  private calendarGroupCol() {
+    return this.db.collection<CalendarGroupDb>(
+      this.calendarGroupsCollectionName
+    );
+  }
+
+  private calendarEventCol() {
+    return this.db.collection<CalendarEventDb>(
+      this.calendarEventsCollectionName
+    );
+  }
+
+  async getCalendarGroups(): Promise<CalendarGroup[]> {
+    return this.calendarGroupCol().find().sort({ order: 1 }).toArray();
+  }
+
+  async getCalendarGroup(id: string): Promise<CalendarGroup | null> {
+    return this.calendarGroupCol().findOne({
+      _id: id,
+    } as Partial<CalendarGroupDb>);
+  }
+
+  async saveCalendarGroup(
+    group: CalendarGroupInput
+  ): Promise<CalendarGroup> {
+    const doc: CalendarGroupDb = {
+      _id: crypto.randomUUID(),
+      ...group,
+    };
+    await this.calendarGroupCol().insertOne(doc);
+    return doc;
+  }
+
+  async updateCalendarGroup(
+    id: string,
+    group: CalendarGroupInput
+  ): Promise<CalendarGroup | null> {
+    const result = await this.calendarGroupCol().findOneAndUpdate(
+      { _id: id } as Partial<CalendarGroupDb>,
+      { $set: { ...group } },
+      { returnDocument: "after" }
+    );
+    return result ?? null;
+  }
+
+  async deleteCalendarGroup(id: string): Promise<void> {
+    await this.calendarGroupCol().deleteOne({
+      _id: id,
+    } as Partial<CalendarGroupDb>);
+  }
+
+  async getCalendarEvents(): Promise<CalendarEvent[]> {
+    return this.calendarEventCol()
+      .find()
+      .sort({ date: 1, startTime: 1 })
+      .toArray();
+  }
+
+  async getCalendarEvent(id: string): Promise<CalendarEvent | null> {
+    return this.calendarEventCol().findOne({
+      _id: id,
+    } as Partial<CalendarEventDb>);
+  }
+
+  async getEventsByGroup(groupSlug: string): Promise<CalendarEvent[]> {
+    return this.calendarEventCol()
+      .find({
+        $or: [
+          { groups: groupSlug },
+          { allGroups: true },
+        ],
+      } as Filter<CalendarEventDb>)
+      .sort({ date: 1, startTime: 1 })
+      .toArray();
+  }
+
+  async getNextUpcomingEvent(
+    groupSlug: string
+  ): Promise<CalendarEvent | null> {
+    const today = new Date();
+    const todayStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
+    const result = await this.calendarEventCol()
+      .find({
+        $and: [
+          { date: { $gte: todayStr } },
+          {
+            $or: [
+              { groups: groupSlug },
+              { allGroups: true },
+            ],
+          },
+        ],
+      } as Filter<CalendarEventDb>)
+      .sort({ date: 1, startTime: 1 })
+      .limit(1)
+      .toArray();
+    return result[0] ?? null;
+  }
+
+  async getAllUpcomingEvents(): Promise<CalendarEvent[]> {
+    const today = new Date();
+    const todayStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
+    return this.calendarEventCol()
+      .find({ date: { $gte: todayStr } } as Filter<CalendarEventDb>)
+      .sort({ date: 1, startTime: 1 })
+      .toArray();
+  }
+
+  async saveCalendarEvent(
+    event: CalendarEventInput
+  ): Promise<CalendarEvent> {
+    const now = new Date().toISOString();
+    const id = crypto.randomUUID();
+    const doc: CalendarEventDb = {
+      _id: id,
+      uid: `event-${id}@pfadimh.ch`,
+      ...event,
+      createdAt: now,
+      updatedAt: now,
+    };
+    await this.calendarEventCol().insertOne(doc);
+    return doc;
+  }
+
+  async updateCalendarEvent(
+    id: string,
+    event: CalendarEventInput
+  ): Promise<CalendarEvent | null> {
+    const now = new Date().toISOString();
+    const result = await this.calendarEventCol().findOneAndUpdate(
+      { _id: id } as Partial<CalendarEventDb>,
+      {
+        $set: {
+          ...event,
+          updatedAt: now,
+        },
+      },
+      { returnDocument: "after" }
+    );
+    return result ?? null;
+  }
+
+  async deleteCalendarEvent(id: string): Promise<void> {
+    await this.calendarEventCol().deleteOne({
+      _id: id,
+    } as Partial<CalendarEventDb>);
   }
 }

@@ -1,3 +1,9 @@
+import type {
+  CalendarEvent,
+  CalendarEventInput,
+  CalendarGroup,
+  CalendarGroupInput,
+} from "@lib/calendar/types";
 import type { FooterData } from "@lib/config/footer.config";
 import type { NavbarData } from "@lib/config/navbar.config";
 import type { PageData } from "@lib/config/page.config";
@@ -69,6 +75,26 @@ export interface DatabaseService {
     rootGroupId: number
   ): Promise<OrganigrammCache | null>;
   saveOrganigrammCache(cache: OrganigrammCache): Promise<void>;
+  // Calendar
+  getCalendarGroups(): Promise<CalendarGroup[]>;
+  getCalendarGroup(id: string): Promise<CalendarGroup | null>;
+  saveCalendarGroup(group: CalendarGroupInput): Promise<CalendarGroup>;
+  updateCalendarGroup(
+    id: string,
+    group: CalendarGroupInput
+  ): Promise<CalendarGroup | null>;
+  deleteCalendarGroup(id: string): Promise<void>;
+  getCalendarEvents(): Promise<CalendarEvent[]>;
+  getCalendarEvent(id: string): Promise<CalendarEvent | null>;
+  getEventsByGroup(groupSlug: string): Promise<CalendarEvent[]>;
+  getNextUpcomingEvent(groupSlug: string): Promise<CalendarEvent | null>;
+  getAllUpcomingEvents(): Promise<CalendarEvent[]>;
+  saveCalendarEvent(event: CalendarEventInput): Promise<CalendarEvent>;
+  updateCalendarEvent(
+    id: string,
+    event: CalendarEventInput
+  ): Promise<CalendarEvent | null>;
+  deleteCalendarEvent(id: string): Promise<void>;
 }
 
 function getDatabaseService(): DatabaseService {

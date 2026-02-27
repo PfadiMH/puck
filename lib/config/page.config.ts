@@ -3,6 +3,10 @@ import {
   ButtonGroupProps,
   buttonGroupConfig,
 } from "@components/puck/ButtonGroup";
+import {
+  CalendarSubscribeProps,
+  calendarSubscribeConfig,
+} from "@components/puck/CalendarSubscribe";
 import { CardProps, cardConfig } from "@components/puck/Card";
 import { FlexProps, flexConfig } from "@components/puck/Flex";
 import { FormProps, formConfig } from "@components/puck/Form";
@@ -34,6 +38,7 @@ import type { Config, Data } from "@puckeditor/core";
 export type PageProps = {
   Activity: ActivityProps;
   ButtonGroup: ButtonGroupProps;
+  CalendarSubscribe: CalendarSubscribeProps;
   Card: CardProps;
   Flex: FlexProps;
   Form: FormProps;
@@ -58,6 +63,7 @@ export const pageConfig: PageConfig = sectionThemedConfig({
   components: {
     Activity: activityConfig,
     ButtonGroup: buttonGroupConfig,
+    CalendarSubscribe: calendarSubscribeConfig,
     Card: cardConfig,
     Flex: flexConfig,
     Form: formConfig,
