@@ -419,6 +419,9 @@ export function CalendarAdmin() {
                     queryClient.invalidateQueries({
                       queryKey: ["admin-calendar-groups"],
                     });
+                    queryClient.invalidateQueries({
+                      queryKey: ["admin-calendar-events"],
+                    });
                     setIsCreatingGroup(false);
                     setEditingGroup(null);
                     if (savedId) setHighlightId(savedId);

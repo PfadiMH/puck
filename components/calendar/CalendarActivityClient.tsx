@@ -97,8 +97,9 @@ function EventContent({ event }: { event: CalendarEvent }) {
     event.mitnehmen.some((item) => item.name?.trim());
   const hasBemerkung = event.bemerkung && event.bemerkung.trim() !== "";
 
+  const hasAnyLocation = hasLocation || hasEndLocation;
   const hasContentBelowDateTime =
-    hasLocation || hasMitnehmen || hasBemerkung;
+    hasAnyLocation || hasMitnehmen || hasBemerkung;
   const hasContentBelowLocation = hasMitnehmen || hasBemerkung;
   const hasContentBelowMitnehmen = hasBemerkung;
 
@@ -132,7 +133,7 @@ function EventContent({ event }: { event: CalendarEvent }) {
       </div>
 
       {/* Location(s) */}
-      {hasLocation && (
+      {hasAnyLocation && (
         <div
           className={
             hasContentBelowLocation
@@ -140,7 +141,7 @@ function EventContent({ event }: { event: CalendarEvent }) {
               : "space-y-2"
           }
         >
-          {hasEndLocation ? (
+          {hasLocation && hasEndLocation ? (
             <>
               <LocationDisplay
                 label="Besammlung"
@@ -151,8 +152,10 @@ function EventContent({ event }: { event: CalendarEvent }) {
                 location={event.endLocation!}
               />
             </>
-          ) : (
+          ) : hasLocation ? (
             <LocationDisplay label="Ort" location={event.location!} />
+          ) : (
+            <LocationDisplay label="Ort" location={event.endLocation!} />
           )}
         </div>
       )}

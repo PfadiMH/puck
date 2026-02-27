@@ -24,33 +24,28 @@ import type {
 } from "@lib/storage/file-record";
 import type { DatabaseService, FileQueryOptions, FileQueryResult } from "./db";
 
-/** Returns today's date string (YYYY-MM-DD) in Europe/Zurich timezone. */
-function getZurichDateString(): string {
-  const now = new Date();
-  const parts = new Intl.DateTimeFormat("en-CA", {
+/** Returns today's date (YYYY-MM-DD) and time (HH:MM) in Europe/Zurich from a single instant. */
+function getZurichNow(now = new Date()): { date: string; time: string } {
+  const dateParts = new Intl.DateTimeFormat("en-CA", {
     timeZone: "Europe/Zurich",
     year: "numeric",
     month: "2-digit",
     day: "2-digit",
   }).formatToParts(now);
-  const year = parts.find((p) => p.type === "year")!.value;
-  const month = parts.find((p) => p.type === "month")!.value;
-  const day = parts.find((p) => p.type === "day")!.value;
-  return `${year}-${month}-${day}`;
-}
+  const year = dateParts.find((p) => p.type === "year")!.value;
+  const month = dateParts.find((p) => p.type === "month")!.value;
+  const day = dateParts.find((p) => p.type === "day")!.value;
 
-/** Returns the current time string (HH:MM) in Europe/Zurich timezone. */
-function getZurichTimeString(): string {
-  const now = new Date();
-  const parts = new Intl.DateTimeFormat("en-GB", {
+  const timeParts = new Intl.DateTimeFormat("en-GB", {
     timeZone: "Europe/Zurich",
     hour: "2-digit",
     minute: "2-digit",
     hour12: false,
   }).formatToParts(now);
-  const hour = parts.find((p) => p.type === "hour")!.value;
-  const minute = parts.find((p) => p.type === "minute")!.value;
-  return `${hour}:${minute}`;
+  const hour = timeParts.find((p) => p.type === "hour")!.value;
+  const minute = timeParts.find((p) => p.type === "minute")!.value;
+
+  return { date: `${year}-${month}-${day}`, time: `${hour}:${minute}` };
 }
 
 export class MockDatabaseService implements DatabaseService {
@@ -307,7 +302,19 @@ export class MockDatabaseService implements DatabaseService {
   ): Promise<CalendarGroup | null> {
     const index = this.calendarGroups.findIndex((g) => g._id === id);
     if (index === -1) return null;
+    const oldSlug = this.calendarGroups[index].slug;
     this.calendarGroups[index] = { ...this.calendarGroups[index], ...group };
+
+    // Cascade slug change to events
+    if (oldSlug !== group.slug) {
+      for (const event of this.calendarEvents) {
+        const slugIdx = event.groups.indexOf(oldSlug);
+        if (slugIdx !== -1) {
+          event.groups[slugIdx] = group.slug;
+        }
+      }
+    }
+
     return this.calendarGroups[index];
   }
 
@@ -340,8 +347,7 @@ export class MockDatabaseService implements DatabaseService {
   async getNextUpcomingEvent(
     groupSlug: string
   ): Promise<CalendarEvent | null> {
-    const todayStr = getZurichDateString();
-    const nowTime = getZurichTimeString();
+    const { date: todayStr, time: nowTime } = getZurichNow();
     const upcoming = this.calendarEvents
       .filter(
         (e) =>
@@ -358,8 +364,7 @@ export class MockDatabaseService implements DatabaseService {
   }
 
   async getAllUpcomingEvents(): Promise<CalendarEvent[]> {
-    const todayStr = getZurichDateString();
-    const nowTime = getZurichTimeString();
+    const { date: todayStr, time: nowTime } = getZurichNow();
     return this.calendarEvents
       .filter(
         (e) =>

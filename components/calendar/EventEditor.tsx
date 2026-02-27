@@ -115,7 +115,7 @@ export function EventEditor({
       toast.error("Datum ist erforderlich");
       return;
     }
-    if (endTime < startTime) {
+    if (endTime <= startTime) {
       toast.error("Endzeit muss nach der Startzeit liegen");
       return;
     }
@@ -152,7 +152,11 @@ export function EventEditor({
       };
 
       if (isEditing && event) {
-        await updateCalendarEvent(event._id, input);
+        const result = await updateCalendarEvent(event._id, input);
+        if (!result) {
+          toast.error("Aktivität konnte nicht aktualisiert werden");
+          return;
+        }
         toast.success("Aktivität aktualisiert");
         onSaved(event._id);
       } else {
@@ -348,6 +352,7 @@ export function EventEditor({
                       className="p-1.5 text-brand-red hover:bg-brand-red/10 rounded shrink-0"
                       onClick={() => removeMitnehmenItem(idx)}
                       title="Entfernen"
+                      aria-label="Gegenstand entfernen"
                     >
                       <Trash2 className="w-4 h-4" />
                     </button>
@@ -366,6 +371,7 @@ export function EventEditor({
                           updateMitnehmenItem(idx, { icon: undefined })
                         }
                         className="ml-auto text-xs text-brand-red hover:text-brand-red/80"
+                        aria-label="Icon entfernen"
                       >
                         Entfernen
                       </button>

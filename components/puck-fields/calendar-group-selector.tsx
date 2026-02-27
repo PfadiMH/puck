@@ -27,7 +27,7 @@ function CalendarGroupSelector({
         return res.json();
       })
       .then((data) => {
-        setGroups(data);
+        setGroups(Array.isArray(data) ? data : []);
         setLoaded(true);
       })
       .catch(() => {

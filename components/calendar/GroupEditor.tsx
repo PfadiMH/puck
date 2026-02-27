@@ -93,7 +93,11 @@ export function GroupEditor({
       };
 
       if (isEditing && group) {
-        await updateCalendarGroup(group._id, input);
+        const result = await updateCalendarGroup(group._id, input);
+        if (!result) {
+          toast.error("Gruppe konnte nicht aktualisiert werden");
+          return;
+        }
         toast.success("Gruppe aktualisiert");
         onSaved(group._id);
       } else {

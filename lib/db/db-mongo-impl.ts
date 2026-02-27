@@ -30,33 +30,28 @@ import { Data } from "@puckeditor/core";
 import { Db, Filter, MongoClient } from "mongodb";
 import { DatabaseService, FileQueryOptions, FileQueryResult } from "./db";
 
-/** Returns today's date string (YYYY-MM-DD) in Europe/Zurich timezone. */
-function getZurichDateString(): string {
-  const now = new Date();
-  const parts = new Intl.DateTimeFormat("en-CA", {
+/** Returns today's date (YYYY-MM-DD) and time (HH:MM) in Europe/Zurich from a single instant. */
+function getZurichNow(now = new Date()): { date: string; time: string } {
+  const dateParts = new Intl.DateTimeFormat("en-CA", {
     timeZone: "Europe/Zurich",
     year: "numeric",
     month: "2-digit",
     day: "2-digit",
   }).formatToParts(now);
-  const year = parts.find((p) => p.type === "year")!.value;
-  const month = parts.find((p) => p.type === "month")!.value;
-  const day = parts.find((p) => p.type === "day")!.value;
-  return `${year}-${month}-${day}`;
-}
+  const year = dateParts.find((p) => p.type === "year")!.value;
+  const month = dateParts.find((p) => p.type === "month")!.value;
+  const day = dateParts.find((p) => p.type === "day")!.value;
 
-/** Returns the current time string (HH:MM) in Europe/Zurich timezone. */
-function getZurichTimeString(): string {
-  const now = new Date();
-  const parts = new Intl.DateTimeFormat("en-GB", {
+  const timeParts = new Intl.DateTimeFormat("en-GB", {
     timeZone: "Europe/Zurich",
     hour: "2-digit",
     minute: "2-digit",
     hour12: false,
   }).formatToParts(now);
-  const hour = parts.find((p) => p.type === "hour")!.value;
-  const minute = parts.find((p) => p.type === "minute")!.value;
-  return `${hour}:${minute}`;
+  const hour = timeParts.find((p) => p.type === "hour")!.value;
+  const minute = timeParts.find((p) => p.type === "minute")!.value;
+
+  return { date: `${year}-${month}-${day}`, time: `${hour}:${minute}` };
 }
 
 /**
@@ -193,9 +188,9 @@ export class MongoService implements DatabaseService {
       await this.db.createCollection(this.calendarEventsCollectionName);
     }
     const calEventCol = this.db.collection(this.calendarEventsCollectionName);
-    await calEventCol.createIndex({ groups: 1, date: 1, startTime: 1 });
-    await calEventCol.createIndex({ allGroups: 1, date: 1, startTime: 1 });
-    await calEventCol.createIndex({ date: 1, startTime: 1 });
+    await calEventCol.createIndex({ groups: 1, date: 1, endTime: 1 });
+    await calEventCol.createIndex({ allGroups: 1, date: 1, endTime: 1 });
+    await calEventCol.createIndex({ date: 1, endTime: 1 });
   }
 
   async connect(): Promise<void> {
@@ -654,26 +649,43 @@ export class MongoService implements DatabaseService {
       _id: id,
     } as Partial<CalendarGroupDb>);
     const oldSlug = existing?.slug;
+    const needsCascade = oldSlug && oldSlug !== group.slug;
 
+    if (needsCascade) {
+      // Wrap group update + event cascade in a transaction for atomicity
+      const session = this.client.startSession();
+      try {
+        let result: CalendarGroup | null = null;
+        await session.withTransaction(async () => {
+          const updated = await this.calendarGroupCol().findOneAndUpdate(
+            { _id: id } as Partial<CalendarGroupDb>,
+            { $set: { ...group } },
+            { returnDocument: "after", session }
+          );
+          result = updated ?? null;
+
+          await this.calendarEventCol().updateMany(
+            { groups: oldSlug } as Filter<CalendarEventDb>,
+            {
+              $set: {
+                "groups.$[elem]": group.slug,
+              },
+            },
+            { arrayFilters: [{ elem: oldSlug }], session }
+          );
+        });
+        return result;
+      } finally {
+        await session.endSession();
+      }
+    }
+
+    // No slug change — simple update without transaction
     const result = await this.calendarGroupCol().findOneAndUpdate(
       { _id: id } as Partial<CalendarGroupDb>,
       { $set: { ...group } },
       { returnDocument: "after" }
     );
-
-    // Cascade slug change to all events referencing the old slug
-    if (oldSlug && oldSlug !== group.slug) {
-      await this.calendarEventCol().updateMany(
-        { groups: oldSlug } as Filter<CalendarEventDb>,
-        {
-          $set: {
-            "groups.$[elem]": group.slug,
-          },
-        },
-        { arrayFilters: [{ elem: oldSlug }] }
-      );
-    }
-
     return result ?? null;
   }
 
@@ -711,8 +723,7 @@ export class MongoService implements DatabaseService {
   async getNextUpcomingEvent(
     groupSlug: string
   ): Promise<CalendarEvent | null> {
-    const todayStr = getZurichDateString();
-    const nowTime = getZurichTimeString();
+    const { date: todayStr, time: nowTime } = getZurichNow();
     const result = await this.calendarEventCol()
       .find({
         $and: [
@@ -737,8 +748,7 @@ export class MongoService implements DatabaseService {
   }
 
   async getAllUpcomingEvents(): Promise<CalendarEvent[]> {
-    const todayStr = getZurichDateString();
-    const nowTime = getZurichTimeString();
+    const { date: todayStr, time: nowTime } = getZurichNow();
     return this.calendarEventCol()
       .find({
         $or: [

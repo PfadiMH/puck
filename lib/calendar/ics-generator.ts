@@ -6,6 +6,7 @@ import type { CalendarEvent } from "./types";
  */
 function escapeIcsText(text: string): string {
   return text
+    .replace(/\r\n?/g, "\n") // normalize CRLF / standalone CR to LF
     .replace(/\\/g, "\\\\")
     .replace(/;/g, "\\;")
     .replace(/,/g, "\\,")
