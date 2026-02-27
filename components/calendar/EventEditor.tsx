@@ -11,9 +11,9 @@ import Input from "@components/ui/Input";
 import type {
   CalendarEvent,
   CalendarEventInput,
+  CalendarGroup,
+  MitnehmenItem,
 } from "@lib/calendar/types";
-import type { CalendarGroup } from "@lib/calendar/types";
-import type { MitnehmenItem } from "@components/puck/Activity";
 import {
   saveCalendarEvent,
   updateCalendarEvent,
@@ -29,6 +29,16 @@ type EventEditorProps = {
   onClose: () => void;
   onSaved: (savedId?: string) => void;
 };
+
+// Generate time options (00:00 to 23:45 in 15min increments) at module scope
+const TIME_OPTIONS: string[] = [];
+for (let h = 0; h < 24; h++) {
+  for (let m = 0; m < 60; m += 15) {
+    TIME_OPTIONS.push(
+      `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}`
+    );
+  }
+}
 
 export function EventEditor({
   event,
@@ -96,16 +106,6 @@ export function EventEditor({
     setMitnehmen(updated);
   }
 
-  // Generate time options (00:00 to 23:45 in 15min increments)
-  const timeOptions: string[] = [];
-  for (let h = 0; h < 24; h++) {
-    for (let m = 0; m < 60; m += 15) {
-      timeOptions.push(
-        `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}`
-      );
-    }
-  }
-
   async function handleSave() {
     if (!title.trim()) {
       toast.error("Titel ist erforderlich");
@@ -113,6 +113,10 @@ export function EventEditor({
     }
     if (!date) {
       toast.error("Datum ist erforderlich");
+      return;
+    }
+    if (endTime < startTime) {
+      toast.error("Endzeit muss nach der Startzeit liegen");
       return;
     }
     if (!allGroups && selectedGroups.length === 0) {
@@ -200,7 +204,7 @@ export function EventEditor({
               onChange={(e) => setStartTime(e.target.value)}
               className="w-full bg-elevated border-2 border-primary rounded px-3 py-2 text-base focus:outline-none focus:ring-2 focus:ring-primary/60"
             >
-              {timeOptions.map((t) => (
+              {TIME_OPTIONS.map((t) => (
                 <option key={t} value={t}>
                   {t}
                 </option>
@@ -214,7 +218,7 @@ export function EventEditor({
               onChange={(e) => setEndTime(e.target.value)}
               className="w-full bg-elevated border-2 border-primary rounded px-3 py-2 text-base focus:outline-none focus:ring-2 focus:ring-primary/60"
             >
-              {timeOptions.map((t) => (
+              {TIME_OPTIONS.map((t) => (
                 <option key={t} value={t}>
                   {t}
                 </option>

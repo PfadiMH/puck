@@ -4,6 +4,7 @@ import type { CalendarEvent } from "@lib/calendar/types";
 import { getPackingIcon } from "@lib/packing-icons";
 import { useQuery } from "@tanstack/react-query";
 import {
+  AlertTriangle,
   Backpack,
   Calendar,
   CalendarDays,
@@ -204,7 +205,7 @@ function EventContent({ event }: { event: CalendarEvent }) {
 }
 
 export function CalendarActivityClient({ group }: { group: string }) {
-  const { data: event, isLoading } = useQuery<CalendarEvent | null>({
+  const { data: event, isLoading, isError } = useQuery<CalendarEvent | null>({
     queryKey: ["calendar-next-event", group],
     queryFn: async () => {
       const res = await fetch(
@@ -222,6 +223,17 @@ export function CalendarActivityClient({ group }: { group: string }) {
         <div className="h-5 bg-primary/10 rounded w-3/4 mb-3" />
         <div className="h-4 bg-primary/10 rounded w-1/2 mb-2" />
         <div className="h-4 bg-primary/10 rounded w-1/3" />
+      </div>
+    );
+  }
+
+  if (isError) {
+    return (
+      <div className="bg-elevated rounded-lg p-6 shadow-md text-center">
+        <AlertTriangle className="w-8 h-8 mx-auto text-brand-red/60 mb-2" />
+        <p className="text-contrast-ground/60 text-sm">
+          Aktivität konnte nicht geladen werden
+        </p>
       </div>
     );
   }

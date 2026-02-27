@@ -15,19 +15,44 @@ function escapeIcsText(text: string): string {
 /**
  * Folds long lines per RFC 5545 (max 75 octets per line).
  * Continuation lines start with a space.
+ * Uses TextEncoder to count UTF-8 byte length correctly.
  */
 function foldLine(line: string): string {
-  const maxLen = 75;
-  if (line.length <= maxLen) return line;
+  const encoder = new TextEncoder();
+  const bytes = encoder.encode(line);
+  const maxBytes = 75;
+  if (bytes.length <= maxBytes) return line;
 
   const parts: string[] = [];
-  parts.push(line.slice(0, maxLen));
-  let remaining = line.slice(maxLen);
-  while (remaining.length > 0) {
-    // Continuation lines: space + up to 74 chars
-    parts.push(" " + remaining.slice(0, maxLen - 1));
-    remaining = remaining.slice(maxLen - 1);
+  let offset = 0;
+
+  // First line: up to 75 bytes
+  let charCount = 0;
+  let byteCount = 0;
+  while (charCount < line.length) {
+    const charBytes = encoder.encode(line[charCount]).length;
+    if (byteCount + charBytes > maxBytes) break;
+    byteCount += charBytes;
+    charCount++;
   }
+  parts.push(line.slice(0, charCount));
+  offset = charCount;
+
+  // Continuation lines: space (1 byte) + up to 74 bytes of content
+  while (offset < line.length) {
+    charCount = 0;
+    byteCount = 0;
+    const contMax = maxBytes - 1; // 1 byte for leading space
+    while (offset + charCount < line.length) {
+      const charBytes = encoder.encode(line[offset + charCount]).length;
+      if (byteCount + charBytes > contMax) break;
+      byteCount += charBytes;
+      charCount++;
+    }
+    parts.push(" " + line.slice(offset, offset + charCount));
+    offset += charCount;
+  }
+
   return parts.join("\r\n");
 }
 

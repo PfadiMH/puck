@@ -1,6 +1,5 @@
 import { generateIcsFeed } from "@lib/calendar/ics-generator";
 import { dbService } from "@lib/db/db";
-import { NextResponse } from "next/server";
 
 export async function GET(
   _request: Request,
@@ -8,8 +7,11 @@ export async function GET(
 ) {
   try {
     const { slug: rawSlug } = await params;
-    // Strip .ics extension if present
-    const slug = rawSlug.replace(/\.ics$/, "");
+    // Strip .ics extension and sanitize to safe characters only
+    const slug = rawSlug
+      .replace(/\.ics$/, "")
+      .replace(/[^a-z0-9_-]/gi, "")
+      .toLowerCase();
 
     let events;
     let calendarName: string;
@@ -24,10 +26,10 @@ export async function GET(
       const group = groups.find((g) => g.slug === slug);
 
       if (!group) {
-        return NextResponse.json(
-          { error: "Kalendergruppe nicht gefunden" },
-          { status: 404 }
-        );
+        return new Response("Kalendergruppe nicht gefunden", {
+          status: 404,
+          headers: { "Content-Type": "text/plain; charset=utf-8" },
+        });
       }
 
       events = await dbService.getEventsByGroup(slug);
@@ -40,15 +42,15 @@ export async function GET(
       status: 200,
       headers: {
         "Content-Type": "text/calendar; charset=utf-8",
-        "Content-Disposition": `attachment; filename="${slug}.ics"`,
+        "Content-Disposition": `attachment; filename="${slug || "calendar"}.ics"`,
         "Cache-Control": "s-maxage=300, stale-while-revalidate=600",
       },
     });
   } catch (error) {
     console.error("Failed to generate ICS feed:", error);
-    return NextResponse.json(
-      { error: "Fehler beim Generieren des Kalender-Feeds" },
-      { status: 500 }
-    );
+    return new Response("Fehler beim Generieren des Kalender-Feeds", {
+      status: 500,
+      headers: { "Content-Type": "text/plain; charset=utf-8" },
+    });
   }
 }

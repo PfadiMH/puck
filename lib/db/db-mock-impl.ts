@@ -24,6 +24,35 @@ import type {
 } from "@lib/storage/file-record";
 import type { DatabaseService, FileQueryOptions, FileQueryResult } from "./db";
 
+/** Returns today's date string (YYYY-MM-DD) in Europe/Zurich timezone. */
+function getZurichDateString(): string {
+  const now = new Date();
+  const parts = new Intl.DateTimeFormat("en-CA", {
+    timeZone: "Europe/Zurich",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).formatToParts(now);
+  const year = parts.find((p) => p.type === "year")!.value;
+  const month = parts.find((p) => p.type === "month")!.value;
+  const day = parts.find((p) => p.type === "day")!.value;
+  return `${year}-${month}-${day}`;
+}
+
+/** Returns the current time string (HH:MM) in Europe/Zurich timezone. */
+function getZurichTimeString(): string {
+  const now = new Date();
+  const parts = new Intl.DateTimeFormat("en-GB", {
+    timeZone: "Europe/Zurich",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+  }).formatToParts(now);
+  const hour = parts.find((p) => p.type === "hour")!.value;
+  const minute = parts.find((p) => p.type === "minute")!.value;
+  return `${hour}:${minute}`;
+}
+
 export class MockDatabaseService implements DatabaseService {
   private files: FileRecordDb[] = [];
   private products: ProductDb[] = [];
@@ -311,12 +340,13 @@ export class MockDatabaseService implements DatabaseService {
   async getNextUpcomingEvent(
     groupSlug: string
   ): Promise<CalendarEvent | null> {
-    const today = new Date();
-    const todayStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
+    const todayStr = getZurichDateString();
+    const nowTime = getZurichTimeString();
     const upcoming = this.calendarEvents
       .filter(
         (e) =>
-          e.date >= todayStr &&
+          (e.date > todayStr ||
+            (e.date === todayStr && e.endTime > nowTime)) &&
           (e.groups.includes(groupSlug) || e.allGroups)
       )
       .sort((a, b) => {
@@ -328,10 +358,14 @@ export class MockDatabaseService implements DatabaseService {
   }
 
   async getAllUpcomingEvents(): Promise<CalendarEvent[]> {
-    const today = new Date();
-    const todayStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
+    const todayStr = getZurichDateString();
+    const nowTime = getZurichTimeString();
     return this.calendarEvents
-      .filter((e) => e.date >= todayStr)
+      .filter(
+        (e) =>
+          e.date > todayStr ||
+          (e.date === todayStr && e.endTime > nowTime)
+      )
       .sort((a, b) => {
         const dateCmp = a.date.localeCompare(b.date);
         if (dateCmp !== 0) return dateCmp;

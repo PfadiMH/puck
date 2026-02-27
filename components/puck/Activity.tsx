@@ -3,19 +3,13 @@ import { calendarGroupSelectorField } from "@components/puck-fields/calendar-gro
 import { datePickerField } from "@components/puck-fields/date-picker";
 import { iconSelectorField } from "@components/puck-fields/icon-selector";
 import { timePickerField } from "@components/puck-fields/time-picker";
+import type { LocationInfo, MitnehmenItem } from "@lib/calendar/types";
 import { getPackingIcon } from "@lib/packing-icons";
 import type { ComponentConfig, Fields } from "@puckeditor/core";
 import { Calendar, Clock, MapPin, Backpack, Info } from "lucide-react";
 
-export type MitnehmenItem = {
-  name: string;
-  icon?: string; // Icon ID from predefined set
-};
-
-export type LocationInfo = {
-  name: string;
-  mapsLink?: string;
-};
+// Re-export for backward compatibility
+export type { MitnehmenItem, LocationInfo };
 
 export type ActivityProps = {
   mode: "manual" | "calendar";
@@ -223,7 +217,17 @@ function Activity({
   mitnehmen,
   bemerkung,
 }: ActivityProps) {
-  if (mode === "calendar" && calendarGroup) {
+  if (mode === "calendar") {
+    if (!calendarGroup) {
+      return (
+        <div className="bg-elevated rounded-lg p-6 shadow-md text-center">
+          <Calendar className="w-8 h-8 mx-auto text-contrast-ground/30 mb-2" />
+          <p className="text-contrast-ground/50 text-sm">
+            Keine Kalendergruppe ausgewählt.
+          </p>
+        </div>
+      );
+    }
     return <CalendarActivityClient group={calendarGroup} />;
   }
 

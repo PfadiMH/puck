@@ -1,4 +1,14 @@
-import type { MitnehmenItem, LocationInfo } from "@components/puck/Activity";
+// --- Shared Types ---
+
+export type MitnehmenItem = {
+  name: string;
+  icon?: string; // Icon ID from predefined set
+};
+
+export type LocationInfo = {
+  name: string;
+  mapsLink?: string;
+};
 
 // --- Calendar Groups (Stufen) ---
 

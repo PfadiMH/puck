@@ -26,6 +26,7 @@ import {
 import type { CalendarEvent, CalendarGroup } from "@lib/calendar/types";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
+  AlertTriangle,
   CalendarDays,
   Check,
   Copy,
@@ -73,6 +74,7 @@ function CopyButton({ text }: { text: string }) {
       onClick={handleCopy}
       className="p-1 rounded hover:bg-contrast-ground/10 transition-colors"
       title="Link kopieren"
+      aria-label="Link kopieren"
     >
       {copied ? (
         <Check className="w-4 h-4 text-primary" />
@@ -98,12 +100,20 @@ export function CalendarAdmin() {
   );
   const [highlightId, setHighlightId] = useState<string | null>(null);
 
-  const { data: events = [], isLoading: eventsLoading } = useQuery({
+  const {
+    data: events = [],
+    isLoading: eventsLoading,
+    isError: eventsError,
+  } = useQuery({
     queryKey: ["admin-calendar-events"],
     queryFn: () => getCalendarEvents(),
   });
 
-  const { data: groups = [], isLoading: groupsLoading } = useQuery({
+  const {
+    data: groups = [],
+    isLoading: groupsLoading,
+    isError: groupsError,
+  } = useQuery({
     queryKey: ["admin-calendar-groups"],
     queryFn: () => getCalendarGroups(),
   });
@@ -231,7 +241,14 @@ export function CalendarAdmin() {
             </PermissionGuard>
           </div>
 
-          {eventsLoading ? (
+          {eventsError ? (
+            <div className="text-center py-12">
+              <AlertTriangle className="w-10 h-10 mx-auto text-brand-red/60 mb-3" />
+              <p className="text-brand-red/80">
+                Fehler beim Laden der Aktivitäten.
+              </p>
+            </div>
+          ) : eventsLoading ? (
             <p className="text-contrast-ground/60 text-center py-12">
               Laden...
             </p>
@@ -307,6 +324,7 @@ export function CalendarAdmin() {
                               className="p-1.5 rounded hover:bg-contrast-ground/10 transition-colors"
                               onClick={() => setEditingEvent(event)}
                               title="Bearbeiten"
+                              aria-label="Aktivität bearbeiten"
                             >
                               <Pencil className="w-4 h-4" />
                             </button>
@@ -314,6 +332,7 @@ export function CalendarAdmin() {
                               className="p-1.5 rounded hover:bg-brand-red/10 text-brand-red transition-colors"
                               onClick={() => setDeletingEvent(event)}
                               title="Löschen"
+                              aria-label="Aktivität löschen"
                             >
                               <Trash2 className="w-4 h-4" />
                             </button>
@@ -409,7 +428,14 @@ export function CalendarAdmin() {
             </PermissionGuard>
           </div>
 
-          {groupsLoading ? (
+          {groupsError ? (
+            <div className="text-center py-12">
+              <AlertTriangle className="w-10 h-10 mx-auto text-brand-red/60 mb-3" />
+              <p className="text-brand-red/80">
+                Fehler beim Laden der Gruppen.
+              </p>
+            </div>
+          ) : groupsLoading ? (
             <p className="text-contrast-ground/60 text-center py-12">
               Laden...
             </p>
@@ -460,6 +486,7 @@ export function CalendarAdmin() {
                               className="p-1.5 rounded hover:bg-contrast-ground/10 transition-colors"
                               onClick={() => setEditingGroup(group)}
                               title="Bearbeiten"
+                              aria-label="Gruppe bearbeiten"
                             >
                               <Pencil className="w-4 h-4" />
                             </button>
@@ -467,6 +494,7 @@ export function CalendarAdmin() {
                               className="p-1.5 rounded hover:bg-brand-red/10 text-brand-red transition-colors"
                               onClick={() => setDeletingGroup(group)}
                               title="Löschen"
+                              aria-label="Gruppe löschen"
                             >
                               <Trash2 className="w-4 h-4" />
                             </button>

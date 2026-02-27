@@ -26,11 +26,11 @@ type GroupEditorProps = {
 function slugify(text: string): string {
   return text
     .toLowerCase()
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "") // strip diacritics
     .replace(/[äÄ]/g, "ae")
     .replace(/[öÖ]/g, "oe")
     .replace(/[üÜ]/g, "ue")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "") // strip remaining diacritics
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-+|-+$/g, "");
 }

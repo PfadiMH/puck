@@ -1,5 +1,6 @@
 "use client";
 
+import type { CalendarGroup } from "@lib/calendar/types";
 import type { CustomField } from "@puckeditor/core";
 import { useEffect, useState } from "react";
 
@@ -15,20 +16,39 @@ function CalendarGroupSelector({
   value: string | undefined;
   onChange: (value: string) => void;
 }) {
-  const [groups, setGroups] = useState<
-    { _id: string; slug: string; name: string }[]
-  >([]);
+  const [groups, setGroups] = useState<CalendarGroup[]>([]);
   const [loaded, setLoaded] = useState(false);
+  const [error, setError] = useState(false);
 
   useEffect(() => {
     fetch("/api/calendar/groups")
-      .then((res) => res.json())
+      .then((res) => {
+        if (!res.ok) throw new Error("Failed to fetch groups");
+        return res.json();
+      })
       .then((data) => {
         setGroups(data);
         setLoaded(true);
       })
-      .catch(() => setLoaded(true));
+      .catch(() => {
+        setError(true);
+        setLoaded(true);
+      });
   }, []);
+
+  if (error) {
+    return (
+      <div
+        style={{
+          padding: "8px",
+          color: "#b91c1c",
+          fontSize: "13px",
+        }}
+      >
+        Fehler beim Laden der Gruppen.
+      </div>
+    );
+  }
 
   return (
     <div>
