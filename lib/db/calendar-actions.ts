@@ -9,6 +9,18 @@ import type {
 import { requireServerPermission } from "@lib/security/server-guard";
 import { dbService } from "./db";
 
+// --- Validation ---
+
+const RESERVED_SLUGS = ["leiter", "all"];
+
+function validateGroupSlug(slug: string): void {
+  if (RESERVED_SLUGS.includes(slug) || slug.startsWith("leiter-")) {
+    throw new Error(
+      `Slug "${slug}" ist reserviert und kann nicht verwendet werden`
+    );
+  }
+}
+
 // --- Calendar Groups ---
 
 export async function getCalendarGroups(): Promise<CalendarGroup[]> {
@@ -27,6 +39,7 @@ export async function saveCalendarGroup(
   group: CalendarGroupInput
 ): Promise<CalendarGroup> {
   await requireServerPermission({ all: ["calendar:update"] });
+  validateGroupSlug(group.slug);
   return dbService.saveCalendarGroup(group);
 }
 
@@ -35,6 +48,7 @@ export async function updateCalendarGroup(
   group: CalendarGroupInput
 ): Promise<CalendarGroup | null> {
   await requireServerPermission({ all: ["calendar:update"] });
+  validateGroupSlug(group.slug);
   return dbService.updateCalendarGroup(id, group);
 }
 

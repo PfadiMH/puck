@@ -199,41 +199,59 @@ export function EventEditor({
       <div className="space-y-5 mt-4">
         {/* Event Type */}
         <div>
-          <label className="block text-sm font-medium mb-1">Typ</label>
-          <div className="flex gap-2">
-            <button
-              type="button"
-              onClick={() => setEventType("aktivitaet")}
-              className={`px-4 py-2 text-sm rounded-lg border transition-colors ${
-                eventType === "aktivitaet"
-                  ? "border-primary bg-primary/15 text-primary font-medium"
-                  : "border-contrast-ground/20 hover:border-contrast-ground/40"
-              }`}
-            >
-              Aktivität
-            </button>
-            <button
-              type="button"
-              onClick={() => setEventType("lager")}
-              className={`px-4 py-2 text-sm rounded-lg border transition-colors ${
-                eventType === "lager"
-                  ? "border-primary bg-primary/15 text-primary font-medium"
-                  : "border-contrast-ground/20 hover:border-contrast-ground/40"
-              }`}
-            >
-              Lager
-            </button>
-            <button
-              type="button"
-              onClick={() => setEventType("leitersitzung")}
-              className={`px-4 py-2 text-sm rounded-lg border transition-colors ${
-                eventType === "leitersitzung"
-                  ? "border-primary bg-primary/15 text-primary font-medium"
-                  : "border-contrast-ground/20 hover:border-contrast-ground/40"
-              }`}
-            >
-              Leitersitzung
-            </button>
+          <label className="block text-sm font-medium mb-1" id="event-type-label">Typ</label>
+          <div
+            className="flex gap-2"
+            role="radiogroup"
+            aria-labelledby="event-type-label"
+          >
+            {(
+              [
+                { value: "aktivitaet", label: "Aktivität" },
+                { value: "lager", label: "Lager" },
+                { value: "leitersitzung", label: "Leitersitzung" },
+              ] as const
+            ).map(({ value, label }) => (
+              <button
+                key={value}
+                type="button"
+                role="radio"
+                aria-checked={eventType === value}
+                tabIndex={eventType === value ? 0 : -1}
+                onClick={() => setEventType(value)}
+                onKeyDown={(e) => {
+                  const types: CalendarEventType[] = [
+                    "aktivitaet",
+                    "lager",
+                    "leitersitzung",
+                  ];
+                  const idx = types.indexOf(eventType);
+                  let nextIdx = -1;
+                  if (e.key === "ArrowRight" || e.key === "ArrowDown") {
+                    e.preventDefault();
+                    nextIdx = (idx + 1) % types.length;
+                  } else if (e.key === "ArrowLeft" || e.key === "ArrowUp") {
+                    e.preventDefault();
+                    nextIdx = (idx - 1 + types.length) % types.length;
+                  }
+                  if (nextIdx >= 0) {
+                    setEventType(types[nextIdx]);
+                    const buttons =
+                      e.currentTarget.parentElement?.querySelectorAll<HTMLElement>(
+                        "[role=radio]"
+                      );
+                    buttons?.[nextIdx]?.focus();
+                  }
+                }}
+                className={`px-4 py-2 text-sm rounded-lg border transition-colors ${
+                  eventType === value
+                    ? "border-primary bg-primary/15 text-primary font-medium"
+                    : "border-contrast-ground/20 hover:border-contrast-ground/40"
+                }`}
+              >
+                {label}
+              </button>
+            ))}
           </div>
         </div>
 

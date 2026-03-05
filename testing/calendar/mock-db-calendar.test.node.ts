@@ -160,19 +160,23 @@ describe("MockDatabaseService — Calendar", () => {
     });
 
     test("updates an event and refreshes updatedAt", async () => {
-      const saved = await db.saveCalendarEvent(eventInput({ title: "Old" }));
-      const originalUpdatedAt = saved.updatedAt;
+      vi.useFakeTimers();
+      try {
+        vi.setSystemTime(new Date("2025-01-01T00:00:00Z"));
+        const saved = await db.saveCalendarEvent(eventInput({ title: "Old" }));
+        const originalUpdatedAt = saved.updatedAt;
 
-      // Small delay to ensure timestamp changes
-      await new Promise((r) => setTimeout(r, 5));
-
-      const updated = await db.updateCalendarEvent(
-        saved._id,
-        eventInput({ title: "New" })
-      );
-      expect(updated?.title).toBe("New");
-      expect(updated?.updatedAt).not.toBe(originalUpdatedAt);
-      expect(updated?.createdAt).toBe(saved.createdAt); // createdAt unchanged
+        vi.setSystemTime(new Date("2025-01-01T00:00:01Z"));
+        const updated = await db.updateCalendarEvent(
+          saved._id,
+          eventInput({ title: "New" })
+        );
+        expect(updated?.title).toBe("New");
+        expect(updated?.updatedAt).not.toBe(originalUpdatedAt);
+        expect(updated?.createdAt).toBe(saved.createdAt); // createdAt unchanged
+      } finally {
+        vi.useRealTimers();
+      }
     });
 
     test("returns null when updating non-existent event", async () => {
@@ -553,31 +557,33 @@ describe("MockDatabaseService — Calendar", () => {
       vi.useFakeTimers();
       vi.setSystemTime(new Date("2025-06-15T12:00:00Z"));
 
-      const futureDate = "2025-12-01";
-      await db.saveCalendarEvent(
-        eventInput({
-          title: "Sitzung",
-          date: futureDate,
-          groups: ["woelfli"],
-          allGroups: false,
-          eventType: "leitersitzung",
-        })
-      );
+      try {
+        const futureDate = "2025-12-01";
+        await db.saveCalendarEvent(
+          eventInput({
+            title: "Sitzung",
+            date: futureDate,
+            groups: ["woelfli"],
+            allGroups: false,
+            eventType: "leitersitzung",
+          })
+        );
 
-      // Kid-facing: all should return 0
-      expect(await db.getAllPublicEvents()).toHaveLength(0);
-      expect(await db.getEventsByGroup("woelfli")).toHaveLength(0);
-      expect(await db.getNextUpcomingEvent("woelfli")).toBeNull();
-      expect(await db.getAllUpcomingEvents()).toHaveLength(0);
+        // Kid-facing: all should return 0
+        expect(await db.getAllPublicEvents()).toHaveLength(0);
+        expect(await db.getEventsByGroup("woelfli")).toHaveLength(0);
+        expect(await db.getNextUpcomingEvent("woelfli")).toBeNull();
+        expect(await db.getAllUpcomingEvents()).toHaveLength(0);
 
-      // Leiter-facing: all should return 1
-      expect(await db.getAllEventsForLeiter()).toHaveLength(1);
-      expect(await db.getEventsForLeiterByGroup("woelfli")).toHaveLength(1);
+        // Leiter-facing: all should return 1
+        expect(await db.getAllEventsForLeiter()).toHaveLength(1);
+        expect(await db.getEventsForLeiterByGroup("woelfli")).toHaveLength(1);
 
-      // Admin: should return 1
-      expect(await db.getCalendarEvents()).toHaveLength(1);
-
-      vi.useRealTimers();
+        // Admin: should return 1
+        expect(await db.getCalendarEvents()).toHaveLength(1);
+      } finally {
+        vi.useRealTimers();
+      }
     });
   });
 });

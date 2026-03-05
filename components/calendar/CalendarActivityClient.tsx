@@ -1,7 +1,6 @@
 "use client";
 
-import type { ActivityAudience } from "@components/puck/Activity";
-import type { CalendarEvent } from "@lib/calendar/types";
+import type { ActivityAudience, CalendarEvent } from "@lib/calendar/types";
 import { getPackingIcon } from "@lib/packing-icons";
 import { useQuery } from "@tanstack/react-query";
 import {
@@ -95,21 +94,29 @@ function EventContent({
   audience: ActivityAudience;
 }) {
   const isLeiter = audience === "leiter";
-  const isLager = (event.eventType ?? "aktivitaet") === "lager";
+  const eventType = event.eventType ?? "aktivitaet";
+  const isLager = eventType === "lager";
+  const isLeitersitzung = eventType === "leitersitzung";
+  const hideExtras = isLager || isLeitersitzung;
 
   const hasEndLocation =
-    event.endLocation?.name && event.endLocation.name.trim() !== "";
+    !hideExtras &&
+    event.endLocation?.name &&
+    event.endLocation.name.trim() !== "";
   const hasLocation =
     event.location?.name && event.location.name.trim() !== "";
-  // Mitnehmen: hidden for Lager events
+  // Mitnehmen: hidden for Lager/Leitersitzung
   const hasMitnehmen =
-    !isLager &&
+    !hideExtras &&
     event.mitnehmen &&
     event.mitnehmen.length > 0 &&
     event.mitnehmen.some((item) => item.name?.trim());
-  // Bemerkung: only for Leiter, never for Lager
+  // Bemerkung: only for Leiter, never for Lager/Leitersitzung
   const hasBemerkung =
-    isLeiter && !isLager && event.bemerkung && event.bemerkung.trim() !== "";
+    isLeiter &&
+    !hideExtras &&
+    event.bemerkung &&
+    event.bemerkung.trim() !== "";
   // Description: only for Leiter
   const hasDescription =
     isLeiter && event.description && event.description.trim() !== "";

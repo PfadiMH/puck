@@ -27,6 +27,10 @@ export interface CalendarGroupInput {
   order: number;
 }
 
+// --- Audience ---
+
+export type ActivityAudience = "kinder" | "leiter";
+
 // --- Calendar Events ---
 
 export type CalendarEventType = "aktivitaet" | "lager" | "leitersitzung";

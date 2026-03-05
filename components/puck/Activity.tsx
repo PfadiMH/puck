@@ -3,15 +3,17 @@ import { calendarGroupSelectorField } from "@components/puck-fields/calendar-gro
 import { datePickerField } from "@components/puck-fields/date-picker";
 import { iconSelectorField } from "@components/puck-fields/icon-selector";
 import { timePickerField } from "@components/puck-fields/time-picker";
-import type { LocationInfo, MitnehmenItem } from "@lib/calendar/types";
+import type {
+  ActivityAudience,
+  LocationInfo,
+  MitnehmenItem,
+} from "@lib/calendar/types";
 import { getPackingIcon } from "@lib/packing-icons";
 import type { ComponentConfig, Fields } from "@puckeditor/core";
 import { Calendar, Clock, MapPin, Backpack, Info } from "lucide-react";
 
 // Re-export for backward compatibility
-export type { MitnehmenItem, LocationInfo };
-
-export type ActivityAudience = "kinder" | "leiter";
+export type { ActivityAudience, MitnehmenItem, LocationInfo };
 
 export type ActivityProps = {
   mode: "manual" | "calendar";
