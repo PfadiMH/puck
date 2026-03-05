@@ -98,7 +98,21 @@ export async function getPublicEventsByGroup(
   return dbService.getEventsByGroup(groupSlug);
 }
 
-/** Public — no auth required. Used by ICS "all" feed. */
+/** Public — no auth required. Used by ICS "all" feed. Excludes leitersitzung. */
 export async function getPublicAllCalendarEvents(): Promise<CalendarEvent[]> {
-  return dbService.getCalendarEvents();
+  return dbService.getAllPublicEvents();
+}
+
+/** Public — no auth required. Used by Leiter ICS feed (all events). */
+export async function getPublicAllEventsForLeiter(): Promise<
+  CalendarEvent[]
+> {
+  return dbService.getAllEventsForLeiter();
+}
+
+/** Public — no auth required. Used by per-group Leiter ICS feed. */
+export async function getPublicEventsForLeiterByGroup(
+  groupSlug: string
+): Promise<CalendarEvent[]> {
+  return dbService.getEventsForLeiterByGroup(groupSlug);
 }

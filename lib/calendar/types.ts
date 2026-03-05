@@ -29,9 +29,12 @@ export interface CalendarGroupInput {
 
 // --- Calendar Events ---
 
+export type CalendarEventType = "aktivitaet" | "lager" | "leitersitzung";
+
 export interface CalendarEvent {
   _id: string;
   uid: string; // Stable ICS UID: "event-{_id}@pfadimh.ch"
+  eventType?: CalendarEventType; // defaults to "aktivitaet" for backwards compat
   title: string;
   description?: string;
   date: string; // "YYYY-MM-DD"
@@ -50,6 +53,7 @@ export interface CalendarEvent {
 export type CalendarEventDb = CalendarEvent;
 
 export interface CalendarEventInput {
+  eventType?: CalendarEventType;
   title: string;
   description?: string;
   date: string;

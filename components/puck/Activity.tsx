@@ -11,8 +11,11 @@ import { Calendar, Clock, MapPin, Backpack, Info } from "lucide-react";
 // Re-export for backward compatibility
 export type { MitnehmenItem, LocationInfo };
 
+export type ActivityAudience = "kinder" | "leiter";
+
 export type ActivityProps = {
   mode: "manual" | "calendar";
+  audience: ActivityAudience;
   calendarGroup?: string;
   date: string;
   startTime: string;
@@ -98,6 +101,7 @@ function LocationDisplay({
 }
 
 function ManualActivity({
+  audience,
   date,
   startTime,
   endTime,
@@ -106,13 +110,14 @@ function ManualActivity({
   mitnehmen,
   bemerkung,
 }: Omit<ActivityProps, "mode" | "calendarGroup">) {
+  const isLeiter = audience === "leiter";
   const hasEndLocation = endLocation?.name && endLocation.name.trim() !== "";
   const hasLocation = location?.name && location.name.trim() !== "";
   const hasMitnehmen =
     mitnehmen &&
     mitnehmen.length > 0 &&
     mitnehmen.some((item) => item.name?.trim());
-  const hasBemerkung = bemerkung && bemerkung.trim() !== "";
+  const hasBemerkung = isLeiter && bemerkung && bemerkung.trim() !== "";
 
   // Check what sections exist below each section for border logic
   const hasContentBelowDateTime = hasLocation || hasMitnehmen || hasBemerkung;
@@ -208,6 +213,7 @@ function ManualActivity({
 
 function Activity({
   mode,
+  audience,
   calendarGroup,
   date,
   startTime,
@@ -228,11 +234,12 @@ function Activity({
         </div>
       );
     }
-    return <CalendarActivityClient group={calendarGroup} />;
+    return <CalendarActivityClient group={calendarGroup} audience={audience} />;
   }
 
   return (
     <ManualActivity
+      audience={audience}
       date={date}
       startTime={startTime}
       endTime={endTime}
@@ -252,6 +259,14 @@ const allFields: Fields<ActivityProps> = {
     options: [
       { label: "Manuell", value: "manual" },
       { label: "Kalender (automatisch)", value: "calendar" },
+    ],
+  },
+  audience: {
+    type: "select",
+    label: "Zielgruppe",
+    options: [
+      { label: "Kinder", value: "kinder" },
+      { label: "Leiter", value: "leiter" },
     ],
   },
   calendarGroup: calendarGroupSelectorField,
@@ -319,9 +334,10 @@ export const activityConfig: ComponentConfig<ActivityProps> = {
   render: Activity,
   resolveFields: (data) => {
     if (data.props.mode === "calendar") {
-      // In calendar mode, only show mode selector and group selector
+      // In calendar mode, show mode, audience, and group selector
       return {
         mode: allFields.mode,
+        audience: allFields.audience,
         calendarGroup: allFields.calendarGroup,
       } as Fields<ActivityProps>;
     }
@@ -332,6 +348,7 @@ export const activityConfig: ComponentConfig<ActivityProps> = {
   fields: allFields,
   defaultProps: {
     mode: "manual",
+    audience: "kinder",
     calendarGroup: undefined,
     // Use local date to avoid UTC timezone shift
     date: (() => {

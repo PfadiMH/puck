@@ -17,11 +17,30 @@ export async function GET(
     let calendarName: string;
 
     if (slug === "all") {
-      // All events feed
-      events = await dbService.getCalendarEvents();
+      // All events feed (excludes leitersitzung)
+      events = await dbService.getAllPublicEvents();
       calendarName = "Pfadi MH - Alle Aktivitäten";
+    } else if (slug === "leiter") {
+      // Global Leiter feed (all events including leitersitzung)
+      events = await dbService.getAllEventsForLeiter();
+      calendarName = "Pfadi MH - Leiter";
+    } else if (slug.startsWith("leiter-")) {
+      // Per-group Leiter feed (group events + leitersitzung)
+      const groupSlug = slug.slice("leiter-".length);
+      const groups = await dbService.getCalendarGroups();
+      const group = groups.find((g) => g.slug === groupSlug);
+
+      if (!group) {
+        return new Response("Kalendergruppe nicht gefunden", {
+          status: 404,
+          headers: { "Content-Type": "text/plain; charset=utf-8" },
+        });
+      }
+
+      events = await dbService.getEventsForLeiterByGroup(groupSlug);
+      calendarName = `Pfadi MH - Leiter ${group.name}`;
     } else {
-      // Group-specific feed
+      // Group-specific feed (excludes leitersitzung)
       const groups = await dbService.getCalendarGroups();
       const group = groups.find((g) => g.slug === slug);
 

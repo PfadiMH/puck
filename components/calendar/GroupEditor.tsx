@@ -84,6 +84,18 @@ export function GroupEditor({
       return;
     }
 
+    // Check for reserved slug prefixes
+    const reservedSlugs = ["leiter", "all"];
+    if (
+      reservedSlugs.includes(slug) ||
+      slug.startsWith("leiter-")
+    ) {
+      toast.error(
+        `Slug "${slug}" ist reserviert und kann nicht verwendet werden`
+      );
+      return;
+    }
+
     setSaving(true);
     try {
       const input: CalendarGroupInput = {

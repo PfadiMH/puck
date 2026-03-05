@@ -89,6 +89,9 @@ export interface DatabaseService {
   getEventsByGroup(groupSlug: string): Promise<CalendarEvent[]>;
   getNextUpcomingEvent(groupSlug: string): Promise<CalendarEvent | null>;
   getAllUpcomingEvents(): Promise<CalendarEvent[]>;
+  getAllPublicEvents(): Promise<CalendarEvent[]>;
+  getAllEventsForLeiter(): Promise<CalendarEvent[]>;
+  getEventsForLeiterByGroup(groupSlug: string): Promise<CalendarEvent[]>;
   saveCalendarEvent(event: CalendarEventInput): Promise<CalendarEvent>;
   updateCalendarEvent(
     id: string,
