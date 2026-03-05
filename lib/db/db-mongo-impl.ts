@@ -702,6 +702,15 @@ export class MongoService implements DatabaseService {
       .toArray();
   }
 
+  async getAllPublicEvents(): Promise<CalendarEvent[]> {
+    return this.calendarEventCol()
+      .find({
+        eventType: { $ne: "leitersitzung" },
+      } as Filter<CalendarEventDb>)
+      .sort({ date: 1, startTime: 1 })
+      .toArray();
+  }
+
   async getCalendarEvent(id: string): Promise<CalendarEvent | null> {
     return this.calendarEventCol().findOne({
       _id: id,
@@ -711,9 +720,14 @@ export class MongoService implements DatabaseService {
   async getEventsByGroup(groupSlug: string): Promise<CalendarEvent[]> {
     return this.calendarEventCol()
       .find({
-        $or: [
-          { groups: groupSlug },
-          { allGroups: true },
+        $and: [
+          { eventType: { $ne: "leitersitzung" } },
+          {
+            $or: [
+              { groups: groupSlug },
+              { allGroups: true },
+            ],
+          },
         ],
       } as Filter<CalendarEventDb>)
       .sort({ date: 1, startTime: 1 })
@@ -727,6 +741,7 @@ export class MongoService implements DatabaseService {
     const result = await this.calendarEventCol()
       .find({
         $and: [
+          { eventType: { $ne: "leitersitzung" } },
           {
             $or: [
               { date: { $gt: todayStr } },
@@ -751,9 +766,35 @@ export class MongoService implements DatabaseService {
     const { date: todayStr, time: nowTime } = getZurichNow();
     return this.calendarEventCol()
       .find({
+        $and: [
+          { eventType: { $ne: "leitersitzung" } },
+          {
+            $or: [
+              { date: { $gt: todayStr } },
+              { date: todayStr, endTime: { $gt: nowTime } },
+            ],
+          },
+        ],
+      } as Filter<CalendarEventDb>)
+      .sort({ date: 1, startTime: 1 })
+      .toArray();
+  }
+
+  async getAllEventsForLeiter(): Promise<CalendarEvent[]> {
+    return this.calendarEventCol()
+      .find()
+      .sort({ date: 1, startTime: 1 })
+      .toArray();
+  }
+
+  async getEventsForLeiterByGroup(
+    groupSlug: string
+  ): Promise<CalendarEvent[]> {
+    return this.calendarEventCol()
+      .find({
         $or: [
-          { date: { $gt: todayStr } },
-          { date: todayStr, endTime: { $gt: nowTime } },
+          { groups: groupSlug },
+          { allGroups: true },
         ],
       } as Filter<CalendarEventDb>)
       .sort({ date: 1, startTime: 1 })

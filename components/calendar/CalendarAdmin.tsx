@@ -284,7 +284,23 @@ export function CalendarAdmin() {
                     >
                       <TableCell>
                         <div>
-                          <p className="font-medium">{event.title}</p>
+                          <div className="flex items-center gap-1.5">
+                            <p className="font-medium">{event.title}</p>
+                            {(event.eventType === "lager" ||
+                              event.eventType === "leitersitzung") && (
+                              <span
+                                className={`inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium leading-none ${
+                                  event.eventType === "leitersitzung"
+                                    ? "bg-amber-100 text-amber-800"
+                                    : "bg-blue-100 text-blue-800"
+                                }`}
+                              >
+                                {event.eventType === "leitersitzung"
+                                  ? "Leiter"
+                                  : "Lager"}
+                              </span>
+                            )}
+                          </div>
                           {event.location?.name && (
                             <p className="text-xs text-contrast-ground/50">
                               {event.location.name}
@@ -382,6 +398,29 @@ export function CalendarAdmin() {
                   </code>
                   <CopyButton text={`${webcalBase}/cal/all.ics`} />
                 </div>
+                <div className="flex items-center gap-2 pt-1 border-t border-primary/10">
+                  <span className="font-medium min-w-[80px]">Leiter:</span>
+                  <code className="flex-1 text-xs bg-contrast-ground/5 px-2 py-1 rounded truncate">
+                    {webcalBase}/cal/leiter.ics
+                  </code>
+                  <CopyButton text={`${webcalBase}/cal/leiter.ics`} />
+                </div>
+                {groups.map((g) => (
+                  <div
+                    key={`leiter-${g._id}`}
+                    className="flex items-center gap-2"
+                  >
+                    <span className="font-medium min-w-[80px]">
+                      Leiter {g.name}:
+                    </span>
+                    <code className="flex-1 text-xs bg-contrast-ground/5 px-2 py-1 rounded truncate">
+                      {webcalBase}/cal/leiter-{g.slug}.ics
+                    </code>
+                    <CopyButton
+                      text={`${webcalBase}/cal/leiter-${g.slug}.ics`}
+                    />
+                  </div>
+                ))}
               </div>
             </div>
           )}

@@ -1,6 +1,6 @@
 "use client";
 
-import type { CalendarEvent } from "@lib/calendar/types";
+import type { ActivityAudience, CalendarEvent } from "@lib/calendar/types";
 import { getPackingIcon } from "@lib/packing-icons";
 import { useQuery } from "@tanstack/react-query";
 import {
@@ -86,22 +86,48 @@ function LocationDisplay({
   );
 }
 
-function EventContent({ event }: { event: CalendarEvent }) {
+function EventContent({
+  event,
+  audience,
+}: {
+  event: CalendarEvent;
+  audience: ActivityAudience;
+}) {
+  const isLeiter = audience === "leiter";
+  const eventType = event.eventType ?? "aktivitaet";
+  const isLager = eventType === "lager";
+  const isLeitersitzung = eventType === "leitersitzung";
+  const hideExtras = isLager || isLeitersitzung;
+
   const hasEndLocation =
-    event.endLocation?.name && event.endLocation.name.trim() !== "";
+    !hideExtras &&
+    event.endLocation?.name &&
+    event.endLocation.name.trim() !== "";
   const hasLocation =
     event.location?.name && event.location.name.trim() !== "";
+  // Mitnehmen: hidden for Lager/Leitersitzung
   const hasMitnehmen =
+    !hideExtras &&
     event.mitnehmen &&
     event.mitnehmen.length > 0 &&
     event.mitnehmen.some((item) => item.name?.trim());
-  const hasBemerkung = event.bemerkung && event.bemerkung.trim() !== "";
+  // Bemerkung: only for Leiter, never for Lager/Leitersitzung
+  const hasBemerkung =
+    isLeiter &&
+    !hideExtras &&
+    event.bemerkung &&
+    event.bemerkung.trim() !== "";
+  // Description: only for Leiter
+  const hasDescription =
+    isLeiter && event.description && event.description.trim() !== "";
 
   const hasAnyLocation = hasLocation || hasEndLocation;
   const hasContentBelowDateTime =
-    hasAnyLocation || hasMitnehmen || hasBemerkung;
-  const hasContentBelowLocation = hasMitnehmen || hasBemerkung;
-  const hasContentBelowMitnehmen = hasBemerkung;
+    hasAnyLocation || hasMitnehmen || hasDescription || hasBemerkung;
+  const hasContentBelowLocation =
+    hasMitnehmen || hasDescription || hasBemerkung;
+  const hasContentBelowMitnehmen = hasDescription || hasBemerkung;
+  const hasContentBelowDescription = hasBemerkung;
 
   return (
     <div className="bg-elevated rounded-lg p-6 shadow-md">
@@ -193,7 +219,26 @@ function EventContent({ event }: { event: CalendarEvent }) {
         </div>
       )}
 
-      {/* Bemerkung */}
+      {/* Description (Leiter only) */}
+      {hasDescription && (
+        <div
+          className={
+            hasContentBelowDescription
+              ? "mb-4 pb-4 border-b border-primary/20"
+              : ""
+          }
+        >
+          <div className="flex items-start gap-2">
+            <Info className="w-5 h-5 mt-0.5 flex-shrink-0 text-primary" />
+            <div>
+              <span className="font-semibold">Beschreibung: </span>
+              <span>{event.description}</span>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Bemerkung (Leiter + Aktivität only) */}
       {hasBemerkung && (
         <div className="flex items-start gap-2">
           <Info className="w-5 h-5 mt-0.5 flex-shrink-0 text-primary" />
@@ -207,7 +252,13 @@ function EventContent({ event }: { event: CalendarEvent }) {
   );
 }
 
-export function CalendarActivityClient({ group }: { group: string }) {
+export function CalendarActivityClient({
+  group,
+  audience,
+}: {
+  group: string;
+  audience: ActivityAudience;
+}) {
   const { data: event, isLoading, isError } = useQuery<CalendarEvent | null>({
     queryKey: ["calendar-next-event", group],
     queryFn: async () => {
@@ -252,5 +303,5 @@ export function CalendarActivityClient({ group }: { group: string }) {
     );
   }
 
-  return <EventContent event={event} />;
+  return <EventContent event={event} audience={audience} />;
 }

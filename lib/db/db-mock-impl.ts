@@ -330,13 +330,27 @@ export class MockDatabaseService implements DatabaseService {
     });
   }
 
+  async getAllPublicEvents(): Promise<CalendarEvent[]> {
+    return this.calendarEvents
+      .filter((e) => (e.eventType ?? "aktivitaet") !== "leitersitzung")
+      .sort((a, b) => {
+        const dateCmp = a.date.localeCompare(b.date);
+        if (dateCmp !== 0) return dateCmp;
+        return a.startTime.localeCompare(b.startTime);
+      });
+  }
+
   async getCalendarEvent(id: string): Promise<CalendarEvent | null> {
     return this.calendarEvents.find((e) => e._id === id) ?? null;
   }
 
   async getEventsByGroup(groupSlug: string): Promise<CalendarEvent[]> {
     return this.calendarEvents
-      .filter((e) => e.groups.includes(groupSlug) || e.allGroups)
+      .filter(
+        (e) =>
+          (e.eventType ?? "aktivitaet") !== "leitersitzung" &&
+          (e.groups.includes(groupSlug) || e.allGroups)
+      )
       .sort((a, b) => {
         const dateCmp = a.date.localeCompare(b.date);
         if (dateCmp !== 0) return dateCmp;
@@ -351,6 +365,7 @@ export class MockDatabaseService implements DatabaseService {
     const upcoming = this.calendarEvents
       .filter(
         (e) =>
+          (e.eventType ?? "aktivitaet") !== "leitersitzung" &&
           (e.date > todayStr ||
             (e.date === todayStr && e.endTime > nowTime)) &&
           (e.groups.includes(groupSlug) || e.allGroups)
@@ -368,8 +383,32 @@ export class MockDatabaseService implements DatabaseService {
     return this.calendarEvents
       .filter(
         (e) =>
-          e.date > todayStr ||
-          (e.date === todayStr && e.endTime > nowTime)
+          (e.eventType ?? "aktivitaet") !== "leitersitzung" &&
+          (e.date > todayStr ||
+            (e.date === todayStr && e.endTime > nowTime))
+      )
+      .sort((a, b) => {
+        const dateCmp = a.date.localeCompare(b.date);
+        if (dateCmp !== 0) return dateCmp;
+        return a.startTime.localeCompare(b.startTime);
+      });
+  }
+
+  async getAllEventsForLeiter(): Promise<CalendarEvent[]> {
+    return [...this.calendarEvents].sort((a, b) => {
+      const dateCmp = a.date.localeCompare(b.date);
+      if (dateCmp !== 0) return dateCmp;
+      return a.startTime.localeCompare(b.startTime);
+    });
+  }
+
+  async getEventsForLeiterByGroup(
+    groupSlug: string
+  ): Promise<CalendarEvent[]> {
+    return this.calendarEvents
+      .filter(
+        (e) =>
+          e.groups.includes(groupSlug) || e.allGroups
       )
       .sort((a, b) => {
         const dateCmp = a.date.localeCompare(b.date);
