@@ -14,9 +14,9 @@ export function hasPermission(
   policy: Policy
 ): boolean {
   if (!session?.user) return false;
+  if (session.user.permissions.includes("global-admin")) return true;
 
-  const sessionPermissions = session.user.permissions ?? [];
-  if (sessionPermissions.includes("global-admin")) return true;
+  const sessionPermissions = session.user.permissions;
 
   const anyPerms = policy.any ?? [];
   if (
