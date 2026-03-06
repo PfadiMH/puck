@@ -157,6 +157,16 @@ describe("hasPermission", () => {
   });
 
   describe("edge cases", () => {
+    test("returns false when session.user exists but permissions is undefined", () => {
+      const session = { user: {} } as unknown as Session;
+      expect(hasPermission(session, { any: ["page:update"] })).toBe(false);
+    });
+
+    test("returns true with empty policy when permissions is undefined", () => {
+      const session = { user: {} } as unknown as Session;
+      expect(hasPermission(session, {})).toBe(true);
+    });
+
     test("handles user with empty permissions array", () => {
       const session = createSession([]);
       expect(hasPermission(session, { any: ["page:update"] })).toBe(false);

@@ -6,6 +6,32 @@ import { getMockAuthProvider } from "./mock-auth-config";
 
 const USE_MOCK_AUTH = env.MOCK_AUTH === "true";
 
+/**
+ * Maps SSO helper `hirarchy_level` values to security-config role names.
+ * SSO helper outputs: "admin" | "leader" | "member" | "none"
+ * Security config expects: "Admin" | "Leiter" | "JungLeiter"
+ */
+const HIERARCHY_TO_ROLES: Record<string, string[]> = {
+  admin: ["Admin"],
+  leader: ["Leiter"],
+  member: ["JungLeiter"],
+  none: [],
+};
+
+function resolveRoles(profile: Record<string, unknown> | undefined): string[] {
+  const directRoles = profile?.roles;
+  if (Array.isArray(directRoles) && directRoles.length > 0) {
+    return directRoles as string[];
+  }
+
+  const level = profile?.hirarchy_level;
+  if (typeof level === "string" && level in HIERARCHY_TO_ROLES) {
+    return HIERARCHY_TO_ROLES[level];
+  }
+
+  return [];
+}
+
 const { handlers, signIn, signOut, auth } = NextAuth({
   basePath: "/auth",
   providers: [
@@ -32,10 +58,14 @@ const { handlers, signIn, signOut, auth } = NextAuth({
       }
 
       if (user) {
-        token.roles = (user as any).roles || profile?.roles;
+        const userRoles = (user as any).roles;
+        token.roles =
+          Array.isArray(userRoles) && userRoles.length > 0
+            ? userRoles
+            : resolveRoles(profile as Record<string, unknown> | undefined);
       }
 
-      if (token.roles && !token.permissions) {
+      if (token.roles && (token.roles as string[]).length > 0 && !token.permissions) {
         token.permissions = await fetchPermissions(token.roles as string[]);
       }
 
