@@ -10,6 +10,7 @@ import {
 } from "@components/ui/Dialog";
 import Input from "@components/ui/Input";
 import { saveProduct, updateProduct } from "@lib/db/shop-actions";
+import { formatPrice } from "@lib/shop/utils";
 import type {
   Product,
   ProductInput,
@@ -29,7 +30,6 @@ type ProductEditorProps = {
 function generateVariants(
   options: ProductOption[],
   existingVariants: ProductVariant[],
-  basePrice: number
 ): ProductVariant[] {
   if (options.length === 0) {
     // Single variant with no options
@@ -37,7 +37,7 @@ function generateVariants(
     return [
       {
         options: {},
-        price: existing?.price ?? basePrice,
+        priceAdjustment: existing?.priceAdjustment ?? 0,
         stock: existing?.stock ?? 0,
       },
     ];
@@ -63,7 +63,7 @@ function generateVariants(
     );
     return {
       options: combo,
-      price: existing?.price ?? basePrice,
+      priceAdjustment: existing?.priceAdjustment ?? 0,
       stock: existing?.stock ?? 0,
     };
   });
@@ -86,19 +86,19 @@ export function ProductEditor({
     product?.options ?? []
   );
   const [variants, setVariants] = useState<ProductVariant[]>(
-    product?.variants ?? [{ options: {}, price: 0, stock: 0 }]
+    product?.variants ?? [{ options: {}, priceAdjustment: 0, stock: 0 }]
   );
   const [active, setActive] = useState(product?.active ?? true);
   const [saving, setSaving] = useState(false);
   const [showFilePicker, setShowFilePicker] = useState(false);
-  // Raw string state for variant prices (avoids reformatting on every keystroke)
-  const [variantPriceStrings, setVariantPriceStrings] = useState<
+  // Raw string state for variant adjustment values (avoids reformatting on every keystroke)
+  const [variantAdjustmentStrings, setVariantAdjustmentStrings] = useState<
     Record<number, string>
   >(() => {
     const initial: Record<number, string> = {};
-    const v = product?.variants ?? [{ options: {}, price: 0, stock: 0 }];
+    const v = product?.variants ?? [{ options: {}, priceAdjustment: 0, stock: 0 }];
     v.forEach((variant, idx) => {
-      initial[idx] = (variant.price / 100).toFixed(2);
+      initial[idx] = (variant.priceAdjustment / 100).toFixed(2);
     });
     return initial;
   });
@@ -108,18 +108,18 @@ export function ProductEditor({
   // Regenerate variants when options change
   const regenerateVariants = useCallback(() => {
     setVariants((prev) => {
-      const newVariants = generateVariants(options, prev, basePrice);
-      // Sync variant price strings for new/changed variants
-      setVariantPriceStrings((prevStrings) => {
+      const newVariants = generateVariants(options, prev);
+      // Sync variant adjustment strings for new/changed variants
+      setVariantAdjustmentStrings((prevStrings: Record<number, string>) => {
         const next: Record<number, string> = {};
         newVariants.forEach((v, idx) => {
-          next[idx] = prevStrings[idx] ?? (v.price / 100).toFixed(2);
+          next[idx] = prevStrings[idx] ?? (v.priceAdjustment / 100).toFixed(2);
         });
         return next;
       });
       return newVariants;
     });
-  }, [options, basePrice]);
+  }, [options]);
 
   useEffect(() => {
     regenerateVariants();
@@ -147,12 +147,12 @@ export function ProductEditor({
     setOptions(updated);
   }
 
-  function updateVariantPrice(index: number, priceStr: string) {
-    setVariantPriceStrings((prev) => ({ ...prev, [index]: priceStr }));
+  function updateVariantAdjustment(index: number, adjustmentStr: string) {
+    setVariantAdjustmentStrings((prev: Record<number, string>) => ({ ...prev, [index]: adjustmentStr }));
     const updated = [...variants];
     updated[index] = {
       ...updated[index],
-      price: Math.round(parseFloat(priceStr || "0") * 100),
+      priceAdjustment: Math.round(parseFloat(adjustmentStr || "0") * 100),
     };
     setVariants(updated);
   }
@@ -207,8 +207,9 @@ export function ProductEditor({
         price: basePrice,
         options: options.filter((o) => o.name.trim() && o.values.length > 0),
         variants: variants.map((v) => ({
-          ...v,
-          price: v.price ?? basePrice,
+          options: v.options,
+          priceAdjustment: v.priceAdjustment ?? 0,
+          stock: v.stock,
         })),
         active,
       };
@@ -333,7 +334,7 @@ export function ProductEditor({
         {/* Base Price */}
         <div>
           <label className="block text-sm font-medium mb-1">
-            Basispreis (CHF)
+            Preis (CHF)
           </label>
           <Input
             type="number"
@@ -341,6 +342,9 @@ export function ProductEditor({
             onChange={(e) => setPrice(e.target.value)}
             placeholder="0.00"
           />
+          <p className="text-xs text-contrast-ground/50 mt-1">
+            Grundpreis des Produkts. Varianten werden als Anpassung (+/-) davon berechnet.
+          </p>
         </div>
 
         {/* Active toggle */}
@@ -435,9 +439,12 @@ export function ProductEditor({
         {/* Variants */}
         {variants.length > 0 && (
           <div>
-            <label className="block text-sm font-medium mb-2">
+            <label className="block text-sm font-medium mb-1">
               Varianten ({variants.length})
             </label>
+            <p className="text-xs text-contrast-ground/50 mb-2">
+              Preisanpassung relativ zum Grundpreis. 0 = Grundpreis, positiv = Aufpreis, negativ = Rabatt.
+            </p>
             <div className="border border-contrast-ground/10 rounded-lg overflow-hidden">
               <table className="w-full text-sm">
                 <thead>
@@ -446,7 +453,10 @@ export function ProductEditor({
                       Variante
                     </th>
                     <th className="text-left px-3 py-2 font-medium w-28">
-                      Preis (CHF)
+                      +/- (CHF)
+                    </th>
+                    <th className="text-left px-3 py-2 font-medium w-24">
+                      Effektiv
                     </th>
                     <th className="text-left px-3 py-2 font-medium w-24">
                       Lager
@@ -454,42 +464,48 @@ export function ProductEditor({
                   </tr>
                 </thead>
                 <tbody>
-                  {variants.map((variant, idx) => (
-                    <tr
-                      key={idx}
-                      className="border-t border-contrast-ground/5"
-                    >
-                      <td className="px-3 py-2">
-                        {formatVariantLabel(variant)}
-                      </td>
-                      <td className="px-3 py-2">
-                        <input
-                          type="number"
-                          step="0.05"
-                          value={variantPriceStrings[idx] ?? (variant.price / 100).toFixed(2)}
-                          onChange={(e) =>
-                            updateVariantPrice(idx, e.target.value)
-                          }
-                          className="w-full bg-transparent border border-contrast-ground/15 rounded px-2 py-1 text-sm focus:outline-none focus:ring-1 focus:ring-primary/60"
-                        />
-                      </td>
-                      <td className="px-3 py-2">
-                         <input
-                          type="number"
-                          min="0"
-                          value={variant.stock}
-                          onChange={(e) => {
-                            const parsed = parseInt(e.target.value, 10);
-                            updateVariantStock(
-                              idx,
-                              Number.isNaN(parsed) ? 0 : Math.max(0, parsed)
-                            );
-                          }}
-                          className="w-full bg-transparent border border-contrast-ground/15 rounded px-2 py-1 text-sm focus:outline-none focus:ring-1 focus:ring-primary/60"
-                        />
-                      </td>
-                    </tr>
-                  ))}
+                  {variants.map((variant, idx) => {
+                    const effectivePrice = basePrice + (variant.priceAdjustment ?? 0);
+                    return (
+                      <tr
+                        key={idx}
+                        className="border-t border-contrast-ground/5"
+                      >
+                        <td className="px-3 py-2">
+                          {formatVariantLabel(variant)}
+                        </td>
+                        <td className="px-3 py-2">
+                          <input
+                            type="number"
+                            step="0.05"
+                            value={variantAdjustmentStrings[idx] ?? (variant.priceAdjustment / 100).toFixed(2)}
+                            onChange={(e) =>
+                              updateVariantAdjustment(idx, e.target.value)
+                            }
+                            className="w-full bg-transparent border border-contrast-ground/15 rounded px-2 py-1 text-sm focus:outline-none focus:ring-1 focus:ring-primary/60"
+                          />
+                        </td>
+                        <td className="px-3 py-2 text-xs text-contrast-ground/60">
+                          {formatPrice(effectivePrice)}
+                        </td>
+                        <td className="px-3 py-2">
+                           <input
+                            type="number"
+                            min="0"
+                            value={variant.stock}
+                            onChange={(e) => {
+                              const parsed = parseInt(e.target.value, 10);
+                              updateVariantStock(
+                                idx,
+                                Number.isNaN(parsed) ? 0 : Math.max(0, parsed)
+                              );
+                            }}
+                            className="w-full bg-transparent border border-contrast-ground/15 rounded px-2 py-1 text-sm focus:outline-none focus:ring-1 focus:ring-primary/60"
+                          />
+                        </td>
+                      </tr>
+                    );
+                  })}
                 </tbody>
               </table>
             </div>

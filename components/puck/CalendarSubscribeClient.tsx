@@ -134,14 +134,6 @@ export function CalendarSubscribeClient({
           size={size}
         />
       </div>
-      {/* Leiter card */}
-      <div style={{ width: cardWidth, minWidth: cardWidth }}>
-        <SubscribeCard
-          name="Leiter"
-          slug="leiter"
-          size={size}
-        />
-      </div>
     </div>
   );
 }

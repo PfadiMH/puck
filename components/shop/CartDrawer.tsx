@@ -3,7 +3,7 @@
 import Button from "@components/ui/Button";
 import cn from "@lib/cn";
 import type { Product } from "@lib/shop/types";
-import { formatPrice } from "@lib/shop/utils";
+import { formatPrice, getVariantPrice } from "@lib/shop/utils";
 import {
   AlertTriangle,
   Loader2,
@@ -73,7 +73,7 @@ export function CartDrawer() {
         }
 
         const status: CartItemStatus = {};
-        const currentPrice = variant.price ?? product.price;
+        const currentPrice = getVariantPrice(product.price, variant);
 
         if (currentPrice !== item.price) {
           status.priceChanged = currentPrice;

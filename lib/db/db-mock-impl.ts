@@ -55,6 +55,7 @@ export class MockDatabaseService implements DatabaseService {
 
   async savePage() {}
   async deletePage() {}
+  async renamePage() {}
   async getPage() {
     return undefined;
   }
@@ -410,6 +411,25 @@ export class MockDatabaseService implements DatabaseService {
         (e) =>
           e.groups.includes(groupSlug) || e.allGroups
       )
+      .sort((a, b) => {
+        const dateCmp = a.date.localeCompare(b.date);
+        if (dateCmp !== 0) return dateCmp;
+        return a.startTime.localeCompare(b.startTime);
+      });
+  }
+
+  async getEventsByMultipleGroups(
+    slugs: string[],
+    includeLeiterEvents: boolean
+  ): Promise<CalendarEvent[]> {
+    const slugSet = new Set(slugs);
+    return this.calendarEvents
+      .filter((e) => {
+        const matchesGroup = e.groups.some((g) => slugSet.has(g)) || e.allGroups;
+        if (!matchesGroup) return false;
+        if (!includeLeiterEvents && (e.eventType ?? "aktivitaet") === "leitersitzung") return false;
+        return true;
+      })
       .sort((a, b) => {
         const dateCmp = a.date.localeCompare(b.date);
         if (dateCmp !== 0) return dateCmp;

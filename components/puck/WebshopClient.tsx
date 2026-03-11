@@ -3,11 +3,11 @@
 import { useCart } from "@components/shop/CartProvider";
 import cn from "@lib/cn";
 import type { Product } from "@lib/shop/types";
-import { formatPrice } from "@lib/shop/utils";
+import { formatPrice, getVariantPrice } from "@lib/shop/utils";
 import type { WebshopSize } from "./Webshop";
 import { useQuery } from "@tanstack/react-query";
 import { Check, ChevronLeft, ChevronRight, Package } from "lucide-react";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 /** Fixed card pixel widths */
 const sizePixels: Record<WebshopSize, number> = {
@@ -500,8 +500,7 @@ function ProductCard({
 
   const variantIndex = getSelectedVariantIndex();
   const variant = variantIndex >= 0 ? product.variants[variantIndex] : null;
-  // ?? preserves legitimate 0 prices (|| would treat 0 as falsy)
-  const currentPrice = variant?.price ?? product.price;
+  const currentPrice = variant ? getVariantPrice(product.price, variant) : product.price;
   const inStock = variant ? variant.stock > 0 : false;
 
   function handleAdd() {
@@ -622,7 +621,13 @@ function ProductCard({
   );
 }
 
-export function WebshopClient({ size }: { size: WebshopSize }) {
+export function WebshopClient({
+  size,
+  selectedProducts,
+}: {
+  size: WebshopSize;
+  selectedProducts?: string[];
+}) {
   const { enableCart, disableCart } = useCart();
 
   // Signal to navbar that this page has a shop
@@ -631,7 +636,7 @@ export function WebshopClient({ size }: { size: WebshopSize }) {
     return () => disableCart();
   }, [enableCart, disableCart]);
 
-  const { data: products = [], isLoading } = useQuery<Product[]>({
+  const { data: allProducts = [], isLoading } = useQuery<Product[]>({
     queryKey: ["shop-products"],
     queryFn: async () => {
       const res = await fetch("/api/shop/products");
@@ -639,6 +644,13 @@ export function WebshopClient({ size }: { size: WebshopSize }) {
       return res.json();
     },
   });
+
+  // Filter products if a selection was made; otherwise show all (backward compat)
+  const products = useMemo(() => {
+    if (!selectedProducts || selectedProducts.length === 0) return allProducts;
+    const ids = new Set(selectedProducts);
+    return allProducts.filter((p) => ids.has(p._id));
+  }, [allProducts, selectedProducts]);
 
   if (isLoading) {
     return (

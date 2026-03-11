@@ -4,6 +4,7 @@ import {
   sendConfirmationEmail,
   sendFulfillmentEmail,
 } from "@lib/shop/fulfillment-email";
+import { getVariantPrice } from "@lib/shop/utils";
 import { stripe } from "@lib/stripe";
 import { NextRequest, NextResponse } from "next/server";
 import type Stripe from "stripe";
@@ -173,7 +174,7 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
       variantIndex,
       quantity,
       name: product.name,
-      price: variant.price ?? product.price,
+      price: getVariantPrice(product.price, variant),
       options: variant.options,
     });
   }

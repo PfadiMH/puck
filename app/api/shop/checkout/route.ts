@@ -1,6 +1,7 @@
 import { dbService } from "@lib/db/db";
 import { env } from "@lib/env";
 import type { CartItem } from "@lib/shop/types";
+import { getVariantPrice } from "@lib/shop/utils";
 import { stripe } from "@lib/stripe";
 import { headers } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
@@ -115,8 +116,8 @@ export async function POST(request: NextRequest) {
         );
       }
 
-      // Use DB price, not client price. ?? preserves legitimate 0 prices.
-      const price = variant.price ?? product.price;
+      // Use DB price, not client price. getVariantPrice handles both new and legacy data.
+      const price = getVariantPrice(product.price, variant);
       const optionsStr = Object.values(cartItem.selectedOptions ?? {}).join(
         " / "
       );

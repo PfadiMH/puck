@@ -5,7 +5,10 @@ export interface ProductOption {
 
 export interface ProductVariant {
   options: Record<string, string>; // e.g. {"Grösse": "M", "Farbe": "Blau"}
-  price: number; // price in Rappen (CHF cents)
+  /** Price adjustment relative to the product base price, in Rappen. 0 = base price, positive = surcharge, negative = discount. */
+  priceAdjustment: number;
+  /** @deprecated Legacy absolute price field. Only present on data saved before the offset migration. Use getVariantPrice() for resolution. */
+  price?: number;
   stock: number;
 }
 
@@ -33,7 +36,7 @@ export interface ProductInput {
   name: string;
   description: string;
   images: string[];
-  price: number;
+  price: number; // base price in Rappen
   options: ProductOption[];
   variants: ProductVariant[];
   active: boolean;

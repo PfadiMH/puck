@@ -389,7 +389,7 @@ export function CalendarAdmin() {
                     className="flex items-center gap-2"
                   >
                     <span className="font-medium min-w-[80px]">
-                      {g.name}:
+                      {g.name}{g.isLeiterGroup ? " (L)" : ""}:
                     </span>
                     <code className="flex-1 text-xs bg-contrast-ground/5 px-2 py-1 rounded truncate">
                       {webcalBase}/cal/{g.slug}.ics
@@ -407,28 +407,11 @@ export function CalendarAdmin() {
                   <CopyButton text={`${webcalBase}/cal/all.ics`} />
                 </div>
                 <div className="flex items-center gap-2 pt-1 border-t border-primary/10">
-                  <span className="font-medium min-w-[80px]">Leiter:</span>
+                  <span className="font-medium min-w-[80px] text-contrast-ground/60">Benutzerdefiniert:</span>
                   <code className="flex-1 text-xs bg-contrast-ground/5 px-2 py-1 rounded truncate">
-                    {webcalBase}/cal/leiter.ics
+                    {webcalBase}/cal/feed.ics?groups=slug1,slug2
                   </code>
-                  <CopyButton text={`${webcalBase}/cal/leiter.ics`} />
                 </div>
-                {groups.map((g) => (
-                  <div
-                    key={`leiter-${g._id}`}
-                    className="flex items-center gap-2"
-                  >
-                    <span className="font-medium min-w-[80px]">
-                      Leiter {g.name}:
-                    </span>
-                    <code className="flex-1 text-xs bg-contrast-ground/5 px-2 py-1 rounded truncate">
-                      {webcalBase}/cal/leiter-{g.slug}.ics
-                    </code>
-                    <CopyButton
-                      text={`${webcalBase}/cal/leiter-${g.slug}.ics`}
-                    />
-                  </div>
-                ))}
               </div>
             </div>
           )}

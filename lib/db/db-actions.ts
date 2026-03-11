@@ -29,6 +29,99 @@ export async function deletePage(path: string) {
   return dbService.deletePage(path);
 }
 
+const RESERVED_ROUTE_PREFIXES = ["/admin", "/auth", "/api", "/cal"];
+
+function validatePagePath(path: string): string | null {
+  if (!path || typeof path !== "string") {
+    return "Pfad darf nicht leer sein.";
+  }
+  if (!path.startsWith("/")) {
+    return "Pfad muss mit / beginnen.";
+  }
+  if (path === "/") {
+    return "Pfad darf nicht nur / sein.";
+  }
+  if (/\/\//.test(path)) {
+    return "Pfad darf keine doppelten Schrägstriche enthalten.";
+  }
+  if (path.length > 1 && path.endsWith("/")) {
+    return "Pfad darf nicht mit / enden.";
+  }
+  if (!/^[a-zA-Z0-9\-/]+$/.test(path)) {
+    return "Pfad darf nur Buchstaben, Zahlen, Bindestriche und Schrägstriche enthalten.";
+  }
+  for (const prefix of RESERVED_ROUTE_PREFIXES) {
+    if (path === prefix || path.startsWith(prefix + "/")) {
+      return `Pfad "${prefix}" ist reserviert und kann nicht verwendet werden.`;
+    }
+  }
+  return null;
+}
+
+export async function renamePage(
+  oldPath: string,
+  newPath: string
+): Promise<{ success: boolean; error?: string; navbarWarning?: boolean }> {
+  await requireServerPermission({ all: ["page:update"] });
+
+  const validationError = validatePagePath(newPath);
+  if (validationError) {
+    return { success: false, error: validationError };
+  }
+
+  if (oldPath === newPath) {
+    return { success: false, error: "Neuer Pfad ist identisch mit dem alten." };
+  }
+
+  // Check no page already exists at the new path
+  const existing = await dbService.getPage(newPath);
+  if (existing) {
+    return {
+      success: false,
+      error: `Eine Seite mit dem Pfad "${newPath}" existiert bereits.`,
+    };
+  }
+
+  try {
+    await dbService.renamePage(oldPath, newPath);
+  } catch {
+    return {
+      success: false,
+      error: `Seite mit Pfad "${oldPath}" nicht gefunden.`,
+    };
+  }
+
+  // Check if navbar references the old path
+  let navbarWarning = false;
+  try {
+    const navbar = await dbService.getNavbar();
+    for (const component of navbar.content) {
+      if (!component?.props) continue;
+      if (component.type === "NavbarItem") {
+        const { url } = component.props as NavbarItemProps;
+        if (url === oldPath) {
+          navbarWarning = true;
+          break;
+        }
+      }
+      if (component.type === "NavbarDropdown") {
+        const { items = [] } = component.props as NavbarDropdownProps;
+        for (const item of items) {
+          if (item.url === oldPath) {
+            navbarWarning = true;
+            break;
+          }
+        }
+        if (navbarWarning) break;
+      }
+    }
+  } catch {
+    // Navbar check is best-effort
+  }
+
+  return { success: true, navbarWarning };
+}
+
 export async function getPage(path: string): Promise<PageData | undefined> {
   return dbService.getPage(path);
 }

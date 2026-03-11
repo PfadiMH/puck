@@ -11,10 +11,10 @@ import { dbService } from "./db";
 
 // --- Validation ---
 
-const RESERVED_SLUGS = ["leiter", "all"];
+const RESERVED_SLUGS = ["all", "feed"];
 
 function validateGroupSlug(slug: string): void {
-  if (RESERVED_SLUGS.includes(slug) || slug.startsWith("leiter-")) {
+  if (RESERVED_SLUGS.includes(slug)) {
     throw new Error(
       `Slug "${slug}" ist reserviert und kann nicht verwendet werden`
     );
@@ -129,4 +129,12 @@ export async function getPublicEventsForLeiterByGroup(
   groupSlug: string
 ): Promise<CalendarEvent[]> {
   return dbService.getEventsForLeiterByGroup(groupSlug);
+}
+
+/** Public — no auth required. Unified feed query with multi-group support. */
+export async function getPublicEventsByMultipleGroups(
+  slugs: string[],
+  includeLeiterEvents: boolean
+): Promise<CalendarEvent[]> {
+  return dbService.getEventsByMultipleGroups(slugs, includeLeiterEvents);
 }

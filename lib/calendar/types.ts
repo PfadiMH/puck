@@ -17,6 +17,7 @@ export interface CalendarGroup {
   slug: string; // URL-safe identifier, e.g. "biber", "woelfe"
   name: string; // Display name, e.g. "Biberstufe"
   order: number; // Display/sort order
+  isLeiterGroup?: boolean; // If true, feeds for this group include leitersitzung events
 }
 
 export type CalendarGroupDb = CalendarGroup;
@@ -25,6 +26,7 @@ export interface CalendarGroupInput {
   slug: string;
   name: string;
   order: number;
+  isLeiterGroup?: boolean;
 }
 
 // --- Audience ---

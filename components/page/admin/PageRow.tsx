@@ -6,6 +6,7 @@ import { deletePage } from "@lib/db/db-actions";
 import { queryClient } from "@lib/query-client";
 import { useRouter } from "next/navigation";
 import ConfirmModal from "./ConfirmModal";
+import RenamePageModal from "./RenamePageModal";
 
 type PageRowProps = {
   page: string;
@@ -41,6 +42,16 @@ function PageRow({ page, variant = "table" }: PageRowProps) {
               <Button size="small" onClick={handleEdit}>
                 Edit
               </Button>
+            </PermissionGuard>
+            <PermissionGuard policy={{ all: ["page:update"] }}>
+              <DialogRoot>
+                <DialogTrigger>
+                  <button type="button" className="p-1 px-3 text-xs font-bold uppercase rounded border border-primary/40 text-primary/80 hover:bg-primary/10 transition-colors">
+                    Umbenennen
+                  </button>
+                </DialogTrigger>
+                <RenamePageModal currentPath={page} />
+              </DialogRoot>
             </PermissionGuard>
             <PermissionGuard policy={{ all: ["page:delete"] }}>
               <DialogRoot>
@@ -83,6 +94,16 @@ function PageRow({ page, variant = "table" }: PageRowProps) {
           <Button size="small" onClick={handleEdit} className="flex-1">
             Edit
           </Button>
+        </PermissionGuard>
+        <PermissionGuard policy={{ all: ["page:update"] }}>
+          <DialogRoot>
+            <DialogTrigger>
+              <button type="button" className="h-8 px-4 text-xs font-bold uppercase rounded border border-primary/40 text-primary/80 hover:bg-primary/10 transition-colors">
+                Umbenennen
+              </button>
+            </DialogTrigger>
+            <RenamePageModal currentPath={page} />
+          </DialogRoot>
         </PermissionGuard>
         <PermissionGuard policy={{ all: ["page:delete"] }}>
           <DialogRoot>

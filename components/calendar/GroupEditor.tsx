@@ -50,6 +50,7 @@ export function GroupEditor({
       ? Math.max(...existingGroups.map((g) => g.order)) + 1
       : 0)
   );
+  const [isLeiterGroup, setIsLeiterGroup] = useState(group?.isLeiterGroup ?? false);
   const [slugManuallyEdited, setSlugManuallyEdited] = useState(isEditing);
   const [saving, setSaving] = useState(false);
 
@@ -84,12 +85,9 @@ export function GroupEditor({
       return;
     }
 
-    // Check for reserved slug prefixes
-    const reservedSlugs = ["leiter", "all"];
-    if (
-      reservedSlugs.includes(slug) ||
-      slug.startsWith("leiter-")
-    ) {
+    // Check for reserved slugs
+    const reservedSlugs = ["all", "feed"];
+    if (reservedSlugs.includes(slug)) {
       toast.error(
         `Slug "${slug}" ist reserviert und kann nicht verwendet werden`
       );
@@ -102,6 +100,7 @@ export function GroupEditor({
         name: name.trim(),
         slug: slug.trim(),
         order,
+        isLeiterGroup,
       };
 
       if (isEditing && group) {
@@ -164,6 +163,22 @@ export function GroupEditor({
             onChange={(e) => setOrder(parseInt(e.target.value, 10) || 0)}
           />
         </div>
+
+        <div className="flex items-center gap-2">
+          <input
+            type="checkbox"
+            checked={isLeiterGroup}
+            onChange={(e) => setIsLeiterGroup(e.target.checked)}
+            id="is-leiter-group"
+            className="rounded"
+          />
+          <label htmlFor="is-leiter-group" className="text-sm">
+            Leitergruppe
+          </label>
+        </div>
+        <p className="text-xs text-contrast-ground/50 -mt-2">
+          Leitergruppen sehen alle Anlässe inkl. Hock/Leitersitzung im Kalender-Feed.
+        </p>
       </div>
 
       <DialogActions>

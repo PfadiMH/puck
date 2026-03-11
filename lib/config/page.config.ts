@@ -8,11 +8,17 @@ import {
   calendarSubscribeConfig,
 } from "@components/puck/CalendarSubscribe";
 import { CardProps, cardConfig } from "@components/puck/Card";
+import {
+  DownloadButtonProps,
+  downloadButtonConfig,
+} from "@components/puck/DownloadButton";
 import { FlexProps, flexConfig } from "@components/puck/Flex";
 import { FormProps, formConfig } from "@components/puck/Form";
+import { GalleryProps, galleryConfig } from "@components/puck/Gallery";
 import { GraphicProps, graphicConfig } from "@components/puck/Graphic";
 import { HeroProps, heroConfig } from "@components/puck/Hero";
 import { IFrameProps, iframeConfig } from "@components/puck/IFrame";
+import { ImageProps, imageConfig } from "@components/puck/Image";
 import { RichTextProps, richTextConfig } from "@components/puck/RichText";
 import {
   MultiColumnProps,
@@ -40,11 +46,14 @@ export type PageProps = {
   ButtonGroup: ButtonGroupProps;
   CalendarSubscribe: CalendarSubscribeProps;
   Card: CardProps;
+  DownloadButton: DownloadButtonProps;
   Flex: FlexProps;
   Form: FormProps;
+  Gallery: GalleryProps;
   Graphic: GraphicProps;
   Hero: HeroProps;
   IFrame: IFrameProps;
+  Image: ImageProps;
   MultiColumn: MultiColumnProps;
   Organigramm: OrganigrammProps;
   RichText: RichTextProps;
@@ -69,10 +78,13 @@ export const pageConfig: PageConfig = sectionThemedConfig({
         "ButtonGroup",
         "CalendarSubscribe",
         "Card",
+        "DownloadButton",
         "Form",
+        "Gallery",
         "Graphic",
         "Hero",
         "IFrame",
+        "Image",
         "MultiColumn",
         "Organigramm",
         "RichText",
@@ -90,11 +102,14 @@ export const pageConfig: PageConfig = sectionThemedConfig({
     ButtonGroup: buttonGroupConfig,
     CalendarSubscribe: calendarSubscribeConfig,
     Card: cardConfig,
+    DownloadButton: downloadButtonConfig,
     Flex: flexConfig,
     Form: formConfig,
+    Gallery: galleryConfig,
     Graphic: graphicConfig,
     Hero: heroConfig,
     IFrame: iframeConfig,
+    Image: imageConfig,
     MultiColumn: multiColumnConfig,
     Organigramm: organigrammConfig,
     RichText: richTextConfig,

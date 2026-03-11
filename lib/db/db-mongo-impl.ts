@@ -219,6 +219,18 @@ export class MongoService implements DatabaseService {
       .deleteOne({ type: "page", path: path });
   }
 
+  async renamePage(oldPath: string, newPath: string): Promise<void> {
+    const result = await this.db
+      .collection(this.puckDataCollectionName)
+      .updateOne(
+        { type: "page", path: oldPath },
+        { $set: { path: newPath } }
+      );
+    if (result.matchedCount === 0) {
+      throw new Error(`Seite mit Pfad "${oldPath}" nicht gefunden`);
+    }
+  }
+
   async getPage(path: string): Promise<PageData | undefined> {
     const result = await this.db
       .collection(this.puckDataCollectionName)
@@ -797,6 +809,26 @@ export class MongoService implements DatabaseService {
           { allGroups: true },
         ],
       } as Filter<CalendarEventDb>)
+      .sort({ date: 1, startTime: 1 })
+      .toArray();
+  }
+
+  async getEventsByMultipleGroups(
+    slugs: string[],
+    includeLeiterEvents: boolean
+  ): Promise<CalendarEvent[]> {
+    const groupFilter = {
+      $or: [
+        { groups: { $in: slugs } },
+        { allGroups: true },
+      ],
+    };
+    const filter = includeLeiterEvents
+      ? groupFilter
+      : { $and: [{ eventType: { $ne: "leitersitzung" } }, groupFilter] };
+
+    return this.calendarEventCol()
+      .find(filter as Filter<CalendarEventDb>)
       .sort({ date: 1, startTime: 1 })
       .toArray();
   }

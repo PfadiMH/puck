@@ -33,6 +33,7 @@ export interface FileQueryResult {
 export interface DatabaseService {
   savePage(path: string, data: Data): Promise<void>;
   deletePage(path: string): Promise<void>;
+  renamePage(oldPath: string, newPath: string): Promise<void>;
   getPage(path: string): Promise<PageData | undefined>;
   saveNavbar(data: NavbarData): Promise<void>;
   getNavbar(): Promise<NavbarData>;
@@ -92,6 +93,11 @@ export interface DatabaseService {
   getAllPublicEvents(): Promise<CalendarEvent[]>;
   getAllEventsForLeiter(): Promise<CalendarEvent[]>;
   getEventsForLeiterByGroup(groupSlug: string): Promise<CalendarEvent[]>;
+  /** Unified query: events matching any of the given groups, optionally including leitersitzung. */
+  getEventsByMultipleGroups(
+    slugs: string[],
+    includeLeiterEvents: boolean
+  ): Promise<CalendarEvent[]>;
   saveCalendarEvent(event: CalendarEventInput): Promise<CalendarEvent>;
   updateCalendarEvent(
     id: string,

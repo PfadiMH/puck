@@ -4,15 +4,16 @@ import Button from "@components/ui/Button";
 import Card from "@components/ui/Card";
 import { defaultSecurityConfig } from "@lib/security/security-config";
 import { signIn } from "next-auth/react";
-import { useState } from "react";
+import { useRef, useState } from "react";
 
 export function DevSignInForm() {
   const [selectedRoles, setSelectedRoles] = useState<string[]>([]);
+  const rolesRef = useRef<string[]>([]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     await signIn("credentials", {
-      roles: JSON.stringify(selectedRoles),
+      roles: JSON.stringify(rolesRef.current),
       redirectTo: "/",
     });
   };
@@ -21,6 +22,9 @@ export function DevSignInForm() {
     setSelectedRoles((prev) =>
       prev.includes(role) ? prev.filter((r) => r !== role) : [...prev, role]
     );
+    rolesRef.current = rolesRef.current.includes(role)
+      ? rolesRef.current.filter((r) => r !== role)
+      : [...rolesRef.current, role];
   };
 
   return (
