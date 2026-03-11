@@ -80,6 +80,18 @@
   h3,
   h4 {
     font-family: var(--rockingsoda);
+    font-weight: 400;
+    letter-spacing: 0.02em;
+  }
+
+  button,
+  a,
+  [role="button"] {
+    cursor: pointer;
+  }
+
+  button:disabled {
+    cursor: not-allowed;
   }
 
   h1 {

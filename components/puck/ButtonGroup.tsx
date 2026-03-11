@@ -1,5 +1,5 @@
 import Button from "@components/ui/Button";
-import { uploadFileField } from "@components/puck-fields/upload-file";
+import { filePickerField } from "@components/puck-fields/file-picker";
 import cn from "@lib/cn";
 import { ComponentConfig } from "@puckeditor/core";
 import Image from "next/image";
@@ -141,7 +141,7 @@ export const buttonGroupConfig: ComponentConfig<ButtonGroupProps> = {
       ],
     },
     icon: {
-      ...uploadFileField,
+      ...filePickerField,
       label: "Icon (optional)",
     },
     iconPosition: {

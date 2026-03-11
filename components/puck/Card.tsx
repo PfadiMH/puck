@@ -8,7 +8,8 @@ export type CardProps = {
   content: Slot;
   variant: CardVariant;
   padding: CardSpacing;
-  shadow: CardSpacing;
+  /** @deprecated Shadow has been removed. Kept for backward compatibility with saved data. */
+  shadow?: CardSpacing;
 };
 
 const variantClasses: Record<CardVariant, string> = {
@@ -24,22 +25,14 @@ const paddingClasses: Record<CardSpacing, string> = {
   large: "p-8",
 };
 
-const shadowClasses: Record<CardSpacing, string> = {
-  none: "",
-  small: "shadow-sm",
-  medium: "shadow-md",
-  large: "shadow-lg",
-};
-
 export const cardConfig: ComponentConfig<CardProps> = {
   label: "Card",
-  render: ({ content: Content, variant, padding, shadow }) => (
+  render: ({ content: Content, variant, padding }) => (
     <div
       className={cn(
         "min-w-0 overflow-hidden rounded-[0.625rem]",
         variantClasses[variant] ?? variantClasses.elevated,
         paddingClasses[padding] ?? paddingClasses.medium,
-        shadowClasses[shadow] ?? shadowClasses.none,
       )}
     >
       <Content />
@@ -49,7 +42,7 @@ export const cardConfig: ComponentConfig<CardProps> = {
     content: [],
     variant: "elevated",
     padding: "medium",
-    shadow: "medium",
+    shadow: "none",
   },
   fields: {
     content: {
@@ -72,16 +65,6 @@ export const cardConfig: ComponentConfig<CardProps> = {
         { label: "Small", value: "small" },
         { label: "Medium", value: "medium" },
         { label: "Large", value: "large" },
-      ],
-    },
-    shadow: {
-      type: "select",
-      label: "Shadow",
-      options: [
-        { label: "None", value: "none" },
-        { label: "Subtle", value: "small" },
-        { label: "Medium", value: "medium" },
-        { label: "Pronounced", value: "large" },
       ],
     },
   },

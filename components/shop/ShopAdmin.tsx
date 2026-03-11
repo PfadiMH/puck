@@ -27,6 +27,7 @@ import type { Product, ShopSettings } from "@lib/shop/types";
 import { formatPrice } from "@lib/shop/utils";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Package, Pencil, Plus, Trash2 } from "lucide-react";
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { ProductEditor } from "./ProductEditor";
@@ -90,6 +91,9 @@ export function ShopAdmin() {
 
   return (
     <div>
+      <Link href="/admin" className="text-sm text-contrast-ground/70 hover:text-contrast-ground flex items-center gap-1 mb-4">
+        ← Zurück zur Übersicht
+      </Link>
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-6">
         <div>
           <h1 className="text-2xl font-bold">Shop</h1>

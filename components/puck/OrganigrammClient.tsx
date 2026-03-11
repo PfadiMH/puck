@@ -537,7 +537,7 @@ export function OrganigrammClient({
       <div className="flex flex-col items-center gap-2 rounded-lg border border-dashed border-contrast-ground/20 p-8 text-center">
         <Users className="size-8 text-contrast-ground/60" />
         <p className="text-sm text-contrast-ground/60">
-          Bitte Hitobito Gruppen-ID in den Komponenteneinstellungen konfigurieren.
+          Bitte MiData Gruppen-ID in den Komponenteneinstellungen konfigurieren.
         </p>
       </div>
     );
@@ -568,7 +568,7 @@ export function OrganigrammClient({
       {/* Stale data indicator */}
       {data?.stale && (
         <p className="mb-3 text-center text-xs italic text-contrast-ground/60">
-          Zwischengespeicherte Daten (Hitobito nicht erreichbar)
+          Zwischengespeicherte Daten (MiData nicht erreichbar)
         </p>
       )}
 

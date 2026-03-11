@@ -17,7 +17,7 @@ export function PresunBreak() {
 export function PremudBreak() {
   return (
     <svg
-      className="w-full"
+      className="w-full bg-mud-ground"
       viewBox="0 0 1440 202"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"

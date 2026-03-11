@@ -137,7 +137,7 @@ export function FileManager({
   if (isLoading) {
     return (
       <div className="flex items-center justify-center py-12">
-        <div className="text-gray-500">Loading files...</div>
+        <div className="text-contrast-ground/50">Loading files...</div>
       </div>
     );
   }
@@ -161,14 +161,14 @@ export function FileManager({
           placeholder="Search files..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50"
+          className="flex-1 px-4 py-2 border border-contrast-ground/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50"
         />
         {(folders.length > 1 || foldersLoading) && (
           <select
             value={currentFolder}
             onChange={(e) => setCurrentFolder(e.target.value)}
             disabled={foldersLoading}
-            className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 disabled:opacity-50"
+            className="px-4 py-2 border border-contrast-ground/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 disabled:opacity-50"
           >
             <option value="/">All Files</option>
             {folders
@@ -185,7 +185,7 @@ export function FileManager({
       {showUploader && <FileUploader onUpload={handleUpload} />}
 
       {files.length === 0 ? (
-        <div className="text-center py-12 text-gray-500">
+        <div className="text-center py-12 text-contrast-ground/50">
           {searchQuery || currentFolder !== "/"
             ? "No files match your search"
             : "No files uploaded yet"}
@@ -206,7 +206,7 @@ export function FileManager({
               <button
                 onClick={() => fetchNextPage()}
                 disabled={isFetchingNextPage}
-                className="px-6 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg text-sm font-medium transition-colors disabled:opacity-50"
+                className="px-6 py-2 bg-ground hover:bg-elevated rounded-lg text-sm font-medium transition-colors disabled:opacity-50"
               >
                 {isFetchingNextPage ? "Loading..." : "Load more"}
               </button>

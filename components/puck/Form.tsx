@@ -1,4 +1,5 @@
 import { ComponentConfig } from "@puckeditor/core";
+import { optionalNumberField } from "@components/puck-fields/optional-number-field";
 import { FormClient, FormField } from "./FormClient";
 
 export type { FormField, FormFieldType } from "./FormClient";
@@ -92,14 +93,8 @@ export const formConfig: ComponentConfig<FormProps> = {
             { label: "Halbe Breite", value: "half" },
           ],
         },
-        minLength: {
-          type: "number",
-          label: "Min. Länge / Wert",
-        },
-        maxLength: {
-          type: "number",
-          label: "Max. Länge / Wert",
-        },
+        minLength: optionalNumberField({ label: "Min. Länge / Wert", min: 0 }),
+        maxLength: optionalNumberField({ label: "Max. Länge / Wert", min: 0 }),
         options: {
           type: "textarea",
           label: "Optionen (kommagetrennt, für Radio/Checkbox)",

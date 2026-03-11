@@ -49,9 +49,9 @@ Make sure you have the following tools installed on your system:
     cd puck
     ```
 
-3.  **Add the `upstream` Remote**
+3.  **Add the `upstream` Remote** *(only needed for forks)*
 
-    This allows you to sync changes from the original repository (`PfadiMH/puck`).
+    If you forked the repository, this allows you to sync changes from the original repository (`PfadiMH/puck`). Skip this step if you cloned the original repo directly.
 
     ```bash
     git remote add upstream https://github.com/PfadiMH/puck.git
@@ -59,10 +59,10 @@ Make sure you have the following tools installed on your system:
 
 4.  **Start Local MongoDB Database**
 
-    You can start a local database using either `docker compose`.
+    You can start a local database using `docker compose` with the development config.
 
     ```bash
-    docker compose up -d
+    docker compose -f docker-compose.dev.yml up -d
     ```
 
 5.  **Set Up Environment Variables**
@@ -73,16 +73,16 @@ Make sure you have the following tools installed on your system:
     cp .env.example .env
     ```
 
-The default values in this file are already configured for the local Docker database, so no changes are required to get started.
+    The default values in this file are already configured for the local Docker database, so no changes are required to get started.
 
-    Optional:
-    To enable form spam protection, set ALTCHA_HMAC_KEY to a random string:
+    **Optional:**
+    To enable form spam protection, set `ALTCHA_HMAC_KEY` to a random string:
 
     ```bash
     openssl rand -hex 32
     ```
 
-    Forms work without it (a default key is used), but a custom key is recommended for production. See the https://altcha.org/docs for more details.
+    Forms work without it (a default key is used), but a custom key is recommended for production. See the [Altcha docs](https://altcha.org/docs) for more details.
 
 6. **Install Dependencies**
 

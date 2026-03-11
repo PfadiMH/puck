@@ -88,12 +88,12 @@ export function FileGrid({
             className={`relative group rounded-lg border-2 overflow-hidden cursor-pointer transition-all ${
               isSelected
                 ? "border-primary ring-2 ring-primary/50"
-                : "border-gray-200 hover:border-gray-300"
+                : "border-contrast-ground/20 hover:border-contrast-ground/30"
             }`}
             onClick={() => onSelect(file._id)}
           >
             {/* Preview */}
-            <div className="aspect-square bg-gray-100 flex items-center justify-center">
+            <div className="aspect-square bg-ground flex items-center justify-center">
               {isImage(file.contentType) ? (
                 <Image
                   src={url}
@@ -106,14 +106,14 @@ export function FileGrid({
                   }
                 />
               ) : (
-                <FileText className="w-12 h-12 text-gray-400" />
+                <FileText className="w-12 h-12 text-contrast-ground/50" />
               )}
             </div>
 
             {/* Filename */}
-            <div className="p-2 bg-white">
-              <p className="text-xs truncate text-gray-700">{file.filename}</p>
-              <p className="text-xs text-gray-400">
+            <div className="p-2 bg-elevated">
+              <p className="text-xs truncate text-contrast-ground">{file.filename}</p>
+              <p className="text-xs text-contrast-ground/50">
                 {formatFileSize(file.size)}
               </p>
             </div>

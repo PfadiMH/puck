@@ -59,6 +59,31 @@ export type PageConfig = Config<PageProps, PageRootProps>;
 export type PageData = Data<PageProps, PageRootProps>;
 
 export const pageConfig: PageConfig = sectionThemedConfig({
+  categories: {
+    // All active components — Flex is deliberately excluded so it cannot be
+    // added to new pages.  It remains registered in `components` so that
+    // existing pages referencing it still render correctly.
+    components: {
+      components: [
+        "Activity",
+        "ButtonGroup",
+        "CalendarSubscribe",
+        "Card",
+        "Form",
+        "Graphic",
+        "Hero",
+        "IFrame",
+        "MultiColumn",
+        "Organigramm",
+        "RichText",
+        "SectionDivider",
+        "VerticalSpace",
+        "Webshop",
+      ],
+    },
+    // Hide the auto-generated "other" bucket (contains deprecated Flex)
+    other: { title: "Other", visible: false },
+  },
   // @keep-sorted
   components: {
     Activity: activityConfig,

@@ -335,17 +335,28 @@ export const activityConfig: ComponentConfig<ActivityProps> = {
   label: "Aktivität",
   render: Activity,
   resolveFields: (data) => {
+    let filteredFields: Fields<ActivityProps>;
+
     if (data.props.mode === "calendar") {
       // In calendar mode, show mode, audience, and group selector
-      return {
+      filteredFields = {
         mode: allFields.mode,
         audience: allFields.audience,
         calendarGroup: allFields.calendarGroup,
       } as Fields<ActivityProps>;
+    } else {
+      // In manual mode, show all fields except calendarGroup
+      const { calendarGroup: _, ...manualFields } = allFields;
+      filteredFields = manualFields as Fields<ActivityProps>;
     }
-    // In manual mode, show all fields except calendarGroup
-    const { calendarGroup: _, ...manualFields } = allFields;
-    return manualFields as Fields<ActivityProps>;
+
+    // Hide bemerkung for kinder audience (it only renders for leiter)
+    if (data.props.audience === "kinder") {
+      const { bemerkung: _, ...rest } = filteredFields as Record<string, unknown>;
+      filteredFields = rest as Fields<ActivityProps>;
+    }
+
+    return filteredFields;
   },
   fields: allFields,
   defaultProps: {

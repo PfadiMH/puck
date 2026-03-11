@@ -109,31 +109,15 @@ test("shadow none applies no shadow class", async () => {
   expect(container.className).not.toContain("shadow-");
 });
 
-test("shadow small applies shadow-sm", async () => {
-  const props = createCardProps({ shadow: "small" });
+test("shadow prop is ignored (deprecated)", async () => {
+  for (const shadow of ["small", "medium", "large"] as const) {
+    const props = createCardProps({ shadow });
 
-  const screen = await render(<Card {...props} />);
-  const container = screen.container.firstChild as HTMLElement;
+    const screen = await render(<Card {...props} />);
+    const container = screen.container.firstChild as HTMLElement;
 
-  expect(container.className).toContain("shadow-sm");
-});
-
-test("shadow medium applies shadow-md", async () => {
-  const props = createCardProps({ shadow: "medium" });
-
-  const screen = await render(<Card {...props} />);
-  const container = screen.container.firstChild as HTMLElement;
-
-  expect(container.className).toContain("shadow-md");
-});
-
-test("shadow large applies shadow-lg", async () => {
-  const props = createCardProps({ shadow: "large" });
-
-  const screen = await render(<Card {...props} />);
-  const container = screen.container.firstChild as HTMLElement;
-
-  expect(container.className).toContain("shadow-lg");
+    expect(container.className).not.toContain("shadow-");
+  }
 });
 
 test("border radius uses rounded-xl", async () => {
@@ -155,7 +139,7 @@ test("default props render correctly", async () => {
   expect(container.className).toContain("bg-elevated");
   expect(container.className).toContain("p-5");
   expect(container.className).toContain("rounded-[0.625rem]");
-  expect(container.className).toContain("shadow-md");
+  expect(container.className).not.toContain("shadow-");
 });
 
 test("fallback to defaults for invalid props", async () => {

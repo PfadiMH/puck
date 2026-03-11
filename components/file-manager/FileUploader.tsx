@@ -62,7 +62,7 @@ export function FileUploader({
       className={`border-2 border-dashed rounded-lg p-8 text-center transition-colors ${
         isDragging
           ? "border-primary bg-primary/5"
-          : "border-gray-300 hover:border-gray-400"
+          : "border-contrast-ground/20 hover:border-contrast-ground/30"
       } ${isUploading ? "opacity-50 pointer-events-none" : ""}`}
       onDragOver={(e) => {
         e.preventDefault();
@@ -83,15 +83,15 @@ export function FileUploader({
         htmlFor={inputId}
         className="flex flex-col items-center cursor-pointer"
       >
-        <Upload className="w-10 h-10 text-gray-400 mb-2" />
+        <Upload className="w-10 h-10 text-contrast-ground/50 mb-2" />
         {isUploading ? (
-          <span className="text-gray-500">Uploading...</span>
+          <span className="text-contrast-ground/50">Uploading...</span>
         ) : (
           <>
-            <span className="text-gray-600 font-medium">
+            <span className="text-contrast-ground/70 font-medium">
               Drop file here or click to upload
             </span>
-            <span className="text-gray-400 text-sm mt-1">
+            <span className="text-contrast-ground/50 text-sm mt-1">
               Images (JPG, PNG, WebP, GIF, SVG) or PDF, max {MAX_FILE_SIZE_MB}MB
             </span>
           </>

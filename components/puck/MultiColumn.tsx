@@ -1,3 +1,4 @@
+import React from "react";
 import { ComponentConfig, Slot, SlotComponent } from "@puckeditor/core";
 
 export type MultiColumnProps = {
@@ -28,31 +29,42 @@ function MultiColumn(props: MultiColumnRenderProps) {
   const gridTemplateColumns = columns.map((ratio) => `${ratio}fr`).join(" ");
 
   return (
-    <div
-      style={{
-        display: "grid",
-        gridTemplateColumns,
-        gap,
-        alignItems: "start",
-      }}
-    >
-      {columns.map((_, idx) => {
-        const Column = props[SLOT_NAMES[idx]] as SlotComponent | undefined;
-        if (!Column) return null;
-        return (
-          <div
-            key={idx}
-            style={{
-              minWidth: 0,
-              overflowWrap: "break-word",
-              height: "fit-content",
-            }}
-          >
-            <Column />
-          </div>
-        );
-      })}
-    </div>
+    <>
+      <style>{`
+        @media (min-width: 768px) {
+          .puck-multi-column {
+            grid-template-columns: var(--col-layout) !important;
+          }
+        }
+      `}</style>
+      <div
+        className="puck-multi-column"
+        style={{
+          display: "grid",
+          gridTemplateColumns: "1fr",
+          gap,
+          alignItems: "start",
+          "--col-layout": gridTemplateColumns,
+        } as React.CSSProperties}
+      >
+        {columns.map((_, idx) => {
+          const Column = props[SLOT_NAMES[idx]] as SlotComponent | undefined;
+          if (!Column) return null;
+          return (
+            <div
+              key={idx}
+              style={{
+                minWidth: 0,
+                overflowWrap: "break-word",
+                height: "fit-content",
+              }}
+            >
+              <Column />
+            </div>
+          );
+        })}
+      </div>
+    </>
   );
 }
 

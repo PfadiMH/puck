@@ -1,5 +1,5 @@
 import { PostHeroSvg } from "@components/graphics/PostHeroSvg";
-import { uploadFileField } from "@components/puck-fields/upload-file";
+import { filePickerField } from "@components/puck-fields/file-picker";
 import { ComponentConfig } from "@puckeditor/core";
 import Image from "next/image";
 
@@ -34,6 +34,6 @@ export const heroConfig: ComponentConfig<HeroProps> = {
       type: "text",
       label: "Title (Optional)",
     },
-    backgroundImage: uploadFileField,
+    backgroundImage: filePickerField,
   },
 };

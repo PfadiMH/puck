@@ -35,6 +35,7 @@ import {
   Trash2,
   Users,
 } from "lucide-react";
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { EventEditor } from "./EventEditor";
@@ -99,6 +100,7 @@ export function CalendarAdmin() {
     null
   );
   const [highlightId, setHighlightId] = useState<string | null>(null);
+  const [createEventCounter, setCreateEventCounter] = useState(0);
 
   const {
     data: events = [],
@@ -170,6 +172,9 @@ export function CalendarAdmin() {
 
   return (
     <div>
+      <Link href="/admin" className="text-sm text-contrast-ground/70 hover:text-contrast-ground flex items-center gap-1 mb-4">
+        ← Zurück zur Übersicht
+      </Link>
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-6">
         <div>
           <h1 className="text-2xl font-bold">Kalender</h1>
@@ -213,7 +218,10 @@ export function CalendarAdmin() {
                 <DialogTrigger>
                   <Button
                     color="primary"
-                    onClick={() => setIsCreatingEvent(true)}
+                    onClick={() => {
+                      setCreateEventCounter((c) => c + 1);
+                      setIsCreatingEvent(true);
+                    }}
                   >
                     <Plus className="w-4 h-4 mr-2" />
                     Aktivität hinzufügen
@@ -221,7 +229,7 @@ export function CalendarAdmin() {
                 </DialogTrigger>
 
                 <EventEditor
-                  key={editingEvent?._id ?? "new"}
+                  key={editingEvent?._id ?? `new-${createEventCounter}`}
                   event={editingEvent}
                   groups={groups}
                   onClose={() => {
@@ -296,7 +304,7 @@ export function CalendarAdmin() {
                                 }`}
                               >
                                 {event.eventType === "leitersitzung"
-                                  ? "Leiter"
+                                  ? "Höck"
                                   : "Lager"}
                               </span>
                             )}

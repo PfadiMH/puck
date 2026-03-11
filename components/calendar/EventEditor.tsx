@@ -19,6 +19,11 @@ import {
   saveCalendarEvent,
   updateCalendarEvent,
 } from "@lib/db/calendar-actions";
+import DatePicker, {
+  formatLocalDate,
+  isSaturday,
+  parseLocalDate,
+} from "@components/ui/DatePicker";
 import { Plus, Trash2 } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -187,19 +192,19 @@ export function EventEditor({
           ? eventType === "lager"
             ? "Lager bearbeiten"
             : eventType === "leitersitzung"
-              ? "Leitersitzung bearbeiten"
+              ? "Höck bearbeiten"
               : "Aktivität bearbeiten"
           : eventType === "lager"
             ? "Neues Lager"
             : eventType === "leitersitzung"
-              ? "Neue Leitersitzung"
+              ? "Neuer Höck"
               : "Neue Aktivität"}
       </DialogTitle>
 
       <div className="space-y-5 mt-4">
         {/* Event Type */}
         <div>
-          <label className="block text-sm font-medium mb-1" id="event-type-label">Typ</label>
+          <label className="block text-sm font-medium mb-1" id="event-type-label">Typ *</label>
           <div
             className="flex gap-2"
             role="radiogroup"
@@ -209,7 +214,7 @@ export function EventEditor({
               [
                 { value: "aktivitaet", label: "Aktivität" },
                 { value: "lager", label: "Lager" },
-                { value: "leitersitzung", label: "Leitersitzung" },
+                { value: "leitersitzung", label: "Höck" },
               ] as const
             ).map(({ value, label }) => (
               <button
@@ -257,7 +262,7 @@ export function EventEditor({
 
         {/* Title */}
         <div>
-          <label className="block text-sm font-medium mb-1">Titel</label>
+          <label className="block text-sm font-medium mb-1">Titel *</label>
           <Input
             value={title}
             onChange={(e) => setTitle(e.target.value)}
@@ -268,17 +273,32 @@ export function EventEditor({
         {/* Date & Time */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           <div>
-            <label className="block text-sm font-medium mb-1">Datum</label>
-            <input
-              type="date"
-              value={date}
-              onChange={(e) => setDate(e.target.value)}
-              className="w-full bg-elevated border-2 border-primary rounded px-3 py-2 text-base focus:outline-none focus:ring-2 focus:ring-primary/60"
+            <label className="block text-sm font-medium mb-1">Datum *</label>
+            <DatePicker
+              value={parseLocalDate(date)}
+              onChange={(d) => {
+                if (d) setDate(formatLocalDate(d));
+              }}
+              calendarProps={{
+                modifiers: {
+                  saturday: (d) => d.getDay() === 6,
+                },
+                modifiersClassNames: {
+                  saturday:
+                    "relative after:absolute after:bottom-1 after:left-1/2 after:-translate-x-1/2 after:w-1 after:h-1 after:bg-yellow-400 after:rounded-full",
+                },
+              }}
             />
+            {parseLocalDate(date) && isSaturday(parseLocalDate(date)!) && (
+              <div className="flex items-center gap-1.5 text-xs text-yellow-600 font-medium mt-1">
+                <span className="w-2 h-2 bg-yellow-400 rounded-full" />
+                Samstag
+              </div>
+            )}
           </div>
           <div>
             <label className="block text-sm font-medium mb-1">
-              Startzeit
+              Startzeit *
             </label>
             <select
               value={startTime}
@@ -293,7 +313,7 @@ export function EventEditor({
             </select>
           </div>
           <div>
-            <label className="block text-sm font-medium mb-1">Endzeit</label>
+            <label className="block text-sm font-medium mb-1">Endzeit *</label>
             <select
               value={endTime}
               onChange={(e) => setEndTime(e.target.value)}
@@ -310,7 +330,7 @@ export function EventEditor({
 
         {/* Groups */}
         <div>
-          <label className="block text-sm font-medium mb-2">Gruppen</label>
+          <label className="block text-sm font-medium mb-2">Gruppen *</label>
           <div className="flex items-center gap-2 mb-2">
             <input
               type="checkbox"
@@ -356,7 +376,7 @@ export function EventEditor({
         {/* Location */}
         <div>
           <label className="block text-sm font-medium mb-1">
-            Ort (optional)
+            Ort
           </label>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
             <Input
@@ -376,7 +396,7 @@ export function EventEditor({
         {eventType === "aktivitaet" && (
           <div>
             <label className="block text-sm font-medium mb-1">
-              Endort (optional, für Wanderungen etc.)
+              Endort (für Wanderungen etc.)
             </label>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
               <Input
@@ -398,7 +418,7 @@ export function EventEditor({
           <div>
             <div className="flex items-center justify-between mb-2">
               <label className="block text-sm font-medium">
-                Mitnehmen (optional)
+                Mitnehmen
               </label>
               <button
                 type="button"
@@ -488,7 +508,7 @@ export function EventEditor({
         {/* Description */}
         <div>
           <label className="block text-sm font-medium mb-1">
-            Beschreibung (optional, für Kalender-Feed)
+            Beschreibung (für Kalender-Feed)
           </label>
           <textarea
             value={description}
@@ -503,7 +523,7 @@ export function EventEditor({
         {eventType === "aktivitaet" && (
           <div>
             <label className="block text-sm font-medium mb-1">
-              Bemerkung (optional)
+              Bemerkung
             </label>
             <textarea
               value={bemerkung}

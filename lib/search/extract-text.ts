@@ -31,6 +31,8 @@ function stripHtml(html: string): string {
 
 function getComponentWeight(component: ComponentEntry): number {
   if (component.type === "Hero") return 3;
+  if (component.type === "RichText") return 1.5;
+  // Legacy "Heading" component (deprecated, replaced by RichText)
   if (component.type === "Heading") {
     const level = component.props.level as string | undefined;
     return (level && HEADING_WEIGHTS[level]) || 1;

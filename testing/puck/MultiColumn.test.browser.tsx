@@ -28,6 +28,11 @@ function createProps(
   };
 }
 
+/** The component renders a fragment with <style> + <div>, so the grid div is the second child. */
+function getGridContainer(screen: { container: HTMLElement }): HTMLElement {
+  return screen.container.children[1] as HTMLElement;
+}
+
 test("renders 2 slots for [1, 1] layout", async () => {
   const props = createProps({ layout: [1, 1] });
 
@@ -65,43 +70,53 @@ test("renders 4 slots for [1, 1, 1, 1] layout", async () => {
   await expect.element(screen.getByTestId("slot-column3")).toBeInTheDocument();
 });
 
-test("applies correct grid-template-columns for [1, 1]", async () => {
+test("sets --col-layout custom property for [1, 1]", async () => {
   const props = createProps({ layout: [1, 1] });
 
   const screen = await render(<multiColumnConfig.render {...props} />);
-  const container = screen.container.firstChild as HTMLElement;
+  const container = getGridContainer(screen);
 
-  expect(container.style.gridTemplateColumns).toBe("1fr 1fr");
+  expect(container.style.getPropertyValue("--col-layout")).toBe("1fr 1fr");
 });
 
-test("applies correct grid-template-columns for [1, 2]", async () => {
+test("sets --col-layout custom property for [1, 2]", async () => {
   const props = createProps({ layout: [1, 2] });
 
   const screen = await render(<multiColumnConfig.render {...props} />);
-  const container = screen.container.firstChild as HTMLElement;
+  const container = getGridContainer(screen);
 
-  expect(container.style.gridTemplateColumns).toBe("1fr 2fr");
+  expect(container.style.getPropertyValue("--col-layout")).toBe("1fr 2fr");
 });
 
-test("applies correct grid-template-columns for [1, 2, 1]", async () => {
+test("sets --col-layout custom property for [1, 2, 1]", async () => {
   const props = createProps({
     layout: [1, 2, 1],
     column2: createSlot("column2"),
   });
 
   const screen = await render(<multiColumnConfig.render {...props} />);
-  const container = screen.container.firstChild as HTMLElement;
+  const container = getGridContainer(screen);
 
-  expect(container.style.gridTemplateColumns).toBe("1fr 2fr 1fr");
+  expect(container.style.getPropertyValue("--col-layout")).toBe("1fr 2fr 1fr");
+});
+
+test("mobile default is single column (1fr)", async () => {
+  const props = createProps({ layout: [1, 1] });
+
+  const screen = await render(<multiColumnConfig.render {...props} />);
+  const container = getGridContainer(screen);
+
+  expect(container.style.gridTemplateColumns).toBe("1fr");
 });
 
 test("default props render correctly", async () => {
   const props = createProps({});
 
   const screen = await render(<multiColumnConfig.render {...props} />);
-  const container = screen.container.firstChild as HTMLElement;
+  const container = getGridContainer(screen);
 
-  expect(container.style.gridTemplateColumns).toBe("1fr 1fr");
+  expect(container.style.getPropertyValue("--col-layout")).toBe("1fr 1fr");
+  expect(container.style.gridTemplateColumns).toBe("1fr");
   expect(container.style.gap).toBe("1rem");
   expect(container.children.length).toBe(2);
 });
@@ -110,7 +125,7 @@ test("gap 0 applies 0", async () => {
   const props = createProps({ gap: "0" });
 
   const screen = await render(<multiColumnConfig.render {...props} />);
-  const container = screen.container.firstChild as HTMLElement;
+  const container = getGridContainer(screen);
 
   expect(container.style.gap).toBe("0px");
 });
@@ -119,7 +134,7 @@ test("gap 0.5rem applies 0.5rem", async () => {
   const props = createProps({ gap: "0.5rem" });
 
   const screen = await render(<multiColumnConfig.render {...props} />);
-  const container = screen.container.firstChild as HTMLElement;
+  const container = getGridContainer(screen);
 
   expect(container.style.gap).toBe("0.5rem");
 });
@@ -128,7 +143,7 @@ test("gap 2rem applies 2rem", async () => {
   const props = createProps({ gap: "2rem" });
 
   const screen = await render(<multiColumnConfig.render {...props} />);
-  const container = screen.container.firstChild as HTMLElement;
+  const container = getGridContainer(screen);
 
   expect(container.style.gap).toBe("2rem");
 });
@@ -139,9 +154,9 @@ test("fallback to [1, 1] for invalid layout", async () => {
   });
 
   const screen = await render(<multiColumnConfig.render {...props} />);
-  const container = screen.container.firstChild as HTMLElement;
+  const container = getGridContainer(screen);
 
-  expect(container.style.gridTemplateColumns).toBe("1fr 1fr");
+  expect(container.style.getPropertyValue("--col-layout")).toBe("1fr 1fr");
   expect(container.children.length).toBe(2);
 });
 
@@ -149,7 +164,7 @@ test("columns have proper styling to handle content", async () => {
   const props = createProps({ layout: [1, 1] });
 
   const screen = await render(<multiColumnConfig.render {...props} />);
-  const container = screen.container.firstChild as HTMLElement;
+  const container = getGridContainer(screen);
   const columns = container.children;
 
   for (let i = 0; i < columns.length; i++) {
@@ -164,7 +179,7 @@ test("align-items start prevents vertical stretching", async () => {
   const props = createProps({ layout: [1, 1] });
 
   const screen = await render(<multiColumnConfig.render {...props} />);
-  const container = screen.container.firstChild as HTMLElement;
+  const container = getGridContainer(screen);
 
   expect(container.style.alignItems).toBe("start");
 });

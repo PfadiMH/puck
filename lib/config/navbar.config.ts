@@ -1,4 +1,4 @@
-import { uploadFileField } from "@components/puck-fields/upload-file";
+import { filePickerField } from "@components/puck-fields/file-picker";
 import {
   navbarDropdownConfig,
   NavbarDropdownProps,
@@ -24,7 +24,7 @@ export type NavbarData = Data<NavbarProps, NavbarRootProps>;
 export const navbarConfig: NavbarConfig = {
   root: {
     fields: {
-      logo: uploadFileField,
+      logo: filePickerField,
       enableSearch: {
         type: "radio",
         label: "Enable Search",

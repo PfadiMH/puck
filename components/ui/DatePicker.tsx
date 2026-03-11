@@ -52,7 +52,7 @@ function DatePicker({
           className={cn(
             "flex items-center gap-2 px-3 py-2 w-full",
             "rounded-md border-2 border-primary/30",
-            "bg-elevated text-contrast-ground text-sm text-left",
+            "bg-white text-gray-900 text-sm text-left",
             "hover:border-primary/50",
             "focus:outline-none focus:ring-2 focus:ring-primary/60 focus:border-primary",
             "disabled:cursor-not-allowed disabled:opacity-50",

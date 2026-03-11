@@ -69,14 +69,14 @@ export function FilePickerModal({
       />
 
       {/* Modal */}
-      <div className="relative bg-white rounded-lg shadow-xl w-full max-w-4xl max-h-[80vh] flex flex-col m-4">
+      <div className="relative bg-elevated rounded-lg shadow-xl w-full max-w-4xl max-h-[80vh] flex flex-col m-4">
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b">
           <h2 className="text-lg font-semibold">Select File</h2>
           <button
             onClick={onClose}
             aria-label="Close modal"
-            className="p-1 hover:bg-gray-100 rounded"
+            className="p-1 hover:bg-elevated rounded"
           >
             <X className="w-5 h-5" />
           </button>

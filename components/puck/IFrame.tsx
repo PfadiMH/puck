@@ -1,9 +1,10 @@
 import { ComponentConfig } from "@puckeditor/core";
+import { optionalNumberField } from "@components/puck-fields/optional-number-field";
 import React from "react";
 
 export type IFrameProps = {
   source: string;
-  height: string;
+  height: number | undefined;
   title: string;
 };
 
@@ -23,9 +24,7 @@ export const iframeConfig: ComponentConfig<IFrameProps> = {
     source: {
       type: "textarea",
     },
-    height: {
-      type: "number",
-    },
+    height: optionalNumberField({ label: "Höhe (px)", min: 0 }),
     title: {
       type: "textarea",
     },

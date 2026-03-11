@@ -40,7 +40,7 @@ export const organigrammConfig: ComponentConfig<OrganigrammProps> = {
   fields: {
     rootGroupId: {
       type: "number",
-      label: "Hitobito Gruppen-ID",
+      label: "MiData Gruppen-ID",
       min: 1,
     },
     excludedRoles: {

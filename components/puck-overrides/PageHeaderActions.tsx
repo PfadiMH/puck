@@ -3,6 +3,7 @@ import Button from "@components/ui/Button";
 import { DialogRoot, DialogTrigger } from "@components/ui/Dialog";
 import { toast } from "@components/ui/Toast";
 import { PageConfig } from "@lib/config/page.config";
+import { useIsDirty, useMarkClean } from "@lib/contexts/dirty-state-context";
 import { deletePage, savePage } from "@lib/db/db-actions";
 import { queryClient } from "@lib/query-client";
 import { usePuck } from "@puckeditor/core";
@@ -18,6 +19,8 @@ type PageHeaderActionsProps = {
 
 function PageHeaderActions({ path }: PageHeaderActionsProps) {
   const router = useRouter();
+  const isDirty = useIsDirty();
+  const markClean = useMarkClean();
   const {
     appState: { data },
   } = usePuck<PageConfig>();
@@ -27,12 +30,27 @@ function PageHeaderActions({ path }: PageHeaderActionsProps) {
     queryClient.invalidateQueries({ queryKey: ["pages"] });
   };
 
+  const confirmNavigation = (href: string) => {
+    if (
+      isDirty &&
+      !window.confirm(
+        "Ungespeicherte Änderungen gehen verloren. Trotzdem verlassen?",
+      )
+    ) {
+      return;
+    }
+    router.push(href);
+  };
+
   const { mutate: savePageMutation, isPending } = useMutation({
     mutationFn: async () => {
       await savePage(path, data);
       queryClient.invalidateQueries({ queryKey: ["pages"] });
     },
-    onSuccess: () => toast("Page saved successfully"),
+    onSuccess: () => {
+      markClean();
+      toast("Page saved successfully");
+    },
   });
 
   return (
@@ -59,7 +77,7 @@ function PageHeaderActions({ path }: PageHeaderActionsProps) {
         </DialogRoot>
 
         <Button
-          onClick={() => router.push("/admin")}
+          onClick={() => confirmNavigation("/admin")}
           color="secondary"
           size="small"
           className="w-full sm:w-auto"
@@ -68,7 +86,7 @@ function PageHeaderActions({ path }: PageHeaderActionsProps) {
         </Button>
 
         <Button
-          onClick={() => router.push(path)}
+          onClick={() => confirmNavigation(path)}
           color="secondary"
           size="small"
           className="w-full sm:w-auto"

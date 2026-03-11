@@ -65,11 +65,7 @@ function highlightMatches(text: string, query: string): ReactNode {
   );
 }
 
-type NavbarSearchProps = {
-  compact?: boolean;
-};
-
-export function NavbarSearch({ compact = false }: NavbarSearchProps) {
+export function NavbarSearch() {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
   const [selectedIndex, setSelectedIndex] = useState(-1);
@@ -126,7 +122,7 @@ export function NavbarSearch({ compact = false }: NavbarSearchProps) {
   }, [selectedIndex]);
 
   if (!open) {
-    return compact ? (
+    return (
       <button
         type="button"
         onClick={() => setOpen(true)}
@@ -134,16 +130,6 @@ export function NavbarSearch({ compact = false }: NavbarSearchProps) {
         aria-label="Suchen"
       >
         <Search className="w-4 h-4" />
-      </button>
-    ) : (
-      <button
-        type="button"
-        onClick={() => setOpen(true)}
-        className="flex items-center gap-2 px-4 py-2 text-black rounded-xl border border-black/80 hover:border-black transition-colors min-w-[140px]"
-        aria-label="Suchen"
-      >
-        <Search className="w-4 h-4" />
-        <span className="text-sm">Suchen</span>
       </button>
     );
   }

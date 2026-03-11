@@ -302,13 +302,19 @@ export function CartDrawer() {
                           {item.quantity}
                         </span>
                         <button
-                          className="w-7 h-7 rounded-full border border-contrast-ground/20 flex items-center justify-center hover:bg-contrast-ground/5 transition-colors"
+                          className="w-7 h-7 rounded-full border border-contrast-ground/20 flex items-center justify-center hover:bg-contrast-ground/5 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                           onClick={() =>
                             updateQuantity(
                               item.productId,
                               item.variantIndex,
                               item.quantity + 1
                             )
+                          }
+                          disabled={
+                            status?.outOfStock ||
+                            status?.unavailable ||
+                            (status?.lowStock != null &&
+                              item.quantity >= status.lowStock)
                           }
                           aria-label="Menge erhöhen"
                         >
@@ -364,12 +370,7 @@ export function CartDrawer() {
                 "Zur Kasse"
               )}
             </Button>
-            <button
-              className="w-full text-sm text-contrast-ground/60 hover:text-contrast-ground transition-colors text-center py-1"
-              onClick={() => setCartOpen(false)}
-            >
-              Weiter einkaufen
-            </button>
+
           </div>
         )}
       </div>

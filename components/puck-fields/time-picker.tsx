@@ -33,8 +33,8 @@ function TimePicker({
 
   const selectStyles = cn(
     "px-3 py-2 rounded-md cursor-pointer",
-    "bg-elevated border-2 border-primary/30",
-    "text-contrast-ground",
+    "bg-white border-2 border-primary/30",
+    "text-gray-900",
     "hover:border-primary/50",
     "focus:outline-none focus:ring-2 focus:ring-primary/60 focus:border-primary",
     "disabled:cursor-not-allowed disabled:opacity-50",
@@ -54,7 +54,7 @@ function TimePicker({
           </option>
         ))}
       </select>
-      <span className="text-contrast-ground/90 font-medium">:</span>
+      <span className="text-gray-900/90 font-medium">:</span>
       <select
         value={minute || "00"}
         onChange={(e) => handleMinuteChange(e.target.value)}
@@ -67,7 +67,7 @@ function TimePicker({
           </option>
         ))}
       </select>
-      <span className="text-contrast-ground/90 text-sm">Uhr</span>
+      <span className="text-gray-900/90 text-sm">Uhr</span>
     </div>
   );
 }
