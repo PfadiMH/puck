@@ -6,8 +6,8 @@ import type {
   CalendarGroupDb,
   CalendarGroupInput,
 } from "@lib/calendar/types";
-import { defaultFooterData } from "@lib/config/footer.config";
-import { defaultNavbarData } from "@lib/config/navbar.config";
+import { defaultFooterData } from "@lib/config/footer.defaults";
+import { defaultNavbarData } from "@lib/config/navbar.defaults";
 import type { OrganigrammCache } from "@lib/hitobito/types";
 import { defaultSecurityConfig } from "@lib/security/security-config";
 import type {

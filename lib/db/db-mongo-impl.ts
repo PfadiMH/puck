@@ -6,14 +6,14 @@ import type {
   CalendarGroupDb,
   CalendarGroupInput,
 } from "@lib/calendar/types";
-import { defaultFooterData, FooterData } from "@lib/config/footer.config";
-import { defaultNavbarData, NavbarData } from "@lib/config/navbar.config";
-import { PageData } from "@lib/config/page.config";
+import { defaultFooterData } from "@lib/config/footer.defaults";
+import type { FooterData } from "@lib/config/footer.config";
+import { defaultNavbarData } from "@lib/config/navbar.defaults";
+import type { NavbarData } from "@lib/config/navbar.config";
+import type { PageData } from "@lib/config/page.config";
 import type { OrganigrammCache } from "@lib/hitobito/types";
-import {
-  defaultSecurityConfig,
-  SecurityConfig,
-} from "@lib/security/security-config";
+import { defaultSecurityConfig } from "@lib/security/security-config";
+import type { SecurityConfig } from "@lib/security/security-config";
 import type {
   Product,
   ProductDb,
@@ -28,7 +28,7 @@ import type {
 } from "@lib/storage/file-record";
 import { Data } from "@puckeditor/core";
 import { Db, Filter, MongoClient } from "mongodb";
-import { DatabaseService, FileQueryOptions, FileQueryResult } from "./db";
+import type { DatabaseService, FileQueryOptions, FileQueryResult } from "./db";
 
 /** Returns today's date (YYYY-MM-DD) and time (HH:MM) in Europe/Zurich from a single instant. */
 function getZurichNow(now = new Date()): { date: string; time: string } {

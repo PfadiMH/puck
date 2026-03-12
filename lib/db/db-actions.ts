@@ -1,15 +1,15 @@
 "use server";
 
-import { NavbarDropdownProps } from "@components/puck/navbar/NavbarDropdown";
-import { NavbarItemProps } from "@components/puck/navbar/NavbarItem";
-import { FooterData } from "@lib/config/footer.config";
-import { NavbarData } from "@lib/config/navbar.config";
-import { PageData } from "@lib/config/page.config";
+import type { NavbarDropdownProps } from "@components/puck/navbar/NavbarDropdown";
+import type { NavbarItemProps } from "@components/puck/navbar/NavbarItem";
+import type { FooterData } from "@lib/config/footer.config";
+import type { NavbarData } from "@lib/config/navbar.config";
+import type { PageData } from "@lib/config/page.config";
 import {
   extractSearchableSegments,
   SearchIndexEntry,
 } from "@lib/search/extract-text";
-import { SecurityConfig } from "@lib/security/security-config";
+import type { SecurityConfig } from "@lib/security/security-config";
 import { requireServerPermission } from "@lib/security/server-guard";
 import { dbService } from "./db";
 

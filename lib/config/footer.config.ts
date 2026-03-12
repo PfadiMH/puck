@@ -17,9 +17,7 @@ export const footerConfig: FooterConfig = {
   },
 };
 
-export const defaultFooterData: FooterData = {
-  content: [],
-  root: {
-    props: {},
-  },
-};
+// Re-exported from footer.defaults.ts for backward compat.
+// DB implementations import from footer.defaults.ts directly to avoid
+// pulling in the component dependency tree.
+export { defaultFooterData } from "./footer.defaults";

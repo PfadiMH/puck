@@ -42,9 +42,7 @@ export const navbarConfig: NavbarConfig = {
   },
 };
 
-export const defaultNavbarData: NavbarData = {
-  content: [],
-  root: {
-    props: { enableSearch: "false" },
-  },
-};
+// Re-exported from navbar.defaults.ts for backward compat.
+// DB implementations import from navbar.defaults.ts directly to avoid
+// pulling in the component dependency tree.
+export { defaultNavbarData } from "./navbar.defaults";
