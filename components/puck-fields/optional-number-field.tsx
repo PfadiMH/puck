@@ -1,5 +1,3 @@
-"use client";
-
 import cn from "@lib/cn";
 import { CustomFieldRenderProps } from "@lib/custom-field-types";
 import { CustomField } from "@puckeditor/core";
