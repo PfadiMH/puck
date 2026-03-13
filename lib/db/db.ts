@@ -3,6 +3,9 @@ import type {
   CalendarEventInput,
   CalendarGroup,
   CalendarGroupInput,
+  Rsvp,
+  RsvpCount,
+  RsvpInput,
 } from "@lib/calendar/types";
 import type { FooterData } from "@lib/config/footer.config";
 import type { NavbarData } from "@lib/config/navbar.config";
@@ -104,6 +107,10 @@ export interface DatabaseService {
     event: CalendarEventInput
   ): Promise<CalendarEvent | null>;
   deleteCalendarEvent(id: string): Promise<void>;
+  getRsvpCount(activityId: string): Promise<RsvpCount>;
+  getRsvpsByDevice(activityId: string, deviceId: string): Promise<Rsvp[]>;
+  saveRsvp(rsvp: RsvpInput): Promise<Rsvp>;
+  deleteRsvp(activityId: string, deviceId: string, profileId: string): Promise<void>;
 }
 
 function getDatabaseService(): DatabaseService {

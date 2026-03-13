@@ -5,6 +5,9 @@ import type {
   CalendarGroup,
   CalendarGroupDb,
   CalendarGroupInput,
+  Rsvp,
+  RsvpCount,
+  RsvpInput,
 } from "@lib/calendar/types";
 import { defaultFooterData, FooterData } from "@lib/config/footer.config";
 import { defaultNavbarData, NavbarData } from "@lib/config/navbar.config";
@@ -71,6 +74,7 @@ export class MongoService implements DatabaseService {
   private hitobitoCollectionName = "hitobito-cache";
   private calendarGroupsCollectionName = "calendar-groups";
   private calendarEventsCollectionName = "calendar-events";
+  private rsvpsCollectionName = "rsvps";
   private initPromise: Promise<void>;
 
   constructor(connectionString: string, dbName: string) {
@@ -191,6 +195,16 @@ export class MongoService implements DatabaseService {
     await calEventCol.createIndex({ groups: 1, date: 1, endTime: 1 });
     await calEventCol.createIndex({ allGroups: 1, date: 1, endTime: 1 });
     await calEventCol.createIndex({ date: 1, endTime: 1 });
+
+    const rsvpCollections = await this.db
+      .listCollections({ name: this.rsvpsCollectionName })
+      .toArray();
+    if (rsvpCollections.length === 0) {
+      await this.db.createCollection(this.rsvpsCollectionName);
+    }
+    const rsvpCol = this.db.collection(this.rsvpsCollectionName);
+    await rsvpCol.createIndex({ activityId: 1, deviceId: 1, profileId: 1 }, { unique: true });
+    await rsvpCol.createIndex({ activityId: 1, status: 1 });
   }
 
   async connect(): Promise<void> {
@@ -871,5 +885,78 @@ export class MongoService implements DatabaseService {
     await this.calendarEventCol().deleteOne({
       _id: id,
     } as Partial<CalendarEventDb>);
+  }
+
+  private rsvpCol() {
+    return this.db.collection<Rsvp>(this.rsvpsCollectionName);
+  }
+
+  async getRsvpCount(activityId: string): Promise<RsvpCount> {
+    const results = await this.rsvpCol()
+      .aggregate([
+        { $match: { activityId } },
+        {
+          $group: {
+            _id: "$status",
+            count: { $sum: 1 },
+          },
+        },
+      ])
+      .toArray();
+
+    let attending = 0;
+    let declined = 0;
+    for (const r of results) {
+      if (r._id === "attending") attending = r.count;
+      if (r._id === "declined") declined = r.count;
+    }
+    return { attending, declined };
+  }
+
+  async getRsvpsByDevice(activityId: string, deviceId: string): Promise<Rsvp[]> {
+    return this.rsvpCol()
+      .find({ activityId, deviceId } as Partial<Rsvp>)
+      .toArray();
+  }
+
+  async saveRsvp(rsvp: RsvpInput): Promise<Rsvp> {
+    const now = new Date().toISOString();
+    const result = await this.rsvpCol().findOneAndUpdate(
+      {
+        activityId: rsvp.activityId,
+        deviceId: rsvp.deviceId,
+        profileId: rsvp.profileId,
+      } as Partial<Rsvp>,
+      {
+        $set: {
+          firstName: rsvp.firstName,
+          lastName: rsvp.lastName,
+          pfadiName: rsvp.pfadiName,
+          status: rsvp.status,
+          updatedAt: now,
+        },
+        $setOnInsert: {
+          _id: crypto.randomUUID(),
+          activityId: rsvp.activityId,
+          deviceId: rsvp.deviceId,
+          profileId: rsvp.profileId,
+          createdAt: now,
+        },
+      },
+      { upsert: true, returnDocument: "after" }
+    );
+    return result!;
+  }
+
+  async deleteRsvp(
+    activityId: string,
+    deviceId: string,
+    profileId: string
+  ): Promise<void> {
+    await this.rsvpCol().deleteOne({
+      activityId,
+      deviceId,
+      profileId,
+    } as Partial<Rsvp>);
   }
 }

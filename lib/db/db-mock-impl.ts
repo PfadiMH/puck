@@ -5,6 +5,9 @@ import type {
   CalendarGroup,
   CalendarGroupDb,
   CalendarGroupInput,
+  Rsvp,
+  RsvpCount,
+  RsvpInput,
 } from "@lib/calendar/types";
 import { defaultFooterData } from "@lib/config/footer.config";
 import { defaultNavbarData } from "@lib/config/navbar.config";
@@ -469,5 +472,65 @@ export class MockDatabaseService implements DatabaseService {
 
   async deleteCalendarEvent(id: string): Promise<void> {
     this.calendarEvents = this.calendarEvents.filter((e) => e._id !== id);
+  }
+
+  private rsvps: Rsvp[] = [];
+
+  async getRsvpCount(activityId: string): Promise<RsvpCount> {
+    const activityRsvps = this.rsvps.filter((r) => r.activityId === activityId);
+    return {
+      attending: activityRsvps.filter((r) => r.status === "attending").length,
+      declined: activityRsvps.filter((r) => r.status === "declined").length,
+    };
+  }
+
+  async getRsvpsByDevice(activityId: string, deviceId: string): Promise<Rsvp[]> {
+    return this.rsvps.filter(
+      (r) => r.activityId === activityId && r.deviceId === deviceId
+    );
+  }
+
+  async saveRsvp(rsvp: RsvpInput): Promise<Rsvp> {
+    const existing = this.rsvps.find(
+      (r) =>
+        r.activityId === rsvp.activityId &&
+        r.deviceId === rsvp.deviceId &&
+        r.profileId === rsvp.profileId
+    );
+
+    const now = new Date().toISOString();
+
+    if (existing) {
+      existing.firstName = rsvp.firstName;
+      existing.lastName = rsvp.lastName;
+      existing.pfadiName = rsvp.pfadiName;
+      existing.status = rsvp.status;
+      existing.updatedAt = now;
+      return existing;
+    }
+
+    const doc: Rsvp = {
+      _id: crypto.randomUUID(),
+      ...rsvp,
+      createdAt: now,
+      updatedAt: now,
+    };
+    this.rsvps.push(doc);
+    return doc;
+  }
+
+  async deleteRsvp(
+    activityId: string,
+    deviceId: string,
+    profileId: string
+  ): Promise<void> {
+    this.rsvps = this.rsvps.filter(
+      (r) =>
+        !(
+          r.activityId === activityId &&
+          r.deviceId === deviceId &&
+          r.profileId === profileId
+        )
+    );
   }
 }
