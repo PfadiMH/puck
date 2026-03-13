@@ -501,6 +501,7 @@ export class MongoService implements DatabaseService {
       options: r.options,
       variants: r.variants,
       active: r.active,
+      order: r.order,
       createdAt: r.createdAt,
       updatedAt: r.updatedAt,
     };

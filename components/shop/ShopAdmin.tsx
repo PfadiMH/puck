@@ -81,10 +81,10 @@ export function ShopAdmin() {
 
   const reorderMutation = useMutation({
     mutationFn: (orderedIds: string[]) => reorderProducts(orderedIds),
-    onSuccess: () => {
+    onError: () => toast.error("Error reordering products"),
+    onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ["admin-products"] });
     },
-    onError: () => toast.error("Error reordering products"),
   });
 
   const handleDragStart = (index: number) => {
@@ -97,12 +97,20 @@ export function ShopAdmin() {
       const [dragged] = newProducts.splice(draggedIndex, 1);
       newProducts.splice(dropTargetIndex, 0, dragged);
       const orderedIds = newProducts.map((p) => p._id);
-      reorderMutation.mutate(orderedIds);
+      
+      const previousProducts = products;
+      queryClient.setQueryData(["admin-products"], newProducts);
+      
+      reorderMutation.mutate(orderedIds, {
+        onError: () => {
+          queryClient.setQueryData(["admin-products"], previousProducts);
+        },
+      });
     }
     setDraggedIndex(null);
     setDropTargetIndex(null);
     dragCounter.current = 0;
-  }, [draggedIndex, dropTargetIndex, products, reorderMutation]);
+  }, [draggedIndex, dropTargetIndex, products, reorderMutation, queryClient]);
 
   const handleDragOver = (e: React.DragEvent, index: number) => {
     e.preventDefault();

@@ -5,8 +5,8 @@ import { PropsWithChildren } from "react";
 export function Dialog({ children, className }: PropsWithChildren<{ className?: string }>) {
   return (
     <RDialog.Portal>
-      <RDialog.Overlay className="fixed inset-0 z-50 bg-black/50" />
-      <RDialog.Content className={cn("fixed top-1/2 left-1/2 -translate-1/2 z-50 w-[90vw] max-w-[500px] rounded-xl p-4 bg-elevated text-contrast-ground overflow-hidden", className)}>
+      <RDialog.Overlay className="fixed inset-0 z-[60] bg-black/50" />
+      <RDialog.Content className={cn("fixed top-1/2 left-1/2 -translate-1/2 z-[60] w-[90vw] max-w-[500px] rounded-xl p-4 bg-elevated text-contrast-ground overflow-hidden", className)}>
         {children}
       </RDialog.Content>
     </RDialog.Portal>
