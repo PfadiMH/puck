@@ -2,6 +2,7 @@ import {
   S3Client,
   PutObjectCommand,
   DeleteObjectCommand,
+  GetObjectCommand,
   HeadObjectCommand,
 } from "@aws-sdk/client-s3";
 import { env } from "@lib/env";
@@ -84,6 +85,41 @@ export async function fileExists(key: string): Promise<boolean> {
       return false;
     }
     // Re-throw unexpected errors (network, permissions, etc.)
+    throw err;
+  }
+}
+
+export async function getFile(
+  key: string
+): Promise<{ body: ReadableStream; contentType: string; contentLength?: number } | null> {
+  if (!s3Client || !env.S3_BUCKET) {
+    return null;
+  }
+
+  try {
+    const response = await s3Client.send(
+      new GetObjectCommand({
+        Bucket: env.S3_BUCKET,
+        Key: key,
+      })
+    );
+
+    if (!response.Body) return null;
+
+    return {
+      body: response.Body.transformToWebStream() as ReadableStream,
+      contentType: response.ContentType || "application/octet-stream",
+      contentLength: response.ContentLength,
+    };
+  } catch (err: unknown) {
+    if (
+      err &&
+      typeof err === "object" &&
+      "name" in err &&
+      (err.name === "NoSuchKey" || err.name === "NotFound")
+    ) {
+      return null;
+    }
     throw err;
   }
 }
