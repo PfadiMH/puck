@@ -9,9 +9,9 @@ export type DownloadButtonProps = {
 
 const variantClasses: Record<DownloadButtonProps["variant"], string> = {
   primary:
-    "bg-primary text-contrast-primary hover:opacity-90 px-6 py-3 rounded-lg font-medium inline-flex items-center gap-2",
+    "bg-primary text-contrast-primary hover:opacity-90 px-6 py-3 rounded-lg font-medium inline-flex items-center gap-2 shadow-md",
   outlined:
-    "border-2 border-primary text-primary hover:bg-primary/10 px-6 py-3 rounded-lg font-medium inline-flex items-center gap-2",
+    "border-2 border-current text-contrast-ground bg-ground hover:bg-elevated px-6 py-3 rounded-lg font-medium inline-flex items-center gap-2",
 };
 
 function DownloadIcon() {
@@ -47,8 +47,8 @@ function extractFilename(url: string): string {
 function DownloadButton({ file, label, variant }: DownloadButtonProps) {
   if (!file) {
     return (
-      <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center text-gray-500">
-        Keine Datei ausgewählt
+      <div className="border-2 border-dashed border-contrast-ground/30 rounded-lg p-8 text-center text-contrast-ground/50">
+        No file selected
       </div>
     );
   }
@@ -68,29 +68,29 @@ function DownloadButton({ file, label, variant }: DownloadButtonProps) {
 }
 
 export const downloadButtonConfig: ComponentConfig<DownloadButtonProps> = {
-  label: "Download-Button",
+  label: "Download Button",
   render: DownloadButton,
   fields: {
     file: {
       ...filePickerField,
-      label: "Datei",
+      label: "File",
     },
     label: {
       type: "text",
-      label: "Button-Text",
+      label: "Button Text",
     },
     variant: {
       type: "select",
-      label: "Variante",
+      label: "Variant",
       options: [
-        { label: "Primär", value: "primary" },
-        { label: "Umrandet", value: "outlined" },
+        { label: "Primary (Filled)", value: "primary" },
+        { label: "Outlined", value: "outlined" },
       ],
     },
   },
   defaultProps: {
     file: "",
-    label: "Herunterladen",
+    label: "Download",
     variant: "primary",
   },
 };

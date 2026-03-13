@@ -47,12 +47,12 @@ export function FooterLinkGroup({ heading, links }: FooterLinkGroupProps) {
 }
 
 export const footerLinkGroupConfig: ComponentConfig<FooterLinkGroupProps> = {
-  label: "Link-Gruppe",
+  label: "Link Group",
   render: FooterLinkGroup,
   fields: {
     heading: {
       type: "text",
-      label: "Überschrift",
+      label: "Heading",
     },
     links: {
       type: "array",
@@ -60,14 +60,14 @@ export const footerLinkGroupConfig: ComponentConfig<FooterLinkGroupProps> = {
       arrayFields: {
         label: {
           type: "text",
-          label: "Linktext",
+          label: "Link Text",
         },
         url: {
           type: "text",
           label: "URL",
         },
       },
-      getItemSummary: (item) => item.label || "Neuer Link",
+      getItemSummary: (item) => item.label || "New Link",
       defaultItemProps: {
         label: "",
         url: "",

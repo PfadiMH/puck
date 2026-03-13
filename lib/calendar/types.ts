@@ -72,3 +72,34 @@ export interface CalendarEventInput {
   mitnehmen: MitnehmenItem[];
   bemerkung?: string;
 }
+
+export type RsvpStatus = "attending" | "declined";
+
+export interface Rsvp {
+  _id: string;
+  activityId: string;
+  deviceId: string;
+  profileId: string;
+  firstName: string;
+  lastName: string;
+  pfadiName?: string;
+  comment?: string;
+  status: RsvpStatus;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface RsvpInput {
+  activityId: string;
+  deviceId: string;
+  profileId: string;
+  firstName: string;
+  lastName: string;
+  pfadiName?: string;
+  status: RsvpStatus;
+}
+
+export interface RsvpCount {
+  attending: number;
+  declined: number;
+}

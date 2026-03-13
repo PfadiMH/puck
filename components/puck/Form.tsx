@@ -35,78 +35,78 @@ function Form({
 
 export const formConfig: ComponentConfig<FormProps> = {
   render: Form,
-  label: "Formular",
+  label: "Form",
   fields: {
     formTitle: {
       type: "text",
-      label: "Formular-Titel",
+      label: "Form Title",
     },
     recipientEmail: {
       type: "text",
-      label: "Empfänger E-Mails (mehrere mit Komma trennen)",
+      label: "Recipient Emails (separate multiple with comma)",
     },
     submitButtonText: {
       type: "text",
-      label: "Button-Text",
+      label: "Button Text",
     },
     successMessage: {
       type: "text",
-      label: "Erfolgsmeldung",
+      label: "Success Message",
     },
     fields: {
       type: "array",
-      label: "Formular-Felder",
-      getItemSummary: (field) => field.label || "Neues Feld",
+      label: "Form Fields",
+      getItemSummary: (field) => field.label || "New Field",
       arrayFields: {
         label: {
           type: "text",
-          label: "Bezeichnung",
+          label: "Label",
         },
         type: {
           type: "select",
-          label: "Feldtyp",
+          label: "Field Type",
           options: [
-            { label: "Kurzer Text", value: "shortText" },
-            { label: "Langer Text", value: "longText" },
-            { label: "Zahl", value: "number" },
+            { label: "Short Text", value: "shortText" },
+            { label: "Long Text", value: "longText" },
+            { label: "Number", value: "number" },
             { label: "Radio Buttons", value: "radio" },
-            { label: "Checkboxen", value: "checkbox" },
+            { label: "Checkboxes", value: "checkbox" },
           ],
         },
         placeholder: {
           type: "text",
-          label: "Platzhalter",
+          label: "Placeholder",
         },
         required: {
           type: "radio",
-          label: "Pflichtfeld",
+          label: "Required",
           options: [
-            { label: "Ja", value: true },
-            { label: "Nein", value: false },
+            { label: "Yes", value: true },
+            { label: "No", value: false },
           ],
         },
         width: {
           type: "radio",
-          label: "Breite",
+          label: "Width",
           options: [
-            { label: "Volle Breite", value: "full" },
-            { label: "Halbe Breite", value: "half" },
+            { label: "Full Width", value: "full" },
+            { label: "Half Width", value: "half" },
           ],
         },
-        minLength: optionalNumberField({ label: "Min. Länge / Wert", min: 0 }),
-        maxLength: optionalNumberField({ label: "Max. Länge / Wert", min: 0 }),
+        minLength: optionalNumberField({ label: "Min Length / Value", min: 0 }),
+        maxLength: optionalNumberField({ label: "Max Length / Value", min: 0 }),
         options: {
           type: "textarea",
-          label: "Optionen (kommagetrennt, für Radio/Checkbox)",
+          label: "Options (comma-separated, for Radio/Checkbox)",
         },
       },
     },
   },
   defaultProps: {
     recipientEmail: "",
-    formTitle: "Kontaktformular",
-    submitButtonText: "Absenden",
-    successMessage: "Vielen Dank für Ihre Nachricht!",
+    formTitle: "Contact Form",
+    submitButtonText: "Submit",
+    successMessage: "Thank you for your message!",
     fields: [],
   },
 };

@@ -14,28 +14,28 @@ export type ImageProps = {
 const allFields: Fields<ImageProps> = {
   src: {
     ...filePickerField,
-    label: "Bild",
+    label: "Image",
   },
   alt: {
     type: "text",
-    label: "Alt-Text",
+    label: "Alt Text (for accessibility, not visible)",
   },
   sizing: {
     type: "select",
-    label: "Grösse",
+    label: "Size",
     options: [
-      { label: "Volle Breite", value: "full-width" },
-      { label: "Zentriert", value: "contained" },
-      { label: "Feste Breite", value: "fixed" },
+      { label: "Full Width (edge to edge)", value: "full-width" },
+      { label: "Contained (max 576px, centered)", value: "contained" },
+      { label: "Fixed Width", value: "fixed" },
     ],
   },
   width: {
     type: "number",
-    label: "Breite (px)",
+    label: "Width (px)",
   },
   caption: {
     type: "text",
-    label: "Bildunterschrift",
+    label: "Caption",
   },
   link: {
     type: "text",
@@ -46,8 +46,8 @@ const allFields: Fields<ImageProps> = {
 function ImageComponent({ src, alt, sizing, width, caption, link }: ImageProps) {
   if (!src) {
     return (
-      <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center text-gray-500">
-        Kein Bild ausgewählt
+      <div className="border-2 border-dashed border-contrast-ground/30 rounded-lg p-8 text-center text-contrast-ground/50">
+        No image selected
       </div>
     );
   }
@@ -56,25 +56,27 @@ function ImageComponent({ src, alt, sizing, width, caption, link }: ImageProps) 
 
   if (sizing === "full-width") {
     imageElement = (
-      <NextImage
-        src={src}
-        alt={alt || ""}
-        width={1200}
-        height={800}
-        className="w-full h-auto"
-        sizes="100vw"
-      />
-    );
-  } else if (sizing === "contained") {
-    imageElement = (
-      <div className="max-w-2xl mx-auto">
+      <div className="full w-full">
         <NextImage
           src={src}
           alt={alt || ""}
           width={1200}
           height={800}
           className="w-full h-auto"
-          sizes="(max-width: 672px) 100vw, 672px"
+          sizes="100vw"
+        />
+      </div>
+    );
+  } else if (sizing === "contained") {
+    imageElement = (
+      <div className="max-w-xl mx-auto">
+        <NextImage
+          src={src}
+          alt={alt || ""}
+          width={800}
+          height={600}
+          className="w-full h-auto"
+          sizes="(max-width: 576px) 100vw, 576px"
         />
       </div>
     );
@@ -105,7 +107,7 @@ function ImageComponent({ src, alt, sizing, width, caption, link }: ImageProps) 
     return (
       <figure>
         {imageElement}
-        <figcaption className="mt-2 text-sm text-gray-600 text-center">
+        <figcaption className="mt-2 text-sm text-contrast-ground/60 text-center">
           {caption}
         </figcaption>
       </figure>
@@ -116,7 +118,7 @@ function ImageComponent({ src, alt, sizing, width, caption, link }: ImageProps) 
 }
 
 export const imageConfig: ComponentConfig<ImageProps> = {
-  label: "Bild",
+  label: "Image",
   render: ImageComponent,
   fields: allFields,
   resolveFields: (data) => {

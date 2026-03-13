@@ -21,7 +21,7 @@ export async function POST(request: NextRequest) {
     // Runtime validation of request body
     if (!Array.isArray(items) || items.length === 0) {
       return NextResponse.json(
-        { error: "Warenkorb ist leer" },
+        { error: "Cart is empty" },
         { status: 400 }
       );
     }
@@ -29,7 +29,7 @@ export async function POST(request: NextRequest) {
     // Cap cart size to prevent abuse
     if (items.length > 50) {
       return NextResponse.json(
-        { error: "Zu viele Artikel im Warenkorb" },
+        { error: "Too many items in cart" },
         { status: 400 }
       );
     }
@@ -51,7 +51,7 @@ export async function POST(request: NextRequest) {
         ci.selectedOptions === null
       ) {
         return NextResponse.json(
-          { error: "Ungültiger Artikel im Warenkorb" },
+          { error: "Invalid item in cart" },
           { status: 400 }
         );
       }

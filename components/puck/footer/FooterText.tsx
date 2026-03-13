@@ -23,10 +23,10 @@ export const footerTextConfig: ComponentConfig<FooterTextProps> = {
     },
     fullWidth: {
       type: "radio",
-      label: "Breite",
+      label: "Width",
       options: [
         { label: "Normal", value: false },
-        { label: "Volle Breite", value: true },
+        { label: "Full Width", value: true },
       ],
     },
   },

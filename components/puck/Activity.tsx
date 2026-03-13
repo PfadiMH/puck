@@ -257,37 +257,37 @@ function Activity({
 const allFields: Fields<ActivityProps> = {
   mode: {
     type: "select",
-    label: "Modus",
+    label: "Mode",
     options: [
-      { label: "Manuell", value: "manual" },
-      { label: "Kalender (automatisch)", value: "calendar" },
+      { label: "Manual", value: "manual" },
+      { label: "Calendar (automatic)", value: "calendar" },
     ],
   },
   audience: {
     type: "select",
-    label: "Zielgruppe",
+    label: "Audience",
     options: [
-      { label: "Kinder", value: "kinder" },
-      { label: "Leiter", value: "leiter" },
+      { label: "Children", value: "kinder" },
+      { label: "Leaders", value: "leiter" },
     ],
   },
   calendarGroup: calendarGroupSelectorField,
   date: datePickerField,
   startTime: {
     ...timePickerField,
-    label: "Startzeit",
+    label: "Start Time",
   },
   endTime: {
     ...timePickerField,
-    label: "Endzeit",
+    label: "End Time",
   },
   location: {
     type: "object",
-    label: "Ort",
+    label: "Location",
     objectFields: {
       name: {
         type: "text",
-        label: "Ortsname",
+        label: "Location Name",
       },
       mapsLink: {
         type: "text",
@@ -297,11 +297,11 @@ const allFields: Fields<ActivityProps> = {
   },
   endLocation: {
     type: "object",
-    label: "Endort (optional, für Wanderungen etc.)",
+    label: "End Location (optional, for hikes etc.)",
     objectFields: {
       name: {
         type: "text",
-        label: "Ortsname",
+        label: "Location Name",
       },
       mapsLink: {
         type: "text",
@@ -311,15 +311,15 @@ const allFields: Fields<ActivityProps> = {
   },
   mitnehmen: {
     type: "array",
-    label: "Mitnehmen",
+    label: "Packing List",
     arrayFields: {
       name: {
         type: "text",
-        label: "Gegenstand",
+        label: "Item",
       },
       icon: iconSelectorField,
     },
-    getItemSummary: (item) => item.name || "Neuer Gegenstand",
+    getItemSummary: (item) => item.name || "New Item",
     defaultItemProps: {
       name: "",
       icon: undefined,
@@ -327,12 +327,12 @@ const allFields: Fields<ActivityProps> = {
   },
   bemerkung: {
     type: "textarea",
-    label: "Bemerkung (optional)",
+    label: "Remarks (optional)",
   },
 };
 
 export const activityConfig: ComponentConfig<ActivityProps> = {
-  label: "Aktivität",
+  label: "Activity",
   render: Activity,
   resolveFields: (data) => {
     let filteredFields: Fields<ActivityProps>;

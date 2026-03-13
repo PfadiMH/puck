@@ -8,6 +8,7 @@ import {
   useUploadFile,
 } from "@lib/files/use-files";
 import type { FileRecord } from "@lib/storage/file-record";
+import { Trash2 } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { FileGrid } from "./FileGrid";
 import { FileUploader } from "./FileUploader";
@@ -134,6 +135,28 @@ export function FileManager({
     [deleteMutation]
   );
 
+  const handleBulkDelete = useCallback(async () => {
+    if (selectedIds.length === 0) return;
+    if (!confirm(`Delete ${selectedIds.length} selected file(s)?`)) return;
+
+    try {
+      for (const id of selectedIds) {
+        await deleteMutation.mutateAsync(id);
+      }
+      setSelectedIds([]);
+    } catch (err) {
+      alert(err instanceof Error ? err.message : "Bulk delete failed");
+    }
+  }, [selectedIds, deleteMutation]);
+
+  const handleSelectAll = useCallback(() => {
+    if (selectedIds.length === files.length) {
+      setSelectedIds([]);
+    } else {
+      setSelectedIds(files.map((f) => f._id));
+    }
+  }, [selectedIds.length, files]);
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center py-12">
@@ -182,7 +205,39 @@ export function FileManager({
         )}
       </div>
 
-      {showUploader && <FileUploader onUpload={handleUpload} />}
+      {showUploader && <FileUploader onUpload={handleUpload} multiple={true} />}
+
+      {files.length > 0 && (
+        <div className="flex items-center justify-between gap-4 py-2 px-3 bg-ground rounded-lg">
+          <div className="flex items-center gap-3">
+            <label className="flex items-center gap-2 cursor-pointer text-sm">
+              <input
+                type="checkbox"
+                checked={selectedIds.length === files.length && files.length > 0}
+                onChange={handleSelectAll}
+                className="w-4 h-4 rounded border-contrast-ground/30"
+              />
+              <span className="text-contrast-ground/70">
+                {selectedIds.length > 0
+                  ? `${selectedIds.length} selected`
+                  : "Select all"}
+              </span>
+            </label>
+          </div>
+
+          {selectedIds.length > 0 && (
+            <div className="flex items-center gap-2">
+              <button
+                onClick={handleBulkDelete}
+                className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-red-600 hover:bg-red-50 rounded-md transition-colors"
+              >
+                <Trash2 className="w-4 h-4" />
+                Delete ({selectedIds.length})
+              </button>
+            </div>
+          )}
+        </div>
+      )}
 
       {files.length === 0 ? (
         <div className="text-center py-12 text-contrast-ground/50">

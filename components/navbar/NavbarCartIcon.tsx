@@ -4,15 +4,15 @@ import { useCart } from "@components/shop/CartProvider";
 import { ShoppingCart } from "lucide-react";
 
 export function NavbarCartIcon({ compact }: { compact?: boolean }) {
-  const { isCartVisible, totalItems, setCartOpen } = useCart();
+  const { isCartVisible, isHydrated, totalItems, setCartOpen } = useCart();
 
-  if (!isCartVisible) return null;
+  if (isHydrated && !isCartVisible) return null;
 
   return (
     <button
       onClick={() => setCartOpen(true)}
       className="relative flex items-center justify-center w-10 h-10 text-black rounded-full border border-black/80 hover:border-black transition-colors"
-      aria-label={`Warenkorb (${totalItems} Artikel)`}
+      aria-label={`Cart (${totalItems} items)`}
     >
       <ShoppingCart className={compact ? "w-4 h-4" : "w-[18px] h-[18px]"} />
       {totalItems > 0 && (

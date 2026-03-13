@@ -54,7 +54,7 @@ function TimePicker({
           </option>
         ))}
       </select>
-      <span className="text-gray-900/90 font-medium">:</span>
+      <span className="text-gray-700 font-medium">:</span>
       <select
         value={minute || "00"}
         onChange={(e) => handleMinuteChange(e.target.value)}
@@ -67,13 +67,12 @@ function TimePicker({
           </option>
         ))}
       </select>
-      <span className="text-gray-900/90 text-sm">Uhr</span>
     </div>
   );
 }
 
 export const timePickerField: CustomField<TimePickerProps> = {
   type: "custom",
-  label: "Zeit",
+  label: "Time",
   render: TimePicker,
 };

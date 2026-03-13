@@ -34,7 +34,7 @@ function DatePicker({
   onChange,
   disabled = false,
   className,
-  placeholder = "Datum wählen",
+  placeholder = "Select date",
   calendarProps,
 }: DatePickerProps) {
   const [open, setOpen] = useState(false);
@@ -73,7 +73,7 @@ function DatePicker({
         <Popover.Content
           className={cn(
             "z-50 w-auto p-0",
-            "rounded-md border border-gray-200 bg-white shadow-md",
+            "rounded-md border border-contrast-ground/20 bg-elevated shadow-md",
             "outline-none",
             "data-[state=open]:animate-in data-[state=closed]:animate-out",
             "data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",

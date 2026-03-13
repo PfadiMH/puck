@@ -70,18 +70,18 @@ export function ShopAdmin() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin-products"] });
       setDeletingProduct(null);
-      toast.success("Produkt gelöscht");
+      toast.success("Product deleted");
     },
-    onError: () => toast.error("Fehler beim Löschen"),
+    onError: () => toast.error("Error deleting product"),
   });
 
   const settingsMutation = useMutation({
     mutationFn: (s: ShopSettings) => saveShopSettings(s),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["shop-settings"] });
-      toast.success("Einstellungen gespeichert");
+      toast.success("Settings saved");
     },
-    onError: () => toast.error("Fehler beim Speichern"),
+    onError: () => toast.error("Error saving settings"),
   });
 
   function getTotalStock(product: Product) {
@@ -92,13 +92,13 @@ export function ShopAdmin() {
   return (
     <div>
       <Link href="/admin" className="text-sm text-contrast-ground/70 hover:text-contrast-ground flex items-center gap-1 mb-4">
-        ← Zurück zur Übersicht
+        ← Back to Overview
       </Link>
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-6">
         <div>
           <h1 className="text-2xl font-bold">Shop</h1>
           <p className="text-contrast-ground/60 mt-1">
-            Produkte und Einstellungen verwalten
+            Manage products and settings
           </p>
         </div>
 
@@ -108,14 +108,14 @@ export function ShopAdmin() {
             color={activeTab === "products" ? "primary" : "secondary"}
             onClick={() => setActiveTab("products")}
           >
-            Produkte
+            Products
           </Button>
           <Button
             size="small"
             color={activeTab === "settings" ? "primary" : "secondary"}
             onClick={() => setActiveTab("settings")}
           >
-            Einstellungen
+            Settings
           </Button>
         </div>
       </div>
@@ -147,7 +147,7 @@ export function ShopAdmin() {
                     onClick={() => setIsCreating(true)}
                   >
                     <Plus className="w-4 h-4 mr-2" />
-                    Produkt hinzufügen
+                    Add Product
                   </Button>
                 </DialogTrigger>
 
@@ -173,13 +173,13 @@ export function ShopAdmin() {
 
           {isLoading ? (
             <p className="text-contrast-ground/60 text-center py-12">
-              Laden...
+              Loading...
             </p>
           ) : products.length === 0 ? (
             <div className="text-center py-16">
               <Package className="w-12 h-12 mx-auto text-contrast-ground/30 mb-4" />
               <p className="text-contrast-ground/60">
-                Noch keine Produkte vorhanden.
+                No products yet.
               </p>
             </div>
           ) : (
@@ -187,11 +187,11 @@ export function ShopAdmin() {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Produkt</TableHead>
-                    <TableHead>Preis</TableHead>
-                    <TableHead>Lager</TableHead>
+                    <TableHead>Product</TableHead>
+                    <TableHead>Price</TableHead>
+                    <TableHead>Stock</TableHead>
                     <TableHead>Status</TableHead>
-                    <TableHead className="text-right">Aktionen</TableHead>
+                    <TableHead className="text-right">Actions</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -250,7 +250,7 @@ export function ShopAdmin() {
                               : "bg-contrast-ground/10 text-contrast-ground/60"
                           }`}
                         >
-                          {product.active ? "Aktiv" : "Inaktiv"}
+                          {product.active ? "Active" : "Inactive"}
                         </span>
                       </TableCell>
                       <TableCell className="text-right">
@@ -261,14 +261,14 @@ export function ShopAdmin() {
                             <button
                               className="p-1.5 rounded hover:bg-contrast-ground/10 transition-colors"
                               onClick={() => setEditingProduct(product)}
-                              title="Bearbeiten"
+                              title="Edit"
                             >
                               <Pencil className="w-4 h-4" />
                             </button>
                             <button
                               className="p-1.5 rounded hover:bg-brand-red/10 text-brand-red transition-colors"
                               onClick={() => setDeletingProduct(product)}
-                              title="Löschen"
+                              title="Delete"
                             >
                               <Trash2 className="w-4 h-4" />
                             </button>
@@ -292,17 +292,17 @@ export function ShopAdmin() {
         }}
       >
         <Dialog>
-          <DialogTitle>Produkt löschen</DialogTitle>
+          <DialogTitle>Delete Product</DialogTitle>
           <p className="text-contrast-ground/70">
-            Möchtest du{" "}
+            Are you sure you want to delete{" "}
             <span className="font-semibold">
               &ldquo;{deletingProduct?.name}&rdquo;
-            </span>{" "}
-            wirklich löschen? Diese Aktion kann nicht rückgängig gemacht werden.
+            </span>
+            ? This action cannot be undone.
           </p>
           <DialogActions>
             <DialogClose>
-              <Button size="medium">Abbrechen</Button>
+              <Button size="medium">Cancel</Button>
             </DialogClose>
             <Button
               size="medium"
@@ -315,7 +315,7 @@ export function ShopAdmin() {
                 }
               }}
             >
-              {deleteMutation.isPending ? "Löschen..." : "Löschen"}
+              {deleteMutation.isPending ? "Deleting..." : "Delete"}
             </Button>
           </DialogActions>
         </Dialog>

@@ -24,16 +24,15 @@ export function ShopSettingsForm({
       <div className="rounded-lg border border-contrast-ground/10 p-6">
         <div className="flex items-center gap-2 mb-4">
           <Mail className="w-5 h-5 text-contrast-ground/60" />
-          <h2 className="text-lg font-semibold">Bestellungs-E-Mail</h2>
+          <h2 className="text-lg font-semibold">Order Email</h2>
         </div>
         <p className="text-sm text-contrast-ground/60 mb-4">
-          Bestellungen werden an diese E-Mail-Adresse gesendet, damit sie
-          erfüllt werden können.
+          Orders will be sent to this email address for fulfillment.
         </p>
         <div className="flex gap-3">
           <Input
             type="email"
-            placeholder="bestellungen@pfadimh.ch"
+            placeholder="orders@pfadimh.ch"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             className="flex-1"
@@ -44,7 +43,7 @@ export function ShopSettingsForm({
             onClick={() => onSave({ fulfillmentEmail: email })}
             disabled={isSaving || email === settings.fulfillmentEmail}
           >
-            {isSaving ? "Speichern..." : "Speichern"}
+            {isSaving ? "Saving..." : "Save"}
           </Button>
         </div>
       </div>

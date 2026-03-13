@@ -117,20 +117,20 @@ export function EventEditor({
 
   async function handleSave() {
     if (!title.trim()) {
-      toast.error("Titel ist erforderlich");
+      toast.error("Title is required");
       return;
     }
     if (!date) {
-      toast.error("Datum ist erforderlich");
+      toast.error("Date is required");
       return;
     }
     if (endTime <= startTime) {
-      toast.error("Endzeit muss nach der Startzeit liegen");
+      toast.error("End time must be after start time");
       return;
     }
     if (!allGroups && selectedGroups.length === 0) {
       toast.error(
-        "Wähle mindestens eine Gruppe oder aktiviere 'Alle Gruppen'"
+        "Select at least one group or enable 'All Groups'"
       );
       return;
     }
@@ -168,18 +168,18 @@ export function EventEditor({
       if (isEditing && event) {
         const result = await updateCalendarEvent(event._id, input);
         if (!result) {
-          toast.error("Aktivität konnte nicht aktualisiert werden");
+          toast.error("Could not update activity");
           return;
         }
-        toast.success("Aktivität aktualisiert");
+        toast.success("Activity updated");
         onSaved(event._id);
       } else {
         const created = await saveCalendarEvent(input);
-        toast.success("Aktivität erstellt");
+        toast.success("Activity created");
         onSaved(created._id);
       }
     } catch {
-      toast.error("Fehler beim Speichern");
+      toast.error("Error saving");
     } finally {
       setSaving(false);
     }
@@ -190,21 +190,21 @@ export function EventEditor({
       <DialogTitle>
         {isEditing
           ? eventType === "lager"
-            ? "Lager bearbeiten"
+            ? "Edit Camp"
             : eventType === "leitersitzung"
-              ? "Höck bearbeiten"
-              : "Aktivität bearbeiten"
+              ? "Edit Meeting"
+              : "Edit Activity"
           : eventType === "lager"
-            ? "Neues Lager"
+            ? "New Camp"
             : eventType === "leitersitzung"
-              ? "Neuer Höck"
-              : "Neue Aktivität"}
+              ? "New Meeting"
+              : "New Activity"}
       </DialogTitle>
 
       <div className="space-y-5 mt-4">
         {/* Event Type */}
         <div>
-          <label className="block text-sm font-medium mb-1" id="event-type-label">Typ *</label>
+          <label className="block text-sm font-medium mb-1" id="event-type-label">Type *</label>
           <div
             className="flex gap-2"
             role="radiogroup"
@@ -212,9 +212,9 @@ export function EventEditor({
           >
             {(
               [
-                { value: "aktivitaet", label: "Aktivität" },
-                { value: "lager", label: "Lager" },
-                { value: "leitersitzung", label: "Höck" },
+                { value: "aktivitaet", label: "Activity" },
+                { value: "lager", label: "Camp" },
+                { value: "leitersitzung", label: "Meeting" },
               ] as const
             ).map(({ value, label }) => (
               <button
@@ -262,18 +262,18 @@ export function EventEditor({
 
         {/* Title */}
         <div>
-          <label className="block text-sm font-medium mb-1">Titel *</label>
+          <label className="block text-sm font-medium mb-1">Title *</label>
           <Input
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            placeholder="z.B. Samstagnachmittag"
+            placeholder="e.g. Saturday afternoon"
           />
         </div>
 
         {/* Date & Time */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           <div>
-            <label className="block text-sm font-medium mb-1">Datum *</label>
+            <label className="block text-sm font-medium mb-1">Date *</label>
             <DatePicker
               value={parseLocalDate(date)}
               onChange={(d) => {
@@ -292,13 +292,13 @@ export function EventEditor({
             {parseLocalDate(date) && isSaturday(parseLocalDate(date)!) && (
               <div className="flex items-center gap-1.5 text-xs text-yellow-600 font-medium mt-1">
                 <span className="w-2 h-2 bg-yellow-400 rounded-full" />
-                Samstag
+                Saturday
               </div>
             )}
           </div>
           <div>
             <label className="block text-sm font-medium mb-1">
-              Startzeit *
+              Start time *
             </label>
             <select
               value={startTime}
@@ -313,7 +313,7 @@ export function EventEditor({
             </select>
           </div>
           <div>
-            <label className="block text-sm font-medium mb-1">Endzeit *</label>
+            <label className="block text-sm font-medium mb-1">End time *</label>
             <select
               value={endTime}
               onChange={(e) => setEndTime(e.target.value)}
@@ -330,7 +330,7 @@ export function EventEditor({
 
         {/* Groups */}
         <div>
-          <label className="block text-sm font-medium mb-2">Gruppen *</label>
+          <label className="block text-sm font-medium mb-2">Groups *</label>
           <div className="flex items-center gap-2 mb-2">
             <input
               type="checkbox"
@@ -343,15 +343,15 @@ export function EventEditor({
               htmlFor="event-all-groups"
               className="text-sm font-medium"
             >
-              Alle Gruppen
+              All Groups
             </label>
           </div>
           {!allGroups && (
             <div className="flex flex-wrap gap-2">
               {groups.length === 0 ? (
                 <p className="text-sm text-contrast-ground/50">
-                  Keine Gruppen vorhanden. Erstelle zuerst Gruppen im
-                  &quot;Gruppen&quot;-Tab.
+                  No groups available. Create groups first in the
+                  &quot;Groups&quot; tab.
                 </p>
               ) : (
                 groups.map((g) => (
@@ -376,13 +376,13 @@ export function EventEditor({
         {/* Location */}
         <div>
           <label className="block text-sm font-medium mb-1">
-            Ort
+            Location
           </label>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
             <Input
               value={locationName}
               onChange={(e) => setLocationName(e.target.value)}
-              placeholder="Ortsname"
+              placeholder="Location name"
             />
             <Input
               value={locationMapsLink}
@@ -396,13 +396,13 @@ export function EventEditor({
         {eventType === "aktivitaet" && (
           <div>
             <label className="block text-sm font-medium mb-1">
-              Endort (für Wanderungen etc.)
+              End location (for hikes etc.)
             </label>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
               <Input
                 value={endLocationName}
                 onChange={(e) => setEndLocationName(e.target.value)}
-                placeholder="Ortsname"
+                placeholder="Location name"
               />
               <Input
                 value={endLocationMapsLink}
@@ -418,14 +418,14 @@ export function EventEditor({
           <div>
             <div className="flex items-center justify-between mb-2">
               <label className="block text-sm font-medium">
-                Mitnehmen
+                Packing List
               </label>
               <button
                 type="button"
                 className="text-sm text-primary hover:underline flex items-center gap-1"
                 onClick={addMitnehmenItem}
               >
-                <Plus className="w-3.5 h-3.5" /> Gegenstand
+                <Plus className="w-3.5 h-3.5" /> Item
               </button>
             </div>
             <div className="space-y-3">
@@ -443,7 +443,7 @@ export function EventEditor({
                         onChange={(e) =>
                           updateMitnehmenItem(idx, { name: e.target.value })
                         }
-                        placeholder="Gegenstand"
+                        placeholder="Item"
                         className="flex-1"
                         size="small"
                       />
@@ -451,8 +451,8 @@ export function EventEditor({
                         type="button"
                         className="p-1.5 text-brand-red hover:bg-brand-red/10 rounded shrink-0"
                         onClick={() => removeMitnehmenItem(idx)}
-                        title="Entfernen"
-                        aria-label="Gegenstand entfernen"
+                        title="Remove"
+                        aria-label="Remove item"
                       >
                         <Trash2 className="w-4 h-4" />
                       </button>
@@ -471,9 +471,9 @@ export function EventEditor({
                             updateMitnehmenItem(idx, { icon: undefined })
                           }
                           className="ml-auto text-xs text-brand-red hover:text-brand-red/80"
-                          aria-label="Icon entfernen"
+                          aria-label="Remove icon"
                         >
-                          Entfernen
+                          Remove
                         </button>
                       </div>
                     )}
@@ -508,12 +508,12 @@ export function EventEditor({
         {/* Description */}
         <div>
           <label className="block text-sm font-medium mb-1">
-            Beschreibung (für Kalender-Feed)
+            Description (for calendar feed)
           </label>
           <textarea
             value={description}
             onChange={(e) => setDescription(e.target.value)}
-            placeholder="Zusätzliche Informationen für den ICS-Feed..."
+            placeholder="Additional information for the ICS feed..."
             rows={2}
             className="w-full bg-elevated border-2 border-primary rounded px-3 py-2 text-base focus:outline-none focus:ring-2 focus:ring-primary/60 placeholder:opacity-70"
           />
@@ -523,12 +523,12 @@ export function EventEditor({
         {eventType === "aktivitaet" && (
           <div>
             <label className="block text-sm font-medium mb-1">
-              Bemerkung
+              Remarks
             </label>
             <textarea
               value={bemerkung}
               onChange={(e) => setBemerkung(e.target.value)}
-              placeholder="Interne Bemerkung..."
+              placeholder="Internal remarks..."
               rows={2}
               className="w-full bg-elevated border-2 border-primary rounded px-3 py-2 text-base focus:outline-none focus:ring-2 focus:ring-primary/60 placeholder:opacity-70"
             />
@@ -539,7 +539,7 @@ export function EventEditor({
       <DialogActions>
         <DialogClose>
           <Button size="medium" onClick={onClose}>
-            Abbrechen
+            Cancel
           </Button>
         </DialogClose>
         <Button
@@ -549,10 +549,10 @@ export function EventEditor({
           disabled={saving}
         >
           {saving
-            ? "Speichern..."
+            ? "Saving..."
             : isEditing
-              ? "Aktualisieren"
-              : "Erstellen"}
+              ? "Update"
+              : "Create"}
         </Button>
       </DialogActions>
     </Dialog>

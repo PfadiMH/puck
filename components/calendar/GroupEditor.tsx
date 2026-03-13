@@ -68,11 +68,11 @@ export function GroupEditor({
 
   async function handleSave() {
     if (!name.trim()) {
-      toast.error("Name ist erforderlich");
+      toast.error("Name is required");
       return;
     }
     if (!slug.trim()) {
-      toast.error("Slug ist erforderlich");
+      toast.error("Slug is required");
       return;
     }
 
@@ -81,7 +81,7 @@ export function GroupEditor({
       (g) => g.slug === slug && g._id !== group?._id
     );
     if (duplicate) {
-      toast.error(`Slug "${slug}" wird bereits verwendet`);
+      toast.error(`Slug "${slug}" is already in use`);
       return;
     }
 
@@ -89,7 +89,7 @@ export function GroupEditor({
     const reservedSlugs = ["all", "feed"];
     if (reservedSlugs.includes(slug)) {
       toast.error(
-        `Slug "${slug}" ist reserviert und kann nicht verwendet werden`
+        `Slug "${slug}" is reserved and cannot be used`
       );
       return;
     }
@@ -106,18 +106,18 @@ export function GroupEditor({
       if (isEditing && group) {
         const result = await updateCalendarGroup(group._id, input);
         if (!result) {
-          toast.error("Gruppe konnte nicht aktualisiert werden");
+          toast.error("Could not update group");
           return;
         }
-        toast.success("Gruppe aktualisiert");
+        toast.success("Group updated");
         onSaved(group._id);
       } else {
         const created = await saveCalendarGroup(input);
-        toast.success("Gruppe erstellt");
+        toast.success("Group created");
         onSaved(created._id);
       }
     } catch {
-      toast.error("Fehler beim Speichern");
+      toast.error("Error saving");
     } finally {
       setSaving(false);
     }
@@ -126,7 +126,7 @@ export function GroupEditor({
   return (
     <Dialog className="max-w-[500px]">
       <DialogTitle>
-        {isEditing ? "Gruppe bearbeiten" : "Neue Gruppe"}
+        {isEditing ? "Edit Group" : "New Group"}
       </DialogTitle>
 
       <div className="space-y-4 mt-4">
@@ -135,27 +135,27 @@ export function GroupEditor({
           <Input
             value={name}
             onChange={(e) => handleNameChange(e.target.value)}
-            placeholder="z.B. Wölfli"
+            placeholder="e.g. Cubs"
           />
         </div>
 
         <div>
           <label className="block text-sm font-medium mb-1">
-            Slug (URL-Kennung)
+            Slug (URL identifier)
           </label>
           <Input
             value={slug}
             onChange={(e) => handleSlugChange(e.target.value)}
-            placeholder="z.B. woelfli"
+            placeholder="e.g. cubs"
           />
           <p className="text-xs text-contrast-ground/50 mt-1">
-            Wird in der Kalender-URL verwendet: /cal/{slug || "..."}.ics
+            Used in calendar URL: /cal/{slug || "..."}.ics
           </p>
         </div>
 
         <div>
           <label className="block text-sm font-medium mb-1">
-            Reihenfolge
+            Order
           </label>
           <Input
             type="number"
@@ -173,18 +173,18 @@ export function GroupEditor({
             className="rounded"
           />
           <label htmlFor="is-leiter-group" className="text-sm">
-            Leitergruppe
+            Leader group
           </label>
         </div>
         <p className="text-xs text-contrast-ground/50 -mt-2">
-          Leitergruppen sehen alle Anlässe inkl. Hock/Leitersitzung im Kalender-Feed.
+          Leader groups see all events including meetings in the calendar feed.
         </p>
       </div>
 
       <DialogActions>
         <DialogClose>
           <Button size="medium" onClick={onClose}>
-            Abbrechen
+            Cancel
           </Button>
         </DialogClose>
         <Button
@@ -194,10 +194,10 @@ export function GroupEditor({
           disabled={saving}
         >
           {saving
-            ? "Speichern..."
+            ? "Saving..."
             : isEditing
-              ? "Aktualisieren"
-              : "Erstellen"}
+              ? "Update"
+              : "Create"}
         </Button>
       </DialogActions>
     </Dialog>

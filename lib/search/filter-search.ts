@@ -49,6 +49,7 @@ export function filterSearchIndex(
     threshold: 0.4,
     includeScore: true,
     ignoreLocation: true,
+    minMatchCharLength: 1,
   });
 
   const terms = trimmed.toLowerCase().split(/\s+/);
