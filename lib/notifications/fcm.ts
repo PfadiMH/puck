@@ -1,7 +1,14 @@
 import { env } from "@lib/env";
+import {
+  type App,
+  getApps,
+  initializeApp,
+  cert,
+} from "firebase-admin/app";
+import { getMessaging } from "firebase-admin/messaging";
 
 // Lazy-initialized Firebase Admin App
-let firebaseApp: import("firebase-admin").app.App | null = null;
+let firebaseApp: App | null = null;
 let initAttempted = false;
 
 function isConfigured(): boolean {
@@ -12,7 +19,7 @@ function isConfigured(): boolean {
   );
 }
 
-async function getApp(): Promise<import("firebase-admin").app.App | null> {
+function getApp(): App | null {
   if (initAttempted) return firebaseApp;
   initAttempted = true;
 
@@ -24,9 +31,6 @@ async function getApp(): Promise<import("firebase-admin").app.App | null> {
   }
 
   try {
-    const admin = await import("firebase-admin");
-    const { getApps, initializeApp, cert } = admin;
-
     if (getApps().length > 0) {
       firebaseApp = getApps()[0];
     } else {
@@ -57,12 +61,11 @@ export async function sendToTopic(
   body: string,
   data?: Record<string, string>
 ): Promise<boolean> {
-  const app = await getApp();
+  const app = getApp();
   if (!app) return false;
 
   try {
-    const admin = await import("firebase-admin");
-    const messaging = admin.getMessaging(app);
+    const messaging = getMessaging(app);
 
     await messaging.send({
       topic,

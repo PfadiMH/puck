@@ -196,7 +196,7 @@ function DeleteAlbumButton({
 }) {
   return (
     <DialogRoot>
-      <DialogTrigger asChild>
+      <DialogTrigger>
         <button
           className="p-1.5 rounded hover:bg-red-100 text-red-600 transition-colors"
           title="Loschen"
@@ -214,11 +214,11 @@ function DeleteAlbumButton({
           </p>
         </div>
         <DialogActions>
-          <DialogClose asChild>
-            <Button variant="secondary">Abbrechen</Button>
+          <DialogClose>
+            <Button color="secondary">Abbrechen</Button>
           </DialogClose>
           <Button
-            variant="primary"
+            color="primary"
             onClick={onConfirm}
             disabled={isDeleting}
           >
@@ -342,7 +342,7 @@ function AlbumEditor({ album, onClose, onSaved }: AlbumEditorProps) {
                 Bilder ({selectedImageIds.length})
               </label>
               <Button
-                variant="secondary"
+                color="secondary"
                 onClick={() => setShowImagePicker(true)}
               >
                 <ImageIcon className="size-4 mr-1" />
@@ -359,7 +359,7 @@ function AlbumEditor({ album, onClose, onSaved }: AlbumEditorProps) {
         </div>
 
         <div className="flex justify-end gap-2 mt-6 pt-4 border-t">
-          <Button variant="secondary" onClick={onClose}>
+          <Button color="secondary" onClick={onClose}>
             Abbrechen
           </Button>
           <Button onClick={handleSave} disabled={isSaving}>
@@ -451,7 +451,7 @@ function ImagePickerModal({
             Bilder wahlen ({selected.size} ausgewahlt)
           </h3>
           <div className="flex gap-2">
-            <Button variant="secondary" onClick={onClose}>
+            <Button color="secondary" onClick={onClose}>
               Abbrechen
             </Button>
             <Button onClick={() => onDone(orderedIds, cover)}>
