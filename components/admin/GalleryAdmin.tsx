@@ -37,12 +37,16 @@ import {
   Plus,
   Trash2,
 } from "lucide-react";
+import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
 
 export function GalleryAdmin() {
   return (
     <div className="space-y-8">
+      <Link href="/admin" className="text-sm text-contrast-ground/70 hover:text-contrast-ground flex items-center gap-1 mb-4">
+        ← Zurück zur Übersicht
+      </Link>
       <div className="flex items-center gap-3">
         <ImageIcon className="size-7" />
         <h1 className="text-2xl font-bold">App Galerie</h1>
@@ -66,9 +70,9 @@ function AlbumsSection() {
     mutationFn: (id: string) => deleteAppAlbum(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["app-albums"] });
-      toast.success("Album geloscht");
+      toast.success("Album gelöscht");
     },
-    onError: () => toast.error("Fehler beim Loschen"),
+    onError: () => toast.error("Fehler beim Löschen"),
   });
 
   return (
@@ -92,16 +96,16 @@ function AlbumsSection() {
         </p>
       ) : (
         <Table>
-          <TableHead>
+          <TableHeader>
             <TableRow>
-              <TableHeader className="w-10"></TableHeader>
-              <TableHeader>Cover</TableHeader>
-              <TableHeader>Titel</TableHeader>
-              <TableHeader>Bilder</TableHeader>
-              <TableHeader>Sichtbar</TableHeader>
-              <TableHeader className="text-right">Aktionen</TableHeader>
+              <TableHead className="w-10"></TableHead>
+              <TableHead>Cover</TableHead>
+              <TableHead>Titel</TableHead>
+              <TableHead>Bilder</TableHead>
+              <TableHead>Sichtbar</TableHead>
+              <TableHead className="text-right">Aktionen</TableHead>
             </TableRow>
-          </TableHead>
+          </TableHeader>
           <TableBody>
             {albums.map((album) => (
               <TableRow key={album._id}>
@@ -199,18 +203,18 @@ function DeleteAlbumButton({
       <DialogTrigger>
         <button
           className="p-1.5 rounded hover:bg-red-100 text-red-600 transition-colors"
-          title="Loschen"
+          title="Löschen"
         >
           <Trash2 className="size-4" />
         </button>
       </DialogTrigger>
       <Dialog>
-        <DialogTitle>Album loschen?</DialogTitle>
+        <DialogTitle>Album löschen?</DialogTitle>
         <div className="flex items-start gap-3 my-4">
           <AlertTriangle className="size-5 text-red-500 mt-0.5 shrink-0" />
           <p className="text-sm">
             Soll das Album <strong>&ldquo;{album.title}&rdquo;</strong>{" "}
-            wirklich geloscht werden? Die Bilder in S3 bleiben erhalten.
+            wirklich gelöscht werden? Die Bilder in S3 bleiben erhalten.
           </p>
         </div>
         <DialogActions>
@@ -222,7 +226,7 @@ function DeleteAlbumButton({
             onClick={onConfirm}
             disabled={isDeleting}
           >
-            {isDeleting ? "Loschen..." : "Loschen"}
+            {isDeleting ? "Löschen..." : "Löschen"}
           </Button>
         </DialogActions>
       </Dialog>
@@ -346,12 +350,12 @@ function AlbumEditor({ album, onClose, onSaved }: AlbumEditorProps) {
                 onClick={() => setShowImagePicker(true)}
               >
                 <ImageIcon className="size-4 mr-1" />
-                Bilder wahlen
+                Bilder wählen
               </Button>
             </div>
             {selectedImageIds.length > 0 && (
               <div className="text-xs text-contrast-ground/60">
-                {selectedImageIds.length} Bilder ausgewahlt
+                {selectedImageIds.length} Bilder ausgewählt
                 {coverImageId && " (Cover gesetzt)"}
               </div>
             )}
@@ -448,14 +452,14 @@ function ImagePickerModal({
       <div className="bg-ground rounded-xl shadow-xl max-w-4xl w-full max-h-[85vh] overflow-hidden flex flex-col m-4">
         <div className="p-4 border-b flex items-center justify-between">
           <h3 className="font-semibold">
-            Bilder wahlen ({selected.size} ausgewahlt)
+            Bilder wählen ({selected.size} ausgewählt)
           </h3>
           <div className="flex gap-2">
             <Button color="secondary" onClick={onClose}>
               Abbrechen
             </Button>
             <Button onClick={() => onDone(orderedIds, cover)}>
-              Ubernehmen
+              Übernehmen
             </Button>
           </div>
         </div>

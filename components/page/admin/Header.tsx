@@ -67,6 +67,15 @@ function Header() {
           </Button>
         </PermissionGuard>
 
+        <PermissionGuard policy={{ all: ["calendar:read"] }}>
+          <Button
+            size="medium"
+            onClick={() => router.push("/admin/gallery")}
+          >
+            Galerie
+          </Button>
+        </PermissionGuard>
+
         <PermissionGuard policy={{ all: ["page:create"] }}>
           <DialogRoot>
             <DialogTrigger>
