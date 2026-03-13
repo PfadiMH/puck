@@ -5,6 +5,9 @@ import type {
   CalendarGroup,
   CalendarGroupDb,
   CalendarGroupInput,
+  Rsvp,
+  RsvpCount,
+  RsvpInput,
 } from "@lib/calendar/types";
 import { defaultFooterData } from "@lib/config/footer.defaults";
 import { defaultNavbarData } from "@lib/config/navbar.defaults";

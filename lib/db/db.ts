@@ -3,6 +3,9 @@ import type {
   CalendarEventInput,
   CalendarGroup,
   CalendarGroupInput,
+  Rsvp,
+  RsvpCount,
+  RsvpInput,
 } from "@lib/calendar/types";
 import type { FooterData } from "@lib/config/footer.config";
 import type { AppAlbum, AppAlbumInput } from "@lib/gallery/types";
