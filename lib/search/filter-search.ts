@@ -62,7 +62,7 @@ export function filterSearchIndex(
         " " +
         result.item.text
       ).toLowerCase();
-      return terms.some((term) => combined.includes(term));
+      return terms.every((term) => combined.includes(term));
     })
     .sort((a, b) => {
       const freqA =

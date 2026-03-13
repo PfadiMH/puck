@@ -11,7 +11,7 @@ export async function GET(
     const deviceId = searchParams.get("deviceId");
 
     if (deviceId) {
-      const rsvps = await dbService.getRsvpsByDevice(id, deviceId);
+      const rsvps = await dbService.getDeviceRsvps(id, deviceId);
       return NextResponse.json(rsvps);
     }
 
@@ -50,8 +50,8 @@ export async function POST(
       );
     }
 
-    const rsvp = await dbService.saveRsvp({
-      activityId: id,
+    const rsvp = await dbService.upsertRsvp({
+      eventId: id,
       deviceId,
       profileId,
       firstName,
