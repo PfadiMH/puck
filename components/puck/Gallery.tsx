@@ -13,7 +13,7 @@ function Gallery({ images, columns, gap }: GalleryProps) {
   if (!images || images.length === 0) {
     return (
       <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center text-gray-500">
-        Keine Bilder hinzugefügt
+        No images added
       </div>
     );
   }
@@ -66,7 +66,7 @@ function Gallery({ images, columns, gap }: GalleryProps) {
               key={idx}
               className="aspect-[4/3] border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center text-gray-400 text-sm"
             >
-              Kein Bild
+              No image
             </div>
           )
         )}
@@ -76,23 +76,23 @@ function Gallery({ images, columns, gap }: GalleryProps) {
 }
 
 export const galleryConfig: ComponentConfig<GalleryProps> = {
-  label: "Galerie",
+  label: "Gallery",
   render: Gallery,
   fields: {
     images: {
       type: "array",
-      label: "Bilder",
+      label: "Images",
       arrayFields: {
         src: {
           ...filePickerField,
-          label: "Bild",
+          label: "Image",
         },
         alt: {
           type: "text",
-          label: "Alt-Text",
+          label: "Alt Text",
         },
       },
-      getItemSummary: (item) => item.alt || "Bild",
+      getItemSummary: (item) => item.alt || "Image",
       defaultItemProps: {
         src: "",
         alt: "",
@@ -100,7 +100,7 @@ export const galleryConfig: ComponentConfig<GalleryProps> = {
     },
     columns: {
       type: "select",
-      label: "Spalten",
+      label: "Columns",
       options: [
         { label: "2", value: 2 },
         { label: "3", value: 3 },
@@ -109,12 +109,12 @@ export const galleryConfig: ComponentConfig<GalleryProps> = {
     },
     gap: {
       type: "select",
-      label: "Abstand",
+      label: "Gap",
       options: [
-        { label: "Kein", value: "0" },
-        { label: "Klein", value: "0.5rem" },
-        { label: "Mittel", value: "1rem" },
-        { label: "Gross", value: "2rem" },
+        { label: "None", value: "0" },
+        { label: "Small", value: "0.5rem" },
+        { label: "Medium", value: "1rem" },
+        { label: "Large", value: "2rem" },
       ],
     },
   },

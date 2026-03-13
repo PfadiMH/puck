@@ -127,7 +127,7 @@ export function NavbarSearch() {
         type="button"
         onClick={() => setOpen(true)}
         className="flex items-center justify-center w-10 h-10 text-black rounded-full border border-black/80 hover:border-black transition-colors"
-        aria-label="Suchen"
+        aria-label="Search"
       >
         <Search className="w-4 h-4" />
       </button>
@@ -142,7 +142,7 @@ export function NavbarSearch() {
       <div
         role="dialog"
         aria-modal="true"
-        aria-label="Suchen"
+        aria-label="Search"
         className="fixed top-[10%] left-1/2 -translate-x-1/2 w-[90vw] max-w-[500px] bg-ground rounded-xl shadow-lg overflow-hidden border border-contrast-ground/10"
         onClick={(e) => e.stopPropagation()}
       >
@@ -182,15 +182,15 @@ export function NavbarSearch() {
                 close();
               }
             }}
-            aria-label="Suchen"
-            placeholder="Suchen"
+            aria-label="Search"
+            placeholder="Search"
             className="flex-1 outline-none text-base bg-transparent text-contrast-ground placeholder:text-contrast-ground/40"
           />
           <button
             type="button"
             onClick={close}
             className="p-1 text-contrast-ground/40 hover:text-contrast-ground transition-colors"
-            aria-label="Schliessen"
+            aria-label="Close"
           >
             <X className="w-4 h-4" />
           </button>
@@ -199,13 +199,13 @@ export function NavbarSearch() {
         {isLoading && (
           <div className="flex items-center justify-center gap-2 p-4 text-contrast-ground/50">
             <Loader2 className="w-4 h-4 animate-spin" />
-            <span>Laden...</span>
+            <span>Loading...</span>
           </div>
         )}
 
         {isError && (
           <div className="p-4 text-red-500 text-center text-sm">
-            Suchindex konnte nicht geladen werden
+            Could not load search index
           </div>
         )}
 
@@ -213,7 +213,7 @@ export function NavbarSearch() {
           <ul className="max-h-[60vh] overflow-y-auto p-2 flex flex-col gap-1">
             {results.length === 0 ? (
               <li className="p-4 text-contrast-ground/50 text-center">
-                Keine Ergebnisse
+                No results
               </li>
             ) : (
               results.map((result, i) => (

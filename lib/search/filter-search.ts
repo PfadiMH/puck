@@ -49,6 +49,7 @@ export function filterSearchIndex(
     threshold: 0.4,
     includeScore: true,
     ignoreLocation: true,
+    minMatchCharLength: 1,
   });
 
   const terms = trimmed.toLowerCase().split(/\s+/);
@@ -61,7 +62,7 @@ export function filterSearchIndex(
         " " +
         result.item.text
       ).toLowerCase();
-      return terms.every((term) => combined.includes(term));
+      return terms.some((term) => combined.includes(term));
     })
     .sort((a, b) => {
       const freqA =

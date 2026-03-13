@@ -53,7 +53,7 @@ function SaturdayDatePicker({
       {showSaturdayIndicator && (
         <div className="flex items-center gap-1.5 text-xs text-yellow-600 font-medium">
           <span className="w-2 h-2 bg-yellow-400 rounded-full" />
-          Samstag (üblicher Aktivitätstag)
+          Saturday (typical activity day)
         </div>
       )}
     </div>
@@ -62,6 +62,6 @@ function SaturdayDatePicker({
 
 export const datePickerField: CustomField<DatePickerFieldProps> = {
   type: "custom",
-  label: "Datum",
+  label: "Date",
   render: SaturdayDatePicker,
 };

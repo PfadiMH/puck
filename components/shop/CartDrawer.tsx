@@ -142,7 +142,7 @@ export function CartDrawer() {
         body: JSON.stringify({ items }),
       });
       if (!res.ok) {
-        let errorMsg = `Fehler (${res.status})`;
+        let errorMsg = `Error (${res.status})`;
         try {
           const data = await res.json();
           if (data.error) errorMsg = data.error;
@@ -159,12 +159,12 @@ export function CartDrawer() {
         window.location.href = data.url;
       } else {
         const { toast } = await import("sonner");
-        toast.error("Fehler beim Erstellen der Bestellung");
+        toast.error("Error creating order");
         setIsCheckingOut(false);
       }
     } catch {
       const { toast } = await import("sonner");
-      toast.error("Netzwerkfehler");
+      toast.error("Network error");
       setIsCheckingOut(false);
     }
   }
@@ -195,13 +195,13 @@ export function CartDrawer() {
           <div className="flex items-center gap-2">
             <ShoppingBag className="w-5 h-5" />
             <h2 className="text-lg font-semibold">
-              Warenkorb ({totalItems})
+              Cart ({totalItems})
             </h2>
           </div>
           <button
             onClick={() => setCartOpen(false)}
             className="p-1.5 rounded-full hover:bg-contrast-ground/10 transition-colors"
-            aria-label="Warenkorb schliessen"
+            aria-label="Close cart"
           >
             <X className="w-5 h-5" />
           </button>
@@ -212,14 +212,14 @@ export function CartDrawer() {
           {items.length === 0 ? (
             <div className="flex flex-col items-center justify-center h-full text-contrast-ground/40">
               <ShoppingBag className="w-16 h-16 mb-4 opacity-30" />
-              <p className="text-lg">Dein Warenkorb ist leer</p>
+              <p className="text-lg">Your cart is empty</p>
             </div>
           ) : (
             <div className="space-y-4">
               {validating && (
                 <div className="flex items-center gap-2 text-xs text-contrast-ground/50 pb-1">
                   <Loader2 className="w-3 h-3 animate-spin" />
-                  Preise werden geprüft...
+                  Checking prices...
                 </div>
               )}
               {items.map((item) => {
@@ -267,19 +267,19 @@ export function CartDrawer() {
                       {status?.unavailable && (
                         <p className="text-xs text-brand-red mt-1 flex items-center gap-1">
                           <AlertTriangle className="w-3 h-3" />
-                          Nicht mehr verfügbar
+                          No longer available
                         </p>
                       )}
                       {status?.outOfStock && !status?.unavailable && (
                         <p className="text-xs text-brand-red mt-1 flex items-center gap-1">
                           <AlertTriangle className="w-3 h-3" />
-                          Ausverkauft
+                          Sold out
                         </p>
                       )}
                       {status?.lowStock && (
                         <p className="text-xs text-brand-red/80 mt-1 flex items-center gap-1">
                           <AlertTriangle className="w-3 h-3" />
-                          Nur noch {status.lowStock} verfügbar
+                          Only {status.lowStock} left
                         </p>
                       )}
 
@@ -294,7 +294,7 @@ export function CartDrawer() {
                               item.quantity - 1
                             )
                           }
-                          aria-label="Menge verringern"
+                          aria-label="Decrease quantity"
                         >
                           <Minus className="w-3.5 h-3.5" />
                         </button>
@@ -316,7 +316,7 @@ export function CartDrawer() {
                             (status?.lowStock != null &&
                               item.quantity >= status.lowStock)
                           }
-                          aria-label="Menge erhöhen"
+                          aria-label="Increase quantity"
                         >
                           <Plus className="w-3.5 h-3.5" />
                         </button>
@@ -325,8 +325,8 @@ export function CartDrawer() {
                           onClick={() =>
                             removeItem(item.productId, item.variantIndex)
                           }
-                          title="Entfernen"
-                          aria-label="Artikel entfernen"
+                          title="Remove"
+                          aria-label="Remove item"
                         >
                           <Trash2 className="w-4 h-4" />
                         </button>
@@ -351,7 +351,7 @@ export function CartDrawer() {
             {hasIssues && (
               <p className="text-xs text-brand-red flex items-center gap-1">
                 <AlertTriangle className="w-3.5 h-3.5 flex-shrink-0" />
-                Bitte entferne nicht verfügbare Artikel, um fortzufahren.
+                Please remove unavailable items to continue.
               </p>
             )}
             <Button
@@ -364,10 +364,10 @@ export function CartDrawer() {
               {isCheckingOut ? (
                 <span className="flex items-center gap-2">
                   <Loader2 className="w-5 h-5 animate-spin" />
-                  Wird geladen...
+                  Loading...
                 </span>
               ) : (
-                "Zur Kasse"
+                "Checkout"
               )}
             </Button>
 

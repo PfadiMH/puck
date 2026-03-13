@@ -34,6 +34,7 @@ interface CartContextValue {
   setCartOpen: (open: boolean) => void;
   /** True when the current page has a Webshop component or the cart has items */
   isCartVisible: boolean;
+  isHydrated: boolean;
   /** Called by the Webshop component on mount to signal the cart should show */
   enableCart: () => void;
   disableCart: () => void;
@@ -176,6 +177,7 @@ export function CartProvider({ children }: PropsWithChildren) {
       isCartOpen,
       setCartOpen,
       isCartVisible,
+      isHydrated: hydrated,
       enableCart,
       disableCart,
     }),
@@ -191,6 +193,7 @@ export function CartProvider({ children }: PropsWithChildren) {
       isCartOpen,
       setCartOpen,
       isCartVisible,
+      hydrated,
       enableCart,
       disableCart,
     ]

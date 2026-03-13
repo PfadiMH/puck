@@ -605,14 +605,14 @@ function ProductCard({
             {added ? (
               <span className="flex items-center gap-1">
                 <Check className="w-3.5 h-3.5" />
-                {size !== "klein" && "Hinzugefügt!"}
+                {size !== "klein" && "Added!"}
               </span>
             ) : inStock ? (
               size === "klein"
-                ? "Kaufen"
-                : "In den Warenkorb"
+                ? "Buy"
+                : "Add to cart"
             ) : (
-              "Ausverkauft"
+              "Sold out"
             )}
           </button>
         </div>

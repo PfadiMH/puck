@@ -47,7 +47,7 @@ function PageRow({ page, variant = "table" }: PageRowProps) {
               <DialogRoot>
                 <DialogTrigger>
                   <button type="button" className="p-1 px-3 text-xs font-bold uppercase rounded border border-primary/40 text-primary/80 hover:bg-primary/10 transition-colors">
-                    Umbenennen
+                    Rename
                   </button>
                 </DialogTrigger>
                 <RenamePageModal currentPath={page} />
@@ -99,7 +99,7 @@ function PageRow({ page, variant = "table" }: PageRowProps) {
           <DialogRoot>
             <DialogTrigger>
               <button type="button" className="h-8 px-4 text-xs font-bold uppercase rounded border border-primary/40 text-primary/80 hover:bg-primary/10 transition-colors">
-                Umbenennen
+                Rename
               </button>
             </DialogTrigger>
             <RenamePageModal currentPath={page} />

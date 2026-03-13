@@ -171,11 +171,11 @@ export function ProductEditor({
 
   async function handleSave() {
     if (!name.trim()) {
-      toast.error("Name ist erforderlich");
+      toast.error("Name is required");
       return;
     }
     if (!price || parseFloat(price) <= 0) {
-      toast.error("Preis muss grösser als 0 sein");
+      toast.error("Price must be greater than 0");
       return;
     }
 
@@ -183,17 +183,17 @@ export function ProductEditor({
     const seenNames = new Set<string>();
     for (const opt of options) {
       if (!opt.name.trim()) {
-        toast.error("Alle Optionen brauchen einen Namen");
+        toast.error("All options need a name");
         return;
       }
       const normalizedName = opt.name.trim().toLowerCase();
       if (seenNames.has(normalizedName)) {
-        toast.error("Optionsnamen müssen eindeutig sein");
+        toast.error("Option names must be unique");
         return;
       }
       seenNames.add(normalizedName);
       if (opt.values.some((v) => !v.trim())) {
-        toast.error("Alle Optionswerte müssen ausgefüllt sein");
+        toast.error("All option values must be filled in");
         return;
       }
     }
@@ -216,15 +216,15 @@ export function ProductEditor({
 
       if (isEditing && product) {
         await updateProduct(product._id, input);
-        toast.success("Produkt aktualisiert");
+        toast.success("Product updated");
         onSaved(product._id);
       } else {
         const created = await saveProduct(input);
-        toast.success("Produkt erstellt");
+        toast.success("Product created");
         onSaved(created._id);
       }
     } catch {
-      toast.error("Fehler beim Speichern");
+      toast.error("Error saving product");
     } finally {
       setSaving(false);
     }
@@ -233,7 +233,7 @@ export function ProductEditor({
   return (
     <Dialog className="max-w-[700px] max-h-[85vh] overflow-y-auto">
       <DialogTitle>
-        {isEditing ? "Produkt bearbeiten" : "Neues Produkt"}
+        {isEditing ? "Edit Product" : "New Product"}
       </DialogTitle>
 
       <div className="space-y-5 mt-4">
@@ -243,19 +243,19 @@ export function ProductEditor({
           <Input
             value={name}
             onChange={(e) => setName(e.target.value)}
-            placeholder="Produktname"
+            placeholder="Product name"
           />
         </div>
 
         {/* Description */}
         <div>
           <label className="block text-sm font-medium mb-1">
-            Beschreibung
+            Description
           </label>
           <textarea
             value={description}
             onChange={(e) => setDescription(e.target.value)}
-            placeholder="Produktbeschreibung..."
+            placeholder="Product description..."
             rows={3}
             className="w-full bg-mud-secondary text-mud-contrast-secondary border-2 border-primary rounded px-3 py-2 text-base focus:outline-none focus:ring-2 focus:ring-primary/60 placeholder:opacity-70"
           />
@@ -263,7 +263,7 @@ export function ProductEditor({
 
         {/* Images */}
         <div>
-          <label className="block text-sm font-medium mb-1">Bilder</label>
+          <label className="block text-sm font-medium mb-1">Images</label>
           <div className="flex flex-wrap gap-2">
             {images.map((url, i) => (
               <div key={`${url}-${i}`} className="relative group">
@@ -291,7 +291,7 @@ export function ProductEditor({
                           [next[i - 1], next[i]] = [next[i], next[i - 1]];
                           setImages(next);
                         }}
-                        title="Nach links"
+                        title="Move left"
                       >
                         <ArrowLeft className="w-3 h-3" />
                       </button>
@@ -304,7 +304,7 @@ export function ProductEditor({
                           [next[i], next[i + 1]] = [next[i + 1], next[i]];
                           setImages(next);
                         }}
-                        title="Nach rechts"
+                        title="Move right"
                       >
                         <ArrowRight className="w-3 h-3" />
                       </button>
@@ -334,7 +334,7 @@ export function ProductEditor({
         {/* Base Price */}
         <div>
           <label className="block text-sm font-medium mb-1">
-            Preis (CHF)
+            Price (CHF)
           </label>
           <Input
             type="number"
@@ -343,7 +343,7 @@ export function ProductEditor({
             placeholder="0.00"
           />
           <p className="text-xs text-contrast-ground/50 mt-1">
-            Grundpreis des Produkts. Varianten werden als Anpassung (+/-) davon berechnet.
+            Base price of the product. Variants are calculated as adjustments (+/-) from this.
           </p>
         </div>
 
@@ -357,7 +357,7 @@ export function ProductEditor({
             className="rounded"
           />
           <label htmlFor="product-active" className="text-sm">
-            Aktiv (im Shop sichtbar)
+            Active (visible in shop)
           </label>
         </div>
 
@@ -365,13 +365,13 @@ export function ProductEditor({
         <div>
           <div className="flex items-center justify-between mb-2">
             <label className="block text-sm font-medium">
-              Optionen (z.B. Grösse, Farbe)
+              Options (e.g. Size, Color)
             </label>
             <button
               className="text-sm text-primary hover:underline flex items-center gap-1"
               onClick={addOption}
             >
-              <Plus className="w-3.5 h-3.5" /> Option hinzufügen
+              <Plus className="w-3.5 h-3.5" /> Add option
             </button>
           </div>
           {options.map((option, optIdx) => (
@@ -384,7 +384,7 @@ export function ProductEditor({
                   size="small"
                   value={option.name}
                   onChange={(e) => updateOptionName(optIdx, e.target.value)}
-                  placeholder="Optionsname (z.B. Grösse)"
+                  placeholder="Option name (e.g. Size)"
                   className="flex-1"
                 />
                 <button
@@ -405,7 +405,7 @@ export function ProductEditor({
                         newValues[valIdx] = e.target.value;
                         updateOptionValues(optIdx, newValues);
                       }}
-                      placeholder="Wert"
+                      placeholder="Value"
                       className="w-20"
                     />
                     {option.values.length > 1 && (
@@ -429,7 +429,7 @@ export function ProductEditor({
                     updateOptionValues(optIdx, [...option.values, ""])
                   }
                 >
-                  + Wert
+                  + Value
                 </button>
               </div>
             </div>
@@ -440,26 +440,26 @@ export function ProductEditor({
         {variants.length > 0 && (
           <div>
             <label className="block text-sm font-medium mb-1">
-              Varianten ({variants.length})
+              Variants ({variants.length})
             </label>
             <p className="text-xs text-contrast-ground/50 mb-2">
-              Preisanpassung relativ zum Grundpreis. 0 = Grundpreis, positiv = Aufpreis, negativ = Rabatt.
+              Price adjustment relative to base price. 0 = base price, positive = surcharge, negative = discount.
             </p>
             <div className="border border-contrast-ground/10 rounded-lg overflow-hidden">
               <table className="w-full text-sm">
                 <thead>
                   <tr className="bg-contrast-ground/5">
                     <th className="text-left px-3 py-2 font-medium">
-                      Variante
+                      Variant
                     </th>
                     <th className="text-left px-3 py-2 font-medium w-28">
                       +/- (CHF)
                     </th>
                     <th className="text-left px-3 py-2 font-medium w-24">
-                      Effektiv
+                      Effective
                     </th>
                     <th className="text-left px-3 py-2 font-medium w-24">
-                      Lager
+                      Stock
                     </th>
                   </tr>
                 </thead>
@@ -516,7 +516,7 @@ export function ProductEditor({
       <DialogActions>
         <DialogClose>
           <Button size="medium" onClick={onClose}>
-            Abbrechen
+            Cancel
           </Button>
         </DialogClose>
         <Button
@@ -526,10 +526,10 @@ export function ProductEditor({
           disabled={saving}
         >
           {saving
-            ? "Speichern..."
+            ? "Saving..."
             : isEditing
-              ? "Aktualisieren"
-              : "Erstellen"}
+              ? "Update"
+              : "Create"}
         </Button>
       </DialogActions>
     </Dialog>

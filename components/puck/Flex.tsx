@@ -28,8 +28,9 @@ function Flex({
   );
 }
 
+/** @deprecated Use MultiColumn instead */
 export const flexConfig: ComponentConfig<FlexProps> = {
-  label: "Grid",
+  label: "Grid (deprecated)",
   render: Flex,
   fields: {
     items: {

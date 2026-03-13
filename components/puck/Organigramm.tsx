@@ -28,7 +28,7 @@ function Organigramm({
 }
 
 export const organigrammConfig: ComponentConfig<OrganigrammProps> = {
-  label: "Organigramm",
+  label: "Org Chart",
   render: Organigramm,
   defaultProps: {
     rootGroupId: 0,
@@ -40,42 +40,42 @@ export const organigrammConfig: ComponentConfig<OrganigrammProps> = {
   fields: {
     rootGroupId: {
       type: "number",
-      label: "MiData Gruppen-ID",
+      label: "MiData Group ID",
       min: 1,
     },
     excludedRoles: {
       type: "textarea",
-      label: "Ausgeschlossene Rollen",
+      label: "Excluded Roles",
     },
     maxDepth: {
       type: "select",
-      label: "Maximale Tiefe",
+      label: "Max Depth",
       options: [
-        { label: "1 Ebene", value: 1 },
-        { label: "2 Ebenen", value: 2 },
-        { label: "3 Ebenen", value: 3 },
-        { label: "4 Ebenen", value: 4 },
-        { label: "5 Ebenen", value: 5 },
+        { label: "1 Level", value: 1 },
+        { label: "2 Levels", value: 2 },
+        { label: "3 Levels", value: 3 },
+        { label: "4 Levels", value: 4 },
+        { label: "5 Levels", value: 5 },
       ],
     },
     maxVisibleMembers: {
       type: "select",
-      label: "Sichtbare Mitglieder",
+      label: "Visible Members",
       options: [
         { label: "3", value: 3 },
         { label: "4", value: 4 },
         { label: "5", value: 5 },
         { label: "6", value: 6 },
         { label: "8", value: 8 },
-        { label: "Alle", value: 99 },
+        { label: "All", value: 99 },
       ],
     },
     showPictures: {
       type: "radio",
-      label: "Profilbilder anzeigen",
+      label: "Show Profile Pictures",
       options: [
-        { label: "Ja", value: true },
-        { label: "Nein", value: false },
+        { label: "Yes", value: true },
+        { label: "No", value: false },
       ],
     },
   },

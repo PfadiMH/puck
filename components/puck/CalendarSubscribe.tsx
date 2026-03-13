@@ -12,7 +12,7 @@ function CalendarSubscribe({ size }: CalendarSubscribeProps) {
 }
 
 export const calendarSubscribeConfig: ComponentConfig<CalendarSubscribeProps> = {
-  label: "Kalender-Abo",
+  label: "Calendar Subscribe",
   render: CalendarSubscribe,
   defaultProps: {
     size: "mittel",
@@ -20,11 +20,11 @@ export const calendarSubscribeConfig: ComponentConfig<CalendarSubscribeProps> = 
   fields: {
     size: {
       type: "select",
-      label: "Kartengrösse",
+      label: "Card Size",
       options: [
-        { label: "Gross", value: "gross" },
-        { label: "Mittel", value: "mittel" },
-        { label: "Klein", value: "klein" },
+        { label: "Large", value: "gross" },
+        { label: "Medium", value: "mittel" },
+        { label: "Small", value: "klein" },
       ],
     },
   },

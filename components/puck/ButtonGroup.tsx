@@ -6,10 +6,10 @@ import Image from "next/image";
 import Link from "next/link";
 
 type ButtonItem = {
-  id?: string;
   content: string;
   url?: string;
   color: "primary" | "secondary";
+  icon?: string;
 };
 
 export type ButtonGroupProps = {
@@ -22,15 +22,15 @@ export type ButtonGroupProps = {
 };
 
 const iconSizeClasses = {
-  small: "w-4 h-4",
-  medium: "w-5 h-5",
-  large: "w-6 h-6",
+  small: "w-5 h-5",
+  medium: "w-6 h-6",
+  large: "w-8 h-8",
 };
 
 const iconSizes = {
-  small: "16px",
-  medium: "20px",
-  large: "24px",
+  small: "20px",
+  medium: "24px",
+  large: "32px",
 };
 
 const gapClasses = {
@@ -56,15 +56,16 @@ function ButtonIcon({ icon, size }: { icon: string; size: ButtonGroupProps["size
 
 function ButtonContent({
   button,
-  icon,
+  globalIcon,
   iconPosition,
   size,
 }: {
   button: ButtonItem;
-  icon?: string;
+  globalIcon?: string;
   iconPosition: ButtonGroupProps["iconPosition"];
   size: ButtonGroupProps["size"];
 }) {
+  const icon = button.icon || globalIcon;
   return (
     <>
       {icon && iconPosition === "left" && <ButtonIcon icon={icon} size={size} />}
@@ -77,34 +78,33 @@ function ButtonContent({
 function ButtonGroup({ alignment, size, spacing, icon, iconPosition, buttons }: ButtonGroupProps) {
   return (
     <div className={cn("flex flex-wrap items-center", alignmentClasses[alignment], gapClasses[spacing])}>
-      {buttons.map((button, idx) =>
-        button.url ? (
+      {buttons.map((button, idx) => {
+        const hasIcon = button.icon || icon;
+        return button.url ? (
           <Button
             key={idx}
-            id={button.id}
             asChild
             size={size}
             color={button.color}
             className="gap-2"
           >
-            <Link href={button.url} {...(!button.content && icon ? { "aria-label": "Button" } : {})}>
-              <ButtonContent button={button} icon={icon} iconPosition={iconPosition} size={size} />
+            <Link href={button.url} {...(!button.content && hasIcon ? { "aria-label": "Button" } : {})}>
+              <ButtonContent button={button} globalIcon={icon} iconPosition={iconPosition} size={size} />
             </Link>
           </Button>
         ) : (
           <Button
             key={idx}
-            id={button.id}
             type="button"
             size={size}
             color={button.color}
             className="gap-2"
-            {...(!button.content && icon ? { "aria-label": "Button" } : {})}
+            {...(!button.content && hasIcon ? { "aria-label": "Button" } : {})}
           >
-            <ButtonContent button={button} icon={icon} iconPosition={iconPosition} size={size} />
+            <ButtonContent button={button} globalIcon={icon} iconPosition={iconPosition} size={size} />
           </Button>
-        )
-      )}
+        );
+      })}
     </div>
   );
 }
@@ -157,10 +157,6 @@ export const buttonGroupConfig: ComponentConfig<ButtonGroupProps> = {
       label: "Buttons",
       getItemSummary: (item) => item.content || "Empty Button",
       arrayFields: {
-        id: {
-          type: "text",
-          label: "ID (optional)",
-        },
         content: {
           type: "text",
           label: "Button Text",
@@ -176,6 +172,10 @@ export const buttonGroupConfig: ComponentConfig<ButtonGroupProps> = {
             { label: "Primary", value: "primary" },
             { label: "Secondary", value: "secondary" },
           ],
+        },
+        icon: {
+          ...filePickerField,
+          label: "Icon (optional, overrides global)",
         },
       },
       defaultItemProps: {

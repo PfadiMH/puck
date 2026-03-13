@@ -93,7 +93,7 @@ export function FileGrid({
             onClick={() => onSelect(file._id)}
           >
             {/* Preview */}
-            <div className="aspect-square bg-ground flex items-center justify-center">
+            <div className="aspect-square bg-ground flex items-center justify-center relative">
               {isImage(file.contentType) ? (
                 <Image
                   src={url}
@@ -111,7 +111,7 @@ export function FileGrid({
             </div>
 
             {/* Filename */}
-            <div className="p-2 bg-elevated">
+            <div className="p-2 bg-elevated relative z-10">
               <p className="text-xs truncate text-contrast-ground">{file.filename}</p>
               <p className="text-xs text-contrast-ground/50">
                 {formatFileSize(file.size)}

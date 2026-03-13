@@ -7,54 +7,88 @@ import { useCallback, useId, useState } from "react";
 interface FileUploaderProps {
   onUpload: (file: File) => Promise<void>;
   accept?: string;
+  multiple?: boolean;
 }
 
 export function FileUploader({
   onUpload,
   accept = ACCEPT_STRING,
+  multiple = true,
 }: FileUploaderProps) {
   const inputId = useId();
   const [isDragging, setIsDragging] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState<{ current: number; total: number } | null>(null);
 
   const handleFile = useCallback(
     async (file: File) => {
       if (file.size > MAX_FILE_SIZE) {
         alert(`File too large. Maximum size is ${MAX_FILE_SIZE_MB}MB.`);
-        return;
+        return false;
       }
       if (!ALLOWED_TYPES.includes(file.type)) {
-        alert("Invalid file type. Allowed: images and PDFs.");
-        return;
+        alert(`Invalid file type for "${file.name}". Allowed: images, videos, PDFs, and ZIPs.`);
+        return false;
       }
-      setIsUploading(true);
       try {
         await onUpload(file);
+        return true;
       } catch (err) {
-        alert(err instanceof Error ? err.message : "Upload failed");
-      } finally {
-        setIsUploading(false);
+        alert(err instanceof Error ? err.message : `Upload failed for "${file.name}"`);
+        return false;
       }
     },
     [onUpload]
+  );
+
+  const handleFiles = useCallback(
+    async (files: FileList) => {
+      const fileArray = Array.from(files);
+      if (fileArray.length === 0) return;
+
+      setIsUploading(true);
+      setUploadProgress({ current: 0, total: fileArray.length });
+
+      for (let i = 0; i < fileArray.length; i++) {
+        setUploadProgress({ current: i + 1, total: fileArray.length });
+        await handleFile(fileArray[i]);
+      }
+
+      setIsUploading(false);
+      setUploadProgress(null);
+    },
+    [handleFile]
   );
 
   const handleDrop = useCallback(
     (e: React.DragEvent) => {
       e.preventDefault();
       setIsDragging(false);
-      const file = e.dataTransfer.files[0];
-      if (file) handleFile(file);
+      const files = e.dataTransfer.files;
+      if (files.length > 0) {
+        if (multiple) {
+          handleFiles(files);
+        } else {
+          handleFile(files[0]);
+        }
+      }
     },
-    [handleFile]
+    [handleFile, handleFiles, multiple]
   );
 
   const handleChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
-      const file = e.target.files?.[0];
-      if (file) handleFile(file);
+      const files = e.target.files;
+      if (files && files.length > 0) {
+        if (multiple) {
+          handleFiles(files);
+        } else {
+          handleFile(files[0]);
+        }
+      }
+      e.target.value = "";
     },
-    [handleFile]
+    [handleFile, handleFiles, multiple]
   );
 
   return (
@@ -78,21 +112,24 @@ export function FileUploader({
         accept={accept}
         onChange={handleChange}
         disabled={isUploading}
+        multiple={multiple}
       />
       <label
         htmlFor={inputId}
         className="flex flex-col items-center cursor-pointer"
       >
         <Upload className="w-10 h-10 text-contrast-ground/50 mb-2" />
-        {isUploading ? (
-          <span className="text-contrast-ground/50">Uploading...</span>
+        {isUploading && uploadProgress ? (
+          <span className="text-contrast-ground/50">
+            Uploading {uploadProgress.current} of {uploadProgress.total}...
+          </span>
         ) : (
           <>
             <span className="text-contrast-ground/70 font-medium">
-              Drop file here or click to upload
+              Drop {multiple ? "files" : "file"} here or click to upload
             </span>
             <span className="text-contrast-ground/50 text-sm mt-1">
-              Images (JPG, PNG, WebP, GIF, SVG) or PDF, max {MAX_FILE_SIZE_MB}MB
+              Images, Videos, PDF or ZIP (max {MAX_FILE_SIZE_MB}MB per file)
             </span>
           </>
         )}

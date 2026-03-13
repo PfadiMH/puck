@@ -84,6 +84,11 @@
     letter-spacing: 0.02em;
   }
 
+  .font-rockingsoda,
+  [class*="font-rockingsoda"] {
+    font-weight: 400 !important;
+  }
+
   button,
   a,
   [role="button"] {

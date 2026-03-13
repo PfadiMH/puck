@@ -66,7 +66,7 @@ function CopyButton({ text }: { text: string }) {
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch {
-      toast.error("Kopieren fehlgeschlagen");
+      toast.error("Copy failed");
     }
   }
 
@@ -74,8 +74,8 @@ function CopyButton({ text }: { text: string }) {
     <button
       onClick={handleCopy}
       className="p-1 rounded hover:bg-contrast-ground/10 transition-colors"
-      title="Link kopieren"
-      aria-label="Link kopieren"
+      title="Copy link"
+      aria-label="Copy link"
     >
       {copied ? (
         <Check className="w-4 h-4 text-primary" />
@@ -139,9 +139,9 @@ export function CalendarAdmin() {
         queryKey: ["admin-calendar-events"],
       });
       setDeletingEvent(null);
-      toast.success("Aktivität gelöscht");
+      toast.success("Activity deleted");
     },
-    onError: () => toast.error("Fehler beim Löschen"),
+    onError: () => toast.error("Error deleting activity"),
   });
 
   const deleteGroupMutation = useMutation({
@@ -151,9 +151,9 @@ export function CalendarAdmin() {
         queryKey: ["admin-calendar-groups"],
       });
       setDeletingGroup(null);
-      toast.success("Gruppe gelöscht");
+      toast.success("Group deleted");
     },
-    onError: () => toast.error("Fehler beim Löschen"),
+    onError: () => toast.error("Error deleting group"),
   });
 
   // Build webcal base URL from current location
@@ -164,7 +164,7 @@ export function CalendarAdmin() {
   const webcalBase = baseUrl.replace(/^https?:/, "webcal:");
 
   function getGroupNames(event: CalendarEvent): string {
-    if (event.allGroups) return "Alle Gruppen";
+    if (event.allGroups) return "All Groups";
     return event.groups
       .map((slug) => groups.find((g) => g.slug === slug)?.name ?? slug)
       .join(", ");
@@ -173,13 +173,13 @@ export function CalendarAdmin() {
   return (
     <div>
       <Link href="/admin" className="text-sm text-contrast-ground/70 hover:text-contrast-ground flex items-center gap-1 mb-4">
-        ← Zurück zur Übersicht
+        ← Back to Overview
       </Link>
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-bold">Kalender</h1>
+          <h1 className="text-2xl font-bold">Calendar</h1>
           <p className="text-contrast-ground/60 mt-1">
-            Aktivitäten und Gruppen verwalten
+            Manage activities and groups
           </p>
         </div>
 
@@ -189,14 +189,14 @@ export function CalendarAdmin() {
             color={activeTab === "events" ? "primary" : "secondary"}
             onClick={() => setActiveTab("events")}
           >
-            Aktivitäten
+            Activities
           </Button>
           <Button
             size="small"
             color={activeTab === "groups" ? "primary" : "secondary"}
             onClick={() => setActiveTab("groups")}
           >
-            Gruppen
+            Groups
           </Button>
         </div>
       </div>
@@ -224,7 +224,7 @@ export function CalendarAdmin() {
                     }}
                   >
                     <Plus className="w-4 h-4 mr-2" />
-                    Aktivität hinzufügen
+                    Add Activity
                   </Button>
                 </DialogTrigger>
 
@@ -253,18 +253,18 @@ export function CalendarAdmin() {
             <div className="text-center py-12">
               <AlertTriangle className="w-10 h-10 mx-auto text-brand-red/60 mb-3" />
               <p className="text-brand-red/80">
-                Fehler beim Laden der Aktivitäten.
+                Error loading activities.
               </p>
             </div>
           ) : eventsLoading ? (
             <p className="text-contrast-ground/60 text-center py-12">
-              Laden...
+              Loading...
             </p>
           ) : events.length === 0 ? (
             <div className="text-center py-16">
               <CalendarDays className="w-12 h-12 mx-auto text-contrast-ground/30 mb-4" />
               <p className="text-contrast-ground/60">
-                Noch keine Aktivitäten vorhanden.
+                No activities yet.
               </p>
             </div>
           ) : (
@@ -272,11 +272,11 @@ export function CalendarAdmin() {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Aktivität</TableHead>
-                    <TableHead>Datum</TableHead>
-                    <TableHead>Zeit</TableHead>
-                    <TableHead>Gruppen</TableHead>
-                    <TableHead className="text-right">Aktionen</TableHead>
+                    <TableHead>Activity</TableHead>
+                    <TableHead>Date</TableHead>
+                    <TableHead>Time</TableHead>
+                    <TableHead>Groups</TableHead>
+                    <TableHead className="text-right">Actions</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -324,7 +324,7 @@ export function CalendarAdmin() {
                         <div className="flex flex-wrap gap-1">
                           {event.allGroups ? (
                             <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-primary/15 text-primary">
-                              Alle
+                              All
                             </span>
                           ) : (
                             event.groups.map((slug) => (
@@ -347,16 +347,16 @@ export function CalendarAdmin() {
                             <button
                               className="p-1.5 rounded hover:bg-contrast-ground/10 transition-colors"
                               onClick={() => setEditingEvent(event)}
-                              title="Bearbeiten"
-                              aria-label="Aktivität bearbeiten"
+                              title="Edit"
+                              aria-label="Edit activity"
                             >
                               <Pencil className="w-4 h-4" />
                             </button>
                             <button
                               className="p-1.5 rounded hover:bg-brand-red/10 text-brand-red transition-colors"
                               onClick={() => setDeletingEvent(event)}
-                              title="Löschen"
-                              aria-label="Aktivität löschen"
+                              title="Delete"
+                              aria-label="Delete activity"
                             >
                               <Trash2 className="w-4 h-4" />
                             </button>
@@ -380,7 +380,7 @@ export function CalendarAdmin() {
             <div className="mb-6 p-4 rounded-lg bg-primary/5 border border-primary/15">
               <h3 className="text-sm font-semibold mb-3 flex items-center gap-2">
                 <CalendarDays className="w-4 h-4" />
-                Kalender-Abonnement Links
+                Calendar Subscription Links
               </h3>
               <div className="space-y-2 text-sm">
                 {groups.map((g) => (
@@ -400,14 +400,14 @@ export function CalendarAdmin() {
                   </div>
                 ))}
                 <div className="flex items-center gap-2 pt-1 border-t border-primary/10">
-                  <span className="font-medium min-w-[80px]">Alle:</span>
+                  <span className="font-medium min-w-[80px]">All:</span>
                   <code className="flex-1 text-xs bg-contrast-ground/5 px-2 py-1 rounded truncate">
                     {webcalBase}/cal/all.ics
                   </code>
                   <CopyButton text={`${webcalBase}/cal/all.ics`} />
                 </div>
                 <div className="flex items-center gap-2 pt-1 border-t border-primary/10">
-                  <span className="font-medium min-w-[80px] text-contrast-ground/60">Benutzerdefiniert:</span>
+                  <span className="font-medium min-w-[80px] text-contrast-ground/60">Custom:</span>
                   <code className="flex-1 text-xs bg-contrast-ground/5 px-2 py-1 rounded truncate">
                     {webcalBase}/cal/feed.ics?groups=slug1,slug2
                   </code>
@@ -433,7 +433,7 @@ export function CalendarAdmin() {
                     onClick={() => setIsCreatingGroup(true)}
                   >
                     <Plus className="w-4 h-4 mr-2" />
-                    Gruppe hinzufügen
+                    Add Group
                   </Button>
                 </DialogTrigger>
 
@@ -465,18 +465,18 @@ export function CalendarAdmin() {
             <div className="text-center py-12">
               <AlertTriangle className="w-10 h-10 mx-auto text-brand-red/60 mb-3" />
               <p className="text-brand-red/80">
-                Fehler beim Laden der Gruppen.
+                Error loading groups.
               </p>
             </div>
           ) : groupsLoading ? (
             <p className="text-contrast-ground/60 text-center py-12">
-              Laden...
+              Loading...
             </p>
           ) : groups.length === 0 ? (
             <div className="text-center py-16">
               <Users className="w-12 h-12 mx-auto text-contrast-ground/30 mb-4" />
               <p className="text-contrast-ground/60">
-                Noch keine Gruppen vorhanden.
+                No groups yet.
               </p>
             </div>
           ) : (
@@ -486,8 +486,8 @@ export function CalendarAdmin() {
                   <TableRow>
                     <TableHead>Name</TableHead>
                     <TableHead>Slug</TableHead>
-                    <TableHead>Reihenfolge</TableHead>
-                    <TableHead className="text-right">Aktionen</TableHead>
+                    <TableHead>Order</TableHead>
+                    <TableHead className="text-right">Actions</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -518,16 +518,16 @@ export function CalendarAdmin() {
                             <button
                               className="p-1.5 rounded hover:bg-contrast-ground/10 transition-colors"
                               onClick={() => setEditingGroup(group)}
-                              title="Bearbeiten"
-                              aria-label="Gruppe bearbeiten"
+                              title="Edit"
+                              aria-label="Edit group"
                             >
                               <Pencil className="w-4 h-4" />
                             </button>
                             <button
                               className="p-1.5 rounded hover:bg-brand-red/10 text-brand-red transition-colors"
                               onClick={() => setDeletingGroup(group)}
-                              title="Löschen"
-                              aria-label="Gruppe löschen"
+                              title="Delete"
+                              aria-label="Delete group"
                             >
                               <Trash2 className="w-4 h-4" />
                             </button>
@@ -551,18 +551,17 @@ export function CalendarAdmin() {
         }}
       >
         <Dialog>
-          <DialogTitle>Aktivität löschen</DialogTitle>
+          <DialogTitle>Delete Activity</DialogTitle>
           <p className="text-contrast-ground/70">
-            Möchtest du{" "}
+            Are you sure you want to delete{" "}
             <span className="font-semibold">
               &ldquo;{deletingEvent?.title}&rdquo;
-            </span>{" "}
-            wirklich löschen? Diese Aktion kann nicht rückgängig gemacht
-            werden.
+            </span>
+            ? This action cannot be undone.
           </p>
           <DialogActions>
             <DialogClose>
-              <Button size="medium">Abbrechen</Button>
+              <Button size="medium">Cancel</Button>
             </DialogClose>
             <Button
               size="medium"
@@ -575,7 +574,7 @@ export function CalendarAdmin() {
                 }
               }}
             >
-              {deleteEventMutation.isPending ? "Löschen..." : "Löschen"}
+              {deleteEventMutation.isPending ? "Deleting..." : "Delete"}
             </Button>
           </DialogActions>
         </Dialog>
@@ -589,18 +588,17 @@ export function CalendarAdmin() {
         }}
       >
         <Dialog>
-          <DialogTitle>Gruppe löschen</DialogTitle>
+          <DialogTitle>Delete Group</DialogTitle>
           <p className="text-contrast-ground/70">
-            Möchtest du die Gruppe{" "}
+            Are you sure you want to delete the group{" "}
             <span className="font-semibold">
               &ldquo;{deletingGroup?.name}&rdquo;
-            </span>{" "}
-            wirklich löschen? Bestehende Aktivitäten, die dieser Gruppe
-            zugeordnet sind, werden nicht gelöscht.
+            </span>
+            ? Existing activities assigned to this group will not be deleted.
           </p>
           <DialogActions>
             <DialogClose>
-              <Button size="medium">Abbrechen</Button>
+              <Button size="medium">Cancel</Button>
             </DialogClose>
             <Button
               size="medium"
@@ -613,7 +611,7 @@ export function CalendarAdmin() {
                 }
               }}
             >
-              {deleteGroupMutation.isPending ? "Löschen..." : "Löschen"}
+              {deleteGroupMutation.isPending ? "Deleting..." : "Delete"}
             </Button>
           </DialogActions>
         </Dialog>

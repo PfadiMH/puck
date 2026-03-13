@@ -48,7 +48,7 @@ export function NavbarItemsDesktop({ data }: NavbarComponentsProps) {
         {logo && <NavbarLogo logo={logo} />}
       </div>
 
-      <div className="flex items-center">
+      <div className="flex items-center pr-4">
         <div className="flex gap-4 flex-wrap">
           <Render config={navbarConfig} data={rightItems} />
         </div>
@@ -57,7 +57,9 @@ export function NavbarItemsDesktop({ data }: NavbarComponentsProps) {
             <NavbarSearch />
           </div>
         )}
-        <NavbarCartIcon />
+        <div className="ml-4">
+          <NavbarCartIcon />
+        </div>
       </div>
     </div>
   );
