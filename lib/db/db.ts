@@ -63,6 +63,7 @@ export interface DatabaseService {
   saveProduct(product: ProductInput): Promise<Product>;
   updateProduct(id: string, product: ProductInput): Promise<Product | null>;
   deleteProduct(id: string): Promise<void>;
+  reorderProducts(orderedIds: string[]): Promise<void>;
   getShopSettings(): Promise<ShopSettings>;
   saveShopSettings(settings: ShopSettings): Promise<void>;
   decrementStock(

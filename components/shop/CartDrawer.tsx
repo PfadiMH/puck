@@ -16,12 +16,11 @@ import {
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useCart } from "./CartProvider";
 
-/** Cart item with validation info overlaid */
 interface CartItemStatus {
-  unavailable?: boolean; // product deleted/deactivated
-  outOfStock?: boolean; // variant stock = 0
-  lowStock?: number; // stock < requested quantity
-  priceChanged?: number; // new price if different
+  unavailable?: boolean;
+  outOfStock?: boolean;
+  stock?: number;
+  priceChanged?: number;
 }
 
 export function CartDrawer() {
@@ -72,7 +71,7 @@ export function CartDrawer() {
           continue;
         }
 
-        const status: CartItemStatus = {};
+        const status: CartItemStatus = { stock: variant.stock };
         const currentPrice = getVariantPrice(product.price, variant);
 
         if (currentPrice !== item.price) {
@@ -82,13 +81,9 @@ export function CartDrawer() {
 
         if (variant.stock === 0) {
           status.outOfStock = true;
-        } else if (variant.stock < item.quantity) {
-          status.lowStock = variant.stock;
         }
 
-        if (Object.keys(status).length > 0) {
-          statuses[key] = status;
-        }
+        statuses[key] = status;
       }
 
       setItemStatuses(statuses);
@@ -128,9 +123,11 @@ export function CartDrawer() {
     return () => document.removeEventListener("keydown", handleEscape);
   }, [isCartOpen, setCartOpen]);
 
-  const hasIssues = Object.values(itemStatuses).some(
-    (s) => s.unavailable || s.outOfStock
-  );
+  const hasIssues = items.some((item) => {
+    const key = `${item.productId}-${item.variantIndex}`;
+    const s = itemStatuses[key];
+    return s?.unavailable || s?.outOfStock || (s?.stock != null && item.quantity > s.stock);
+  });
 
   async function handleCheckout() {
     if (isCheckingOut || hasIssues) return;
@@ -263,7 +260,6 @@ export function CartDrawer() {
                         {formatPrice(item.price)}
                       </p>
 
-                      {/* Validation warnings */}
                       {status?.unavailable && (
                         <p className="text-xs text-brand-red mt-1 flex items-center gap-1">
                           <AlertTriangle className="w-3 h-3" />
@@ -276,10 +272,10 @@ export function CartDrawer() {
                           Sold out
                         </p>
                       )}
-                      {status?.lowStock && (
+                      {status?.stock != null && status.stock > 0 && item.quantity > status.stock && (
                         <p className="text-xs text-brand-red/80 mt-1 flex items-center gap-1">
                           <AlertTriangle className="w-3 h-3" />
-                          Only {status.lowStock} left
+                          Only {status.stock} available
                         </p>
                       )}
 
@@ -313,8 +309,7 @@ export function CartDrawer() {
                           disabled={
                             status?.outOfStock ||
                             status?.unavailable ||
-                            (status?.lowStock != null &&
-                              item.quantity >= status.lowStock)
+                            (status?.stock != null && item.quantity >= status.stock)
                           }
                           aria-label="Increase quantity"
                         >

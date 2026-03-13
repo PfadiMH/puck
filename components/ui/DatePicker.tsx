@@ -50,11 +50,10 @@ function DatePicker({
         <button
           type="button"
           className={cn(
-            "flex items-center gap-2 px-3 py-2 w-full",
-            "rounded-md border-2 border-primary/30",
-            "bg-white text-gray-900 text-sm text-left",
-            "hover:border-primary/50",
-            "focus:outline-none focus:ring-2 focus:ring-primary/60 focus:border-primary",
+            "flex items-center gap-2 px-[15px] py-[12px] w-full box-border",
+            "rounded-[4px] border border-[var(--puck-color-grey-09)]",
+            "bg-[var(--puck-color-white)] text-[14px] text-left font-[inherit]",
+            "hover:bg-[var(--puck-color-azure-10)] hover:border-[var(--puck-color-grey-05)]",
             "disabled:cursor-not-allowed disabled:opacity-50",
             !value && "text-gray-500",
             className

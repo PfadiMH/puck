@@ -186,17 +186,32 @@ export class MockDatabaseService implements DatabaseService {
   // --- Shop ---
 
   async getProducts(): Promise<Product[]> {
-    return [...this.products].sort(
-      (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-    );
+    return [...this.products].sort((a, b) => {
+      const orderA = a.order ?? Infinity;
+      const orderB = b.order ?? Infinity;
+      if (orderA !== orderB) return orderA - orderB;
+      return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+    });
   }
 
   async getActiveProducts(): Promise<Product[]> {
     return this.products
       .filter((p) => p.active)
-      .sort(
-        (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-      );
+      .sort((a, b) => {
+        const orderA = a.order ?? Infinity;
+        const orderB = b.order ?? Infinity;
+        if (orderA !== orderB) return orderA - orderB;
+        return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+      });
+  }
+
+  async reorderProducts(orderedIds: string[]): Promise<void> {
+    orderedIds.forEach((id, index) => {
+      const product = this.products.find((p) => p._id === id);
+      if (product) {
+        product.order = index;
+      }
+    });
   }
 
   async getProduct(id: string): Promise<Product | null> {

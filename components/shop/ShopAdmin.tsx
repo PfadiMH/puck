@@ -21,14 +21,15 @@ import {
   deleteProduct,
   getProducts,
   getShopSettings,
+  reorderProducts,
   saveShopSettings,
 } from "@lib/db/shop-actions";
 import type { Product, ShopSettings } from "@lib/shop/types";
 import { formatPrice } from "@lib/shop/utils";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Package, Pencil, Plus, Trash2 } from "lucide-react";
+import { ChevronDown, ChevronUp, GripVertical, Package, Pencil, Plus, Trash2 } from "lucide-react";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { ProductEditor } from "./ProductEditor";
 import { ShopSettingsForm } from "./ShopSettings";
@@ -42,6 +43,10 @@ export function ShopAdmin() {
   );
   const [deletingProduct, setDeletingProduct] = useState<Product | null>(null);
   const [highlightId, setHighlightId] = useState<string | null>(null);
+  const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
+  const [dropTargetIndex, setDropTargetIndex] = useState<number | null>(null);
+  const [isReordering, setIsReordering] = useState(false);
+  const dragCounter = useRef(0);
 
   const { data: products = [], isLoading } = useQuery({
     queryKey: ["admin-products"],
@@ -74,6 +79,89 @@ export function ShopAdmin() {
     },
     onError: () => toast.error("Error deleting product"),
   });
+
+  const reorderMutation = useMutation({
+    mutationFn: (orderedIds: string[]) => reorderProducts(orderedIds),
+    onError: () => toast.error("Error reordering products"),
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ["admin-products"] });
+    },
+  });
+
+  const handleDragStart = (index: number) => {
+    if (isReordering) return;
+    setDraggedIndex(index);
+  };
+
+  const handleDragEnd = useCallback(() => {
+    if (draggedIndex !== null && dropTargetIndex !== null && draggedIndex !== dropTargetIndex && !isReordering) {
+      const newProducts = [...products];
+      const [dragged] = newProducts.splice(draggedIndex, 1);
+      const targetIndex = draggedIndex < dropTargetIndex ? dropTargetIndex - 1 : dropTargetIndex;
+      newProducts.splice(targetIndex, 0, dragged);
+      const orderedIds = newProducts.map((p) => p._id);
+      
+      const previousProducts = products;
+      queryClient.setQueryData(["admin-products"], newProducts);
+      setIsReordering(true);
+      
+      reorderMutation.mutate(orderedIds, {
+        onError: () => {
+          queryClient.setQueryData(["admin-products"], previousProducts);
+        },
+        onSettled: () => {
+          setIsReordering(false);
+        },
+      });
+    }
+    setDraggedIndex(null);
+    setDropTargetIndex(null);
+    dragCounter.current = 0;
+  }, [draggedIndex, dropTargetIndex, products, reorderMutation, queryClient, isReordering]);
+
+  const moveProduct = useCallback((index: number, direction: "up" | "down") => {
+    if (isReordering) return;
+    const targetIndex = direction === "up" ? index - 1 : index + 1;
+    if (targetIndex < 0 || targetIndex >= products.length) return;
+    
+    const newProducts = [...products];
+    [newProducts[index], newProducts[targetIndex]] = [newProducts[targetIndex], newProducts[index]];
+    const orderedIds = newProducts.map((p) => p._id);
+    
+    const previousProducts = products;
+    queryClient.setQueryData(["admin-products"], newProducts);
+    setIsReordering(true);
+    
+    reorderMutation.mutate(orderedIds, {
+      onError: () => {
+        queryClient.setQueryData(["admin-products"], previousProducts);
+      },
+      onSettled: () => {
+        setIsReordering(false);
+      },
+    });
+  }, [products, reorderMutation, queryClient, isReordering]);
+
+  const handleDragOver = (e: React.DragEvent, index: number) => {
+    e.preventDefault();
+    if (draggedIndex !== null && index !== draggedIndex) {
+      setDropTargetIndex(index);
+    }
+  };
+
+  const handleDragEnter = (index: number) => {
+    dragCounter.current++;
+    if (draggedIndex !== null && index !== draggedIndex) {
+      setDropTargetIndex(index);
+    }
+  };
+
+  const handleDragLeave = () => {
+    dragCounter.current--;
+    if (dragCounter.current === 0) {
+      setDropTargetIndex(null);
+    }
+  };
 
   const settingsMutation = useMutation({
     mutationFn: (s: ShopSettings) => saveShopSettings(s),
@@ -187,6 +275,7 @@ export function ShopAdmin() {
               <Table>
                 <TableHeader>
                   <TableRow>
+                    <TableHead className="w-10"><span className="sr-only">Reorder</span></TableHead>
                     <TableHead>Product</TableHead>
                     <TableHead>Price</TableHead>
                     <TableHead>Stock</TableHead>
@@ -195,16 +284,51 @@ export function ShopAdmin() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {products.map((product) => (
+                  {products.map((product, index) => (
                     <TableRow
                       key={product._id}
                       id={`product-row-${product._id}`}
-                      className={
+                      draggable
+                      onDragStart={() => handleDragStart(index)}
+                      onDragEnd={handleDragEnd}
+                      onDragOver={(e) => handleDragOver(e, index)}
+                      onDragEnter={() => handleDragEnter(index)}
+                      onDragLeave={handleDragLeave}
+                      className={`${
                         product._id === highlightId
                           ? "animate-pulse bg-primary/10"
-                          : undefined
-                      }
+                          : ""
+                      } ${
+                        draggedIndex === index ? "opacity-50" : ""
+                      } ${
+                        dropTargetIndex === index
+                          ? "ring-2 ring-primary ring-inset"
+                          : ""
+                      }`}
                     >
+                      <TableCell>
+                        <div className="flex items-center gap-1">
+                          <GripVertical className="w-4 h-4 text-contrast-ground/40 cursor-grab active:cursor-grabbing" />
+                          <div className="flex flex-col">
+                            <button
+                              onClick={() => moveProduct(index, "up")}
+                              disabled={index === 0 || isReordering}
+                              aria-label={`Move ${product.name} up`}
+                              className="p-0.5 hover:bg-contrast-ground/10 rounded disabled:opacity-30 disabled:cursor-not-allowed"
+                            >
+                              <ChevronUp className="w-3 h-3" />
+                            </button>
+                            <button
+                              onClick={() => moveProduct(index, "down")}
+                              disabled={index === products.length - 1 || isReordering}
+                              aria-label={`Move ${product.name} down`}
+                              className="p-0.5 hover:bg-contrast-ground/10 rounded disabled:opacity-30 disabled:cursor-not-allowed"
+                            >
+                              <ChevronDown className="w-3 h-3" />
+                            </button>
+                          </div>
+                        </div>
+                      </TableCell>
                       <TableCell>
                         <div className="flex items-center gap-3">
                           {product.images[0] ? (

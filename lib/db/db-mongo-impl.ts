@@ -501,6 +501,7 @@ export class MongoService implements DatabaseService {
       options: r.options,
       variants: r.variants,
       active: r.active,
+      order: r.order,
       createdAt: r.createdAt,
       updatedAt: r.updatedAt,
     };
@@ -509,7 +510,7 @@ export class MongoService implements DatabaseService {
   async getProducts(): Promise<Product[]> {
     const results = await this.productCol()
       .find()
-      .sort({ createdAt: -1 })
+      .sort({ order: 1, createdAt: -1 })
       .toArray();
     return results.map((r) => this.toProduct(r));
   }
@@ -517,9 +518,21 @@ export class MongoService implements DatabaseService {
   async getActiveProducts(): Promise<Product[]> {
     const results = await this.productCol()
       .find({ active: true })
-      .sort({ createdAt: -1 })
+      .sort({ order: 1, createdAt: -1 })
       .toArray();
     return results.map((r) => this.toProduct(r));
+  }
+
+  async reorderProducts(orderedIds: string[]): Promise<void> {
+    const bulkOps = orderedIds.map((id, index) => ({
+      updateOne: {
+        filter: { _id: id },
+        update: { $set: { order: index } },
+      },
+    }));
+    if (bulkOps.length > 0) {
+      await this.productCol().bulkWrite(bulkOps);
+    }
   }
 
   async getProduct(id: string): Promise<Product | null> {

@@ -1,16 +1,22 @@
-import { filePickerField } from "@components/puck-fields/file-picker";
+import { filePickerField, multiFilePickerField } from "@components/puck-fields/file-picker";
 import type { ComponentConfig } from "@puckeditor/core";
 import NextImage from "next/image";
 import React from "react";
 
 export type GalleryProps = {
   images: Array<{ src?: string; alt: string }>;
+  bulkImages?: string[];
   columns: number;
   gap: string;
 };
 
-function Gallery({ images, columns, gap }: GalleryProps) {
-  if (!images || images.length === 0) {
+function Gallery({ images, bulkImages, columns, gap }: GalleryProps) {
+  const allImages = [
+    ...(images || []).map((img) => ({ src: img.src, alt: img.alt })),
+    ...(bulkImages || []).map((src) => ({ src, alt: "" })),
+  ];
+
+  if (allImages.length === 0) {
     return (
       <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center text-gray-500">
         No images added
@@ -49,7 +55,7 @@ function Gallery({ images, columns, gap }: GalleryProps) {
           "--gallery-desktop": colTemplate,
         } as React.CSSProperties}
       >
-        {images.map((image, idx) =>
+        {allImages.map((image, idx) =>
           image.src ? (
             <div key={idx} className="aspect-[4/3] relative overflow-hidden rounded-lg">
               <NextImage
@@ -79,9 +85,13 @@ export const galleryConfig: ComponentConfig<GalleryProps> = {
   label: "Gallery",
   render: Gallery,
   fields: {
+    bulkImages: {
+      ...multiFilePickerField,
+      label: "Quick Add (Multiple)",
+    },
     images: {
       type: "array",
-      label: "Images",
+      label: "Images (with Alt Text)",
       arrayFields: {
         src: {
           ...filePickerField,
@@ -120,6 +130,7 @@ export const galleryConfig: ComponentConfig<GalleryProps> = {
   },
   defaultProps: {
     images: [],
+    bulkImages: [],
     columns: 3,
     gap: "1rem",
   },

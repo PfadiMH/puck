@@ -48,16 +48,16 @@ export function NavbarItemsDesktop({ data }: NavbarComponentsProps) {
         {logo && <NavbarLogo logo={logo} />}
       </div>
 
-      <div className="flex items-center pr-4">
-        <div className="flex gap-4 flex-wrap">
+      <div className="flex items-center pr-4 overflow-hidden">
+        <div className="flex gap-4 flex-wrap min-w-0 flex-1">
           <Render config={navbarConfig} data={rightItems} />
         </div>
         {data.root.props?.enableSearch === "true" && (
-          <div className="flex-1 flex justify-center">
+          <div className="flex-1 flex justify-center min-w-0">
             <NavbarSearch />
           </div>
         )}
-        <div className="ml-4">
+        <div className="ml-4 flex-shrink-0">
           <NavbarCartIcon />
         </div>
       </div>

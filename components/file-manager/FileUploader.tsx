@@ -8,14 +8,17 @@ interface FileUploaderProps {
   onUpload: (file: File) => Promise<void>;
   accept?: string;
   multiple?: boolean;
+  allowFolders?: boolean;
 }
 
 export function FileUploader({
   onUpload,
   accept = ACCEPT_STRING,
   multiple = true,
+  allowFolders = true,
 }: FileUploaderProps) {
   const inputId = useId();
+  const folderInputId = useId();
   const [isDragging, setIsDragging] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState<{ current: number; total: number } | null>(null);
@@ -114,6 +117,16 @@ export function FileUploader({
         disabled={isUploading}
         multiple={multiple}
       />
+      {allowFolders && (
+        <input
+          type="file"
+          className="hidden"
+          id={folderInputId}
+          onChange={handleChange}
+          disabled={isUploading}
+          {...{ webkitdirectory: "", directory: "" } as React.InputHTMLAttributes<HTMLInputElement>}
+        />
+      )}
       <label
         htmlFor={inputId}
         className="flex flex-col items-center cursor-pointer"
@@ -131,6 +144,15 @@ export function FileUploader({
             <span className="text-contrast-ground/50 text-sm mt-1">
               Images, Videos, PDF or ZIP (max {MAX_FILE_SIZE_MB}MB per file)
             </span>
+            {allowFolders && (
+              <label
+                htmlFor={folderInputId}
+                className="text-primary text-sm mt-2 cursor-pointer hover:underline"
+                onClick={(e) => e.stopPropagation()}
+              >
+                or upload a folder
+              </label>
+            )}
           </>
         )}
       </label>

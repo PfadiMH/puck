@@ -463,7 +463,7 @@ function ProductCard({
   product: Product;
   size: WebshopSize;
 }) {
-  const { addItem, setCartOpen } = useCart();
+  const { items, addItem, setCartOpen } = useCart();
 
   // Lazy state initializer — avoids extra render from useEffect
   const [selectedOptions, setSelectedOptions] = useState<
@@ -501,10 +501,16 @@ function ProductCard({
   const variantIndex = getSelectedVariantIndex();
   const variant = variantIndex >= 0 ? product.variants[variantIndex] : null;
   const currentPrice = variant ? getVariantPrice(product.price, variant) : product.price;
-  const inStock = variant ? variant.stock > 0 : false;
+  
+  const cartQuantity = items.find(
+    (i) => i.productId === product._id && i.variantIndex === variantIndex
+  )?.quantity ?? 0;
+  const stock = variant?.stock ?? 0;
+  const canAdd = stock > cartQuantity;
+  const inStock = stock > 0 && canAdd;
 
   function handleAdd() {
-    if (!variant || variantIndex < 0) return;
+    if (!variant || variantIndex < 0 || !canAdd) return;
     addItem({
       productId: product._id,
       variantIndex,
@@ -515,24 +521,22 @@ function ProductCard({
       image: product.images[0],
     });
     setAdded(true);
-    // Clear previous timers before setting new ones
     clearTimeout(addTimerRef.current);
     clearTimeout(cartTimerRef.current);
     addTimerRef.current = setTimeout(() => setAdded(false), 1500);
-    // Brief delay so the user sees the button feedback before drawer opens
     cartTimerRef.current = setTimeout(() => setCartOpen(true), 300);
   }
 
   return (
     <div
       style={{ width: sizePixels[size], minWidth: sizePixels[size] }}
-      className="group rounded-xl overflow-hidden bg-elevated shadow-sm hover:shadow-md transition-shadow"
+      className="group rounded-xl overflow-hidden bg-elevated shadow-sm hover:shadow-md transition-shadow flex flex-col h-full"
     >
       {/* Image carousel */}
       <ImageCarousel images={product.images} name={product.name} size={size} />
 
       {/* Content */}
-      <div className={cn("p-4", size === "klein" && "p-3")}>
+      <div className={cn("p-4 flex flex-col flex-1", size === "klein" && "p-3")}>
         <h3
           className={cn(
             "font-semibold mb-1 truncate",
@@ -541,44 +545,50 @@ function ProductCard({
         >
           {product.name}
         </h3>
-        {product.description && size !== "klein" && (
-          <p className="text-sm text-contrast-ground/60 line-clamp-2 mb-3">
-            {product.description}
-          </p>
-        )}
+        
+        {/* Description - fixed height area */}
+        <div className={cn("mb-3", size === "klein" ? "hidden" : "min-h-[2.5rem]")}>
+          {product.description && (
+            <p className="text-sm text-contrast-ground/60 line-clamp-2">
+              {product.description}
+            </p>
+          )}
+        </div>
 
-        {/* Options */}
-        {product.options.map((opt) => (
-          <div key={opt.name} className="mb-2">
-            <label className="text-xs font-medium text-contrast-ground/70 block mb-1">
-              {opt.name}
-            </label>
-            <div className="flex flex-wrap gap-1.5">
-              {opt.values.map((val) => (
-                <button
-                  key={val}
-                  className={cn(
-                    "px-2.5 py-1 text-xs rounded-full border transition-colors",
-                    selectedOptions[opt.name] === val
-                      ? "border-primary bg-primary/10 text-primary font-medium"
-                      : "border-contrast-ground/15 hover:border-contrast-ground/30"
-                  )}
-                  onClick={() =>
-                    setSelectedOptions((prev) => ({
-                      ...prev,
-                      [opt.name]: val,
-                    }))
-                  }
-                >
-                  {val}
-                </button>
-              ))}
+        {/* Options - grows to fill space */}
+        <div className="flex-1">
+          {product.options.map((opt) => (
+            <div key={opt.name} className="mb-2">
+              <label className="text-xs font-medium text-contrast-ground/70 block mb-1">
+                {opt.name}
+              </label>
+              <div className="flex flex-wrap gap-1.5">
+                {opt.values.map((val) => (
+                  <button
+                    key={val}
+                    className={cn(
+                      "px-2.5 py-1 text-xs rounded-full border transition-colors",
+                      selectedOptions[opt.name] === val
+                        ? "border-primary bg-primary/10 text-primary font-medium"
+                        : "border-contrast-ground/15 hover:border-contrast-ground/30"
+                    )}
+                    onClick={() =>
+                      setSelectedOptions((prev) => ({
+                        ...prev,
+                        [opt.name]: val,
+                      }))
+                    }
+                  >
+                    {val}
+                  </button>
+                ))}
+              </div>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
 
-        {/* Price + Add to cart */}
-        <div className="flex items-center justify-between mt-3 pt-3 border-t border-contrast-ground/10">
+        {/* Price + Add to cart - always at bottom */}
+        <div className="flex items-center justify-between gap-4 pt-3 border-t border-contrast-ground/10 mt-auto">
           <span
             className={cn(
               "font-bold",
@@ -672,7 +682,7 @@ export function WebshopClient({
   }
 
   return (
-    <div className="flex flex-wrap justify-center gap-5">
+    <div className="flex flex-wrap justify-center items-stretch gap-5">
       {products.map((product) => (
         <ProductCard key={product._id} product={product} size={size} />
       ))}

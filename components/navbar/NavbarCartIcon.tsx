@@ -16,7 +16,7 @@ export function NavbarCartIcon({ compact }: { compact?: boolean }) {
     >
       <ShoppingCart className={compact ? "w-4 h-4" : "w-[18px] h-[18px]"} />
       {totalItems > 0 && (
-        <span className="absolute -top-1 -right-1 bg-primary text-contrast-primary text-[10px] font-bold rounded-full min-w-[18px] h-[18px] flex items-center justify-center px-1">
+        <span className="absolute top-0 right-0 translate-x-1/3 -translate-y-1/3 bg-primary text-contrast-primary text-[10px] font-bold rounded-full min-w-[18px] h-[18px] flex items-center justify-center px-1">
           {totalItems > 99 ? "99+" : totalItems}
         </span>
       )}
