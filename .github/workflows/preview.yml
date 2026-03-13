@@ -12,8 +12,7 @@ jobs:
   deploy-preview:
     if: >
       github.event.action != 'closed' &&
-      github.event.pull_request.user.type != 'Bot' &&
-      github.event.pull_request.head.repo.full_name == github.repository
+      github.event.pull_request.user.type != 'Bot'
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -117,8 +116,7 @@ jobs:
   cleanup-preview:
     if: >
       github.event.action == 'closed' &&
-      github.event.pull_request.user.type != 'Bot' &&
-      github.event.pull_request.head.repo.full_name == github.repository
+      github.event.pull_request.user.type != 'Bot'
     runs-on: ubuntu-latest
     permissions:
       pull-requests: write
