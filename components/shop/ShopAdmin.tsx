@@ -21,14 +21,15 @@ import {
   deleteProduct,
   getProducts,
   getShopSettings,
+  reorderProducts,
   saveShopSettings,
 } from "@lib/db/shop-actions";
 import type { Product, ShopSettings } from "@lib/shop/types";
 import { formatPrice } from "@lib/shop/utils";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Package, Pencil, Plus, Trash2 } from "lucide-react";
+import { GripVertical, Package, Pencil, Plus, Trash2 } from "lucide-react";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { ProductEditor } from "./ProductEditor";
 import { ShopSettingsForm } from "./ShopSettings";
@@ -42,6 +43,9 @@ export function ShopAdmin() {
   );
   const [deletingProduct, setDeletingProduct] = useState<Product | null>(null);
   const [highlightId, setHighlightId] = useState<string | null>(null);
+  const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
+  const [dropTargetIndex, setDropTargetIndex] = useState<number | null>(null);
+  const dragCounter = useRef(0);
 
   const { data: products = [], isLoading } = useQuery({
     queryKey: ["admin-products"],
@@ -74,6 +78,52 @@ export function ShopAdmin() {
     },
     onError: () => toast.error("Error deleting product"),
   });
+
+  const reorderMutation = useMutation({
+    mutationFn: (orderedIds: string[]) => reorderProducts(orderedIds),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["admin-products"] });
+    },
+    onError: () => toast.error("Error reordering products"),
+  });
+
+  const handleDragStart = (index: number) => {
+    setDraggedIndex(index);
+  };
+
+  const handleDragEnd = useCallback(() => {
+    if (draggedIndex !== null && dropTargetIndex !== null && draggedIndex !== dropTargetIndex) {
+      const newProducts = [...products];
+      const [dragged] = newProducts.splice(draggedIndex, 1);
+      newProducts.splice(dropTargetIndex, 0, dragged);
+      const orderedIds = newProducts.map((p) => p._id);
+      reorderMutation.mutate(orderedIds);
+    }
+    setDraggedIndex(null);
+    setDropTargetIndex(null);
+    dragCounter.current = 0;
+  }, [draggedIndex, dropTargetIndex, products, reorderMutation]);
+
+  const handleDragOver = (e: React.DragEvent, index: number) => {
+    e.preventDefault();
+    if (draggedIndex !== null && index !== draggedIndex) {
+      setDropTargetIndex(index);
+    }
+  };
+
+  const handleDragEnter = (index: number) => {
+    dragCounter.current++;
+    if (draggedIndex !== null && index !== draggedIndex) {
+      setDropTargetIndex(index);
+    }
+  };
+
+  const handleDragLeave = () => {
+    dragCounter.current--;
+    if (dragCounter.current === 0) {
+      setDropTargetIndex(null);
+    }
+  };
 
   const settingsMutation = useMutation({
     mutationFn: (s: ShopSettings) => saveShopSettings(s),
@@ -187,6 +237,7 @@ export function ShopAdmin() {
               <Table>
                 <TableHeader>
                   <TableRow>
+                    <TableHead className="w-10"></TableHead>
                     <TableHead>Product</TableHead>
                     <TableHead>Price</TableHead>
                     <TableHead>Stock</TableHead>
@@ -195,16 +246,31 @@ export function ShopAdmin() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {products.map((product) => (
+                  {products.map((product, index) => (
                     <TableRow
                       key={product._id}
                       id={`product-row-${product._id}`}
-                      className={
+                      draggable
+                      onDragStart={() => handleDragStart(index)}
+                      onDragEnd={handleDragEnd}
+                      onDragOver={(e) => handleDragOver(e, index)}
+                      onDragEnter={() => handleDragEnter(index)}
+                      onDragLeave={handleDragLeave}
+                      className={`${
                         product._id === highlightId
                           ? "animate-pulse bg-primary/10"
-                          : undefined
-                      }
+                          : ""
+                      } ${
+                        draggedIndex === index ? "opacity-50" : ""
+                      } ${
+                        dropTargetIndex === index
+                          ? "ring-2 ring-primary ring-inset"
+                          : ""
+                      }`}
                     >
+                      <TableCell className="cursor-grab active:cursor-grabbing">
+                        <GripVertical className="w-4 h-4 text-contrast-ground/40" />
+                      </TableCell>
                       <TableCell>
                         <div className="flex items-center gap-3">
                           {product.images[0] ? (

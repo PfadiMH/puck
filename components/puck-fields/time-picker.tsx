@@ -32,11 +32,10 @@ function TimePicker({
   };
 
   const selectStyles = cn(
-    "px-3 py-2 rounded-md cursor-pointer",
-    "bg-white border-2 border-primary/30",
-    "text-gray-900",
-    "hover:border-primary/50",
-    "focus:outline-none focus:ring-2 focus:ring-primary/60 focus:border-primary",
+    "px-[15px] py-[12px] rounded-[4px] cursor-pointer w-full box-border",
+    "bg-[var(--puck-color-white)] border border-[var(--puck-color-grey-09)]",
+    "text-[14px] font-[inherit]",
+    "hover:bg-[var(--puck-color-azure-10)] hover:border-[var(--puck-color-grey-05)]",
     "disabled:cursor-not-allowed disabled:opacity-50",
   );
 

@@ -39,6 +39,11 @@ export async function deleteProduct(id: string): Promise<void> {
   return dbService.deleteProduct(id);
 }
 
+export async function reorderProducts(orderedIds: string[]): Promise<void> {
+  await requireServerPermission({ all: ["shop:update"] });
+  return dbService.reorderProducts(orderedIds);
+}
+
 // --- Shop Settings ---
 
 export async function getShopSettings(): Promise<ShopSettings> {

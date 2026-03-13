@@ -157,6 +157,13 @@ export function FileManager({
     }
   }, [selectedIds.length, files]);
 
+  const handleBulkSelect = useCallback((ids: string[]) => {
+    setSelectedIds((prev) => {
+      const newIds = ids.filter((id) => !prev.includes(id));
+      return [...prev, ...newIds];
+    });
+  }, []);
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center py-12">
@@ -251,6 +258,7 @@ export function FileManager({
             files={files}
             selectedIds={selectedIds}
             onSelect={handleSelect}
+            onBulkSelect={handleBulkSelect}
             onDelete={handleDelete}
             fallbackPublicUrl={publicUrl}
           />

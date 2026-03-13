@@ -75,7 +75,7 @@ export const formConfig: ComponentConfig<FormProps> = {
         },
         placeholder: {
           type: "text",
-          label: "Placeholder",
+          label: "Placeholder (Text/Number only)",
         },
         required: {
           type: "radio",
@@ -93,12 +93,20 @@ export const formConfig: ComponentConfig<FormProps> = {
             { label: "Half Width", value: "half" },
           ],
         },
-        minLength: optionalNumberField({ label: "Min Length / Value", min: 0 }),
-        maxLength: optionalNumberField({ label: "Max Length / Value", min: 0 }),
         options: {
           type: "textarea",
-          label: "Options (comma-separated, for Radio/Checkbox)",
+          label: "Options (Radio/Checkbox only, comma-separated)",
         },
+        minLength: optionalNumberField({ 
+          label: "Min Length/Value (Text/Number only)", 
+          min: 0,
+          description: "Leave empty for no minimum",
+        }),
+        maxLength: optionalNumberField({ 
+          label: "Max Length/Value (Text/Number only)", 
+          min: 0,
+          description: "Leave empty for no maximum",
+        }),
       },
     },
   },

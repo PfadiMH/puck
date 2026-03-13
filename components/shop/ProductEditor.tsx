@@ -17,8 +17,8 @@ import type {
   ProductOption,
   ProductVariant,
 } from "@lib/shop/types";
-import { ArrowLeft, ArrowRight, ImagePlus, Plus, Trash2, X } from "lucide-react";
-import { useCallback, useEffect, useState } from "react";
+import { GripVertical, ImagePlus, Plus, Trash2, X } from "lucide-react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 
 type ProductEditorProps = {
@@ -91,6 +91,47 @@ export function ProductEditor({
   const [active, setActive] = useState(product?.active ?? true);
   const [saving, setSaving] = useState(false);
   const [showFilePicker, setShowFilePicker] = useState(false);
+  const [draggedImageIndex, setDraggedImageIndex] = useState<number | null>(null);
+  const [dropTargetIndex, setDropTargetIndex] = useState<number | null>(null);
+  const dragCounter = useRef(0);
+
+  const handleImageDragStart = (index: number) => {
+    setDraggedImageIndex(index);
+  };
+
+  const handleImageDragEnd = () => {
+    if (draggedImageIndex !== null && dropTargetIndex !== null && draggedImageIndex !== dropTargetIndex) {
+      const newImages = [...images];
+      const [draggedImage] = newImages.splice(draggedImageIndex, 1);
+      newImages.splice(dropTargetIndex, 0, draggedImage);
+      setImages(newImages);
+    }
+    setDraggedImageIndex(null);
+    setDropTargetIndex(null);
+    dragCounter.current = 0;
+  };
+
+  const handleImageDragOver = (e: React.DragEvent, index: number) => {
+    e.preventDefault();
+    if (draggedImageIndex !== null && index !== draggedImageIndex) {
+      setDropTargetIndex(index);
+    }
+  };
+
+  const handleImageDragEnter = (index: number) => {
+    dragCounter.current++;
+    if (draggedImageIndex !== null && index !== draggedImageIndex) {
+      setDropTargetIndex(index);
+    }
+  };
+
+  const handleImageDragLeave = () => {
+    dragCounter.current--;
+    if (dragCounter.current === 0) {
+      setDropTargetIndex(null);
+    }
+  };
+
   // Raw string state for variant adjustment values (avoids reformatting on every keystroke)
   const [variantAdjustmentStrings, setVariantAdjustmentStrings] = useState<
     Record<number, string>
@@ -264,13 +305,33 @@ export function ProductEditor({
         {/* Images */}
         <div>
           <label className="block text-sm font-medium mb-1">Images</label>
+          {images.length > 1 && (
+            <p className="text-xs text-contrast-ground/50 mb-2">
+              Drag to reorder. First image is the main product image.
+            </p>
+          )}
           <div className="flex flex-wrap gap-2">
             {images.map((url, i) => (
-              <div key={`${url}-${i}`} className="relative group">
+              <div
+                key={`${url}-${i}`}
+                className={`relative group ${
+                  draggedImageIndex === i ? "opacity-50" : ""
+                } ${
+                  dropTargetIndex === i
+                    ? "ring-2 ring-primary ring-offset-2"
+                    : ""
+                }`}
+                draggable
+                onDragStart={() => handleImageDragStart(i)}
+                onDragEnd={handleImageDragEnd}
+                onDragOver={(e) => handleImageDragOver(e, i)}
+                onDragEnter={() => handleImageDragEnter(i)}
+                onDragLeave={handleImageDragLeave}
+              >
                 <img
                   src={url}
                   alt=""
-                  className="w-20 h-20 rounded object-cover border border-contrast-ground/10"
+                  className="w-20 h-20 rounded object-cover border border-contrast-ground/10 cursor-grab active:cursor-grabbing"
                 />
                 <button
                   className="absolute -top-1.5 -right-1.5 bg-brand-red text-white rounded-full p-0.5 opacity-0 group-hover:opacity-100 transition-opacity"
@@ -280,35 +341,16 @@ export function ProductEditor({
                 >
                   <X className="w-3 h-3" />
                 </button>
-                {/* Reorder controls */}
                 {images.length > 1 && (
-                  <div className="absolute bottom-0 inset-x-0 flex justify-center gap-0.5 pb-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
-                    {i > 0 && (
-                      <button
-                        className="w-5 h-5 rounded bg-black/50 text-white flex items-center justify-center"
-                        onClick={() => {
-                          const next = [...images];
-                          [next[i - 1], next[i]] = [next[i], next[i - 1]];
-                          setImages(next);
-                        }}
-                        title="Move left"
-                      >
-                        <ArrowLeft className="w-3 h-3" />
-                      </button>
-                    )}
-                    {i < images.length - 1 && (
-                      <button
-                        className="w-5 h-5 rounded bg-black/50 text-white flex items-center justify-center"
-                        onClick={() => {
-                          const next = [...images];
-                          [next[i], next[i + 1]] = [next[i + 1], next[i]];
-                          setImages(next);
-                        }}
-                        title="Move right"
-                      >
-                        <ArrowRight className="w-3 h-3" />
-                      </button>
-                    )}
+                  <div className="absolute bottom-0 inset-x-0 flex justify-center pb-0.5 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
+                    <div className="w-5 h-5 rounded bg-black/50 text-white flex items-center justify-center">
+                      <GripVertical className="w-3 h-3" />
+                    </div>
+                  </div>
+                )}
+                {i === 0 && images.length > 1 && (
+                  <div className="absolute top-0 left-0 bg-primary text-white text-[10px] px-1 rounded-br">
+                    Main
                   </div>
                 )}
               </div>
@@ -328,6 +370,7 @@ export function ProductEditor({
               setShowFilePicker(false);
             }}
             onClose={() => setShowFilePicker(false)}
+            multiple
           />
         </div>
 

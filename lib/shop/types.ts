@@ -21,6 +21,7 @@ export interface Product {
   options: ProductOption[];
   variants: ProductVariant[];
   active: boolean;
+  order?: number; // display order (lower = first)
   createdAt: string;
   updatedAt: string;
 }
