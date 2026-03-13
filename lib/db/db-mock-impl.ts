@@ -8,7 +8,9 @@ import type {
 } from "@lib/calendar/types";
 import { defaultFooterData } from "@lib/config/footer.defaults";
 import { defaultNavbarData } from "@lib/config/navbar.defaults";
+import type { AppAlbum, AppAlbumInput } from "@lib/gallery/types";
 import type { OrganigrammCache } from "@lib/hitobito/types";
+import type { Rsvp, RsvpCount, RsvpInput } from "@lib/rsvp/types";
 import { defaultSecurityConfig } from "@lib/security/security-config";
 import type {
   Product,
@@ -469,5 +471,118 @@ export class MockDatabaseService implements DatabaseService {
 
   async deleteCalendarEvent(id: string): Promise<void> {
     this.calendarEvents = this.calendarEvents.filter((e) => e._id !== id);
+  }
+
+  // --- RSVP ---
+
+  private rsvps: Rsvp[] = [];
+
+  async getRsvpCount(eventId: string): Promise<RsvpCount> {
+    const eventRsvps = this.rsvps.filter((r) => r.eventId === eventId);
+    return {
+      attending: eventRsvps.filter((r) => r.status === "attending").length,
+      declined: eventRsvps.filter((r) => r.status === "declined").length,
+    };
+  }
+
+  async getDeviceRsvps(eventId: string, deviceId: string): Promise<Rsvp[]> {
+    return this.rsvps.filter(
+      (r) => r.eventId === eventId && r.deviceId === deviceId
+    );
+  }
+
+  async upsertRsvp(input: RsvpInput): Promise<Rsvp> {
+    const now = new Date().toISOString();
+    const index = this.rsvps.findIndex(
+      (r) =>
+        r.eventId === input.eventId &&
+        r.deviceId === input.deviceId &&
+        r.profileId === input.profileId
+    );
+
+    if (index !== -1) {
+      this.rsvps[index] = {
+        ...this.rsvps[index],
+        firstName: input.firstName,
+        lastName: input.lastName,
+        pfadiName: input.pfadiName,
+        comment: input.comment,
+        status: input.status,
+        updatedAt: now,
+      };
+      return this.rsvps[index];
+    }
+
+    const doc: Rsvp = {
+      _id: crypto.randomUUID(),
+      ...input,
+      createdAt: now,
+      updatedAt: now,
+    };
+    this.rsvps.push(doc);
+    return doc;
+  }
+
+  async deleteRsvp(
+    eventId: string,
+    deviceId: string,
+    profileId: string
+  ): Promise<void> {
+    this.rsvps = this.rsvps.filter(
+      (r) =>
+        !(
+          r.eventId === eventId &&
+          r.deviceId === deviceId &&
+          r.profileId === profileId
+        )
+    );
+  }
+
+  // --- App Gallery ---
+
+  private appAlbums: AppAlbum[] = [];
+
+  async getAppAlbums(): Promise<AppAlbum[]> {
+    return [...this.appAlbums].sort((a, b) => a.order - b.order);
+  }
+
+  async getVisibleAppAlbums(): Promise<AppAlbum[]> {
+    return this.appAlbums
+      .filter((a) => a.isVisible)
+      .sort((a, b) => a.order - b.order);
+  }
+
+  async getAppAlbum(id: string): Promise<AppAlbum | null> {
+    return this.appAlbums.find((a) => a._id === id) ?? null;
+  }
+
+  async saveAppAlbum(input: AppAlbumInput): Promise<AppAlbum> {
+    const now = new Date().toISOString();
+    const doc: AppAlbum = {
+      _id: crypto.randomUUID(),
+      ...input,
+      createdAt: now,
+      updatedAt: now,
+    };
+    this.appAlbums.push(doc);
+    return doc;
+  }
+
+  async updateAppAlbum(
+    id: string,
+    input: Partial<AppAlbumInput>
+  ): Promise<AppAlbum | null> {
+    const index = this.appAlbums.findIndex((a) => a._id === id);
+    if (index === -1) return null;
+    this.appAlbums[index] = {
+      ...this.appAlbums[index],
+      ...input,
+      updatedAt: new Date().toISOString(),
+    };
+    return this.appAlbums[index];
+  }
+
+  async deleteAppAlbum(id: string): Promise<void> {
+    this.appAlbums = this.appAlbums.filter((a) => a._id !== id);
   }
 }

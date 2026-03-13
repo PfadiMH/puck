@@ -29,6 +29,10 @@ export const env = createEnv({
     // Hitobito (MiData) API
     HITOBITO_BASE_URL: z.string().optional(),
     HITOBITO_API_TOKEN: z.string().optional(),
+    // Firebase Cloud Messaging (FCM)
+    FIREBASE_PROJECT_ID: z.string().optional(),
+    FIREBASE_CLIENT_EMAIL: z.string().optional(),
+    FIREBASE_PRIVATE_KEY: z.string().optional(),
   },
   client: {
     NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: z.string().optional(),
@@ -62,6 +66,10 @@ export const env = createEnv({
     // Hitobito (MiData) API
     HITOBITO_BASE_URL: process.env.HITOBITO_BASE_URL,
     HITOBITO_API_TOKEN: process.env.HITOBITO_API_TOKEN,
+    // Firebase Cloud Messaging (FCM)
+    FIREBASE_PROJECT_ID: process.env.FIREBASE_PROJECT_ID,
+    FIREBASE_CLIENT_EMAIL: process.env.FIREBASE_CLIENT_EMAIL,
+    FIREBASE_PRIVATE_KEY: process.env.FIREBASE_PRIVATE_KEY,
   },
   skipValidation: !!process.env.SKIP_ENV_VALIDATION,
   emptyStringAsUndefined: true,

@@ -8,10 +8,12 @@ import type {
 } from "@lib/calendar/types";
 import { defaultFooterData } from "@lib/config/footer.defaults";
 import type { FooterData } from "@lib/config/footer.config";
+import type { AppAlbum, AppAlbumInput } from "@lib/gallery/types";
 import { defaultNavbarData } from "@lib/config/navbar.defaults";
 import type { NavbarData } from "@lib/config/navbar.config";
 import type { PageData } from "@lib/config/page.config";
 import type { OrganigrammCache } from "@lib/hitobito/types";
+import type { Rsvp, RsvpCount, RsvpInput } from "@lib/rsvp/types";
 import { defaultSecurityConfig } from "@lib/security/security-config";
 import type { SecurityConfig } from "@lib/security/security-config";
 import type {
@@ -71,6 +73,8 @@ export class MongoService implements DatabaseService {
   private hitobitoCollectionName = "hitobito-cache";
   private calendarGroupsCollectionName = "calendar-groups";
   private calendarEventsCollectionName = "calendar-events";
+  private rsvpsCollectionName = "rsvps";
+  private appAlbumsCollectionName = "app-albums";
   private initPromise: Promise<void>;
 
   constructor(connectionString: string, dbName: string) {
@@ -191,6 +195,31 @@ export class MongoService implements DatabaseService {
     await calEventCol.createIndex({ groups: 1, date: 1, endTime: 1 });
     await calEventCol.createIndex({ allGroups: 1, date: 1, endTime: 1 });
     await calEventCol.createIndex({ date: 1, endTime: 1 });
+
+    // Ensure rsvps collection has indexes
+    const rsvpCollections = await this.db
+      .listCollections({ name: this.rsvpsCollectionName })
+      .toArray();
+    if (rsvpCollections.length === 0) {
+      await this.db.createCollection(this.rsvpsCollectionName);
+    }
+    const rsvpCol = this.db.collection(this.rsvpsCollectionName);
+    await rsvpCol.createIndex({ eventId: 1 });
+    await rsvpCol.createIndex(
+      { eventId: 1, deviceId: 1, profileId: 1 },
+      { unique: true }
+    );
+
+    // Ensure app-albums collection has indexes
+    const albumCollections = await this.db
+      .listCollections({ name: this.appAlbumsCollectionName })
+      .toArray();
+    if (albumCollections.length === 0) {
+      await this.db.createCollection(this.appAlbumsCollectionName);
+    }
+    const albumCol = this.db.collection(this.appAlbumsCollectionName);
+    await albumCol.createIndex({ order: 1 });
+    await albumCol.createIndex({ isVisible: 1 });
   }
 
   async connect(): Promise<void> {
@@ -871,5 +900,137 @@ export class MongoService implements DatabaseService {
     await this.calendarEventCol().deleteOne({
       _id: id,
     } as Partial<CalendarEventDb>);
+  }
+
+  // --- RSVP ---
+
+  private rsvpCol() {
+    return this.db.collection<Rsvp>(this.rsvpsCollectionName);
+  }
+
+  async getRsvpCount(eventId: string): Promise<RsvpCount> {
+    const pipeline = [
+      { $match: { eventId } },
+      {
+        $group: {
+          _id: "$status",
+          count: { $sum: 1 },
+        },
+      },
+    ];
+    const results = await this.rsvpCol().aggregate(pipeline).toArray();
+    const counts: RsvpCount = { attending: 0, declined: 0 };
+    for (const r of results) {
+      if (r._id === "attending") counts.attending = r.count;
+      if (r._id === "declined") counts.declined = r.count;
+    }
+    return counts;
+  }
+
+  async getDeviceRsvps(eventId: string, deviceId: string): Promise<Rsvp[]> {
+    return this.rsvpCol()
+      .find({ eventId, deviceId } as Filter<Rsvp>)
+      .toArray();
+  }
+
+  async upsertRsvp(input: RsvpInput): Promise<Rsvp> {
+    const now = new Date().toISOString();
+    const result = await this.rsvpCol().findOneAndUpdate(
+      {
+        eventId: input.eventId,
+        deviceId: input.deviceId,
+        profileId: input.profileId,
+      } as Filter<Rsvp>,
+      {
+        $set: {
+          firstName: input.firstName,
+          lastName: input.lastName,
+          pfadiName: input.pfadiName,
+          comment: input.comment,
+          status: input.status,
+          updatedAt: now,
+        },
+        $setOnInsert: {
+          _id: crypto.randomUUID(),
+          eventId: input.eventId,
+          deviceId: input.deviceId,
+          profileId: input.profileId,
+          createdAt: now,
+        },
+      },
+      { upsert: true, returnDocument: "after" }
+    );
+    return result!;
+  }
+
+  async deleteRsvp(
+    eventId: string,
+    deviceId: string,
+    profileId: string
+  ): Promise<void> {
+    await this.rsvpCol().deleteOne({
+      eventId,
+      deviceId,
+      profileId,
+    } as Filter<Rsvp>);
+  }
+
+  // --- App Gallery ---
+
+  private appAlbumCol() {
+    return this.db.collection<AppAlbum>(this.appAlbumsCollectionName);
+  }
+
+  async getAppAlbums(): Promise<AppAlbum[]> {
+    return this.appAlbumCol().find().sort({ order: 1 }).toArray();
+  }
+
+  async getVisibleAppAlbums(): Promise<AppAlbum[]> {
+    return this.appAlbumCol()
+      .find({ isVisible: true } as Filter<AppAlbum>)
+      .sort({ order: 1 })
+      .toArray();
+  }
+
+  async getAppAlbum(id: string): Promise<AppAlbum | null> {
+    return this.appAlbumCol().findOne({
+      _id: id,
+    } as Partial<AppAlbum>);
+  }
+
+  async saveAppAlbum(input: AppAlbumInput): Promise<AppAlbum> {
+    const now = new Date().toISOString();
+    const doc: AppAlbum = {
+      _id: crypto.randomUUID(),
+      ...input,
+      createdAt: now,
+      updatedAt: now,
+    };
+    await this.appAlbumCol().insertOne(doc);
+    return doc;
+  }
+
+  async updateAppAlbum(
+    id: string,
+    input: Partial<AppAlbumInput>
+  ): Promise<AppAlbum | null> {
+    const now = new Date().toISOString();
+    const result = await this.appAlbumCol().findOneAndUpdate(
+      { _id: id } as Partial<AppAlbum>,
+      {
+        $set: {
+          ...input,
+          updatedAt: now,
+        },
+      },
+      { returnDocument: "after" }
+    );
+    return result ?? null;
+  }
+
+  async deleteAppAlbum(id: string): Promise<void> {
+    await this.appAlbumCol().deleteOne({
+      _id: id,
+    } as Partial<AppAlbum>);
   }
 }

@@ -5,10 +5,12 @@ import type {
   CalendarGroupInput,
 } from "@lib/calendar/types";
 import type { FooterData } from "@lib/config/footer.config";
+import type { AppAlbum, AppAlbumInput } from "@lib/gallery/types";
 import type { NavbarData } from "@lib/config/navbar.config";
 import type { PageData } from "@lib/config/page.config";
 import { env } from "@lib/env";
 import type { OrganigrammCache } from "@lib/hitobito/types";
+import type { Rsvp, RsvpCount, RsvpInput } from "@lib/rsvp/types";
 import type { SecurityConfig } from "@lib/security/security-config";
 import type { Product, ProductInput, ShopSettings } from "@lib/shop/types";
 import type { FileRecord, FileRecordInput } from "@lib/storage/file-record";
@@ -104,6 +106,25 @@ export interface DatabaseService {
     event: CalendarEventInput
   ): Promise<CalendarEvent | null>;
   deleteCalendarEvent(id: string): Promise<void>;
+  // RSVP
+  getRsvpCount(eventId: string): Promise<RsvpCount>;
+  getDeviceRsvps(eventId: string, deviceId: string): Promise<Rsvp[]>;
+  upsertRsvp(input: RsvpInput): Promise<Rsvp>;
+  deleteRsvp(
+    eventId: string,
+    deviceId: string,
+    profileId: string
+  ): Promise<void>;
+  // App Gallery
+  getAppAlbums(): Promise<AppAlbum[]>;
+  getVisibleAppAlbums(): Promise<AppAlbum[]>;
+  getAppAlbum(id: string): Promise<AppAlbum | null>;
+  saveAppAlbum(input: AppAlbumInput): Promise<AppAlbum>;
+  updateAppAlbum(
+    id: string,
+    input: Partial<AppAlbumInput>
+  ): Promise<AppAlbum | null>;
+  deleteAppAlbum(id: string): Promise<void>;
 }
 
 function getDatabaseService(): DatabaseService {

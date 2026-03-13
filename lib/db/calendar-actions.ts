@@ -6,6 +6,7 @@ import type {
   CalendarGroup,
   CalendarGroupInput,
 } from "@lib/calendar/types";
+import { sendToGroups } from "@lib/notifications/fcm";
 import { requireServerPermission } from "@lib/security/server-guard";
 import { dbService } from "./db";
 
@@ -75,7 +76,23 @@ export async function saveCalendarEvent(
   event: CalendarEventInput
 ): Promise<CalendarEvent> {
   await requireServerPermission({ all: ["calendar:update"] });
-  return dbService.saveCalendarEvent(event);
+  const saved = await dbService.saveCalendarEvent(event);
+
+  // Send push notification to relevant groups
+  const groupSlugs = saved.allGroups
+    ? (await dbService.getCalendarGroups()).map((g) => g.slug)
+    : saved.groups;
+
+  if (groupSlugs.length > 0) {
+    const [, month, day] = saved.date.split("-");
+    const dateLabel = `${parseInt(day)}.${parseInt(month)}.`;
+    sendToGroups(groupSlugs, saved.title, `${dateLabel} ${saved.startTime}`, {
+      eventId: saved._id,
+      type: "event_created",
+    }).catch(() => {});
+  }
+
+  return saved;
 }
 
 export async function updateCalendarEvent(
@@ -83,7 +100,26 @@ export async function updateCalendarEvent(
   event: CalendarEventInput
 ): Promise<CalendarEvent | null> {
   await requireServerPermission({ all: ["calendar:update"] });
-  return dbService.updateCalendarEvent(id, event);
+  const updated = await dbService.updateCalendarEvent(id, event);
+
+  if (updated) {
+    const groupSlugs = updated.allGroups
+      ? (await dbService.getCalendarGroups()).map((g) => g.slug)
+      : updated.groups;
+
+    if (groupSlugs.length > 0) {
+      const [, month, day] = updated.date.split("-");
+      const dateLabel = `${parseInt(day)}.${parseInt(month)}.`;
+      sendToGroups(
+        groupSlugs,
+        `${updated.title} (aktualisiert)`,
+        `${dateLabel} ${updated.startTime}`,
+        { eventId: updated._id, type: "event_updated" }
+      ).catch(() => {});
+    }
+  }
+
+  return updated;
 }
 
 export async function deleteCalendarEvent(id: string): Promise<void> {
