@@ -23,20 +23,17 @@ const remotePatterns: NonNullable<NonNullable<NextConfig["images"]>["remotePatte
     protocol: "https",
     hostname: "*.r2.cloudflarestorage.com",
   },
+  // Backblaze B2
+  {
+    protocol: "https",
+    hostname: "*.backblazeb2.com",
+  },
+  // Production: files proxied via app domain
+  {
+    protocol: "https",
+    hostname: "*.pfadimh.ch",
+  },
 ];
-
-// Dynamically allow the S3_PUBLIC_URL hostname (e.g. when files are proxied through the app domain)
-if (process.env.S3_PUBLIC_URL) {
-  try {
-    const parsed = new URL(process.env.S3_PUBLIC_URL);
-    remotePatterns.push({
-      protocol: parsed.protocol.replace(":", "") as "http" | "https",
-      hostname: parsed.hostname,
-    });
-  } catch {
-    // Invalid URL — skip
-  }
-}
 
 const nextConfig: NextConfig = {
   output: "standalone",
