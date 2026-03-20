@@ -22,11 +22,11 @@ export const webshopConfig: ComponentConfig<WebshopProps> = {
   fields: {
     size: {
       type: "select",
-      label: "Produktgrösse",
+      label: "Product Size",
       options: [
-        { label: "Gross", value: "gross" },
-        { label: "Mittel", value: "mittel" },
-        { label: "Klein", value: "klein" },
+        { label: "Large", value: "gross" },
+        { label: "Medium", value: "mittel" },
+        { label: "Small", value: "klein" },
       ],
     },
     selectedProducts: productSelectorField,
