@@ -70,7 +70,7 @@ function Parallax() {
         </div>
       </div>
       {/* DESKTOP */}
-      <div className="hidden md:block bg-gradient-to-b from-[#ffaf1b] to-[#1f0002]">
+      <div className="hidden md:block bg-gradient-to-b from-[#ffaf1b] to-mud-ground">
         <ParallaxBanner
           layers={[
             parallaxLayer1,
