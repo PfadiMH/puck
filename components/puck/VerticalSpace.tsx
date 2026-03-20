@@ -36,6 +36,7 @@ export const verticalSpaceConfig: ComponentConfig<VerticalSpaceProps> = {
   fields: {
     size: {
       type: "select",
+      label: "Size",
       options: spacingOptions.map((size) => ({ label: size, value: size })),
     },
   },

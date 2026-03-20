@@ -61,6 +61,7 @@ export const richTextConfig: ComponentConfig<RichTextProps> = {
   fields: {
     content: {
       type: "richtext",
+      label: "Content",
       renderMenu: ({ children }) => (
         <div
           data-puck-rte-menu

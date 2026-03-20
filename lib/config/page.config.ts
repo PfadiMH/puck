@@ -68,6 +68,14 @@ export type PageConfig = Config<PageProps, PageRootProps>;
 export type PageData = Data<PageProps, PageRootProps>;
 
 export const pageConfig: PageConfig = sectionThemedConfig({
+  root: {
+    fields: {
+      title: {
+        type: "text",
+        label: "Title",
+      },
+    },
+  },
   categories: {
     // All active components — Flex is deliberately excluded so it cannot be
     // added to new pages.  It remains registered in `components` so that

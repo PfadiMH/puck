@@ -13,7 +13,7 @@ export default function Unauthorized() {
         </p>
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <Link
-            href="/login"
+            href="/auth/signin"
             className="bg-primary text-contrast-primary px-6 py-3 rounded-md hover:opacity-90 transition-opacity font-medium"
           >
             Anmelden
