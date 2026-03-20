@@ -48,7 +48,7 @@ export function NavbarItemsDesktop({ data }: NavbarComponentsProps) {
         {logo && <NavbarLogo logo={logo} />}
       </div>
 
-      <div className="flex items-center pr-4">
+      <div className="flex items-center pr-4 overflow-hidden">
         <div className="flex gap-4 flex-wrap min-w-0 flex-1">
           <Render config={navbarConfig} data={rightItems} />
         </div>
