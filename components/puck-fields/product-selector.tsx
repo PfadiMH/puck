@@ -55,7 +55,7 @@ function ProductSelector({
           fontSize: "13px",
         }}
       >
-        Fehler beim Laden der Produkte.
+        Failed to load products.
       </div>
     );
   }
@@ -63,7 +63,7 @@ function ProductSelector({
   if (!loaded) {
     return (
       <div style={{ padding: "8px", fontSize: "13px", color: "#6b7280" }}>
-        Laden...
+        Loading...
       </div>
     );
   }
@@ -71,7 +71,7 @@ function ProductSelector({
   if (products.length === 0) {
     return (
       <div style={{ padding: "8px", fontSize: "13px", color: "#6b7280" }}>
-        Keine Produkte vorhanden.
+        No products available.
       </div>
     );
   }
@@ -86,8 +86,8 @@ function ProductSelector({
         }}
       >
         {selected.length === 0
-          ? "Alle Produkte werden angezeigt"
-          : `${selected.length} Produkt${selected.length === 1 ? "" : "e"} ausgewählt`}
+          ? "All products displayed"
+          : `${selected.length} product${selected.length === 1 ? "" : "s"} selected`}
       </div>
       {products.map((product) => (
         <label
@@ -123,6 +123,6 @@ function ProductSelector({
 
 export const productSelectorField: CustomField<string[] | undefined> = {
   type: "custom",
-  label: "Produkte auswählen",
+  label: "Select Products",
   render: ProductSelector,
 };
