@@ -34,7 +34,7 @@ export function NavbarItemsMobile({
         <div className="relative z-20 w-28 h-28 mb-[-50px]">
           {logo && <NavbarLogo logo={logo} />}
         </div>
-        <div className="flex items-center justify-end gap-2 mr-2 min-w-0 overflow-hidden">
+        <div className="flex items-center justify-end gap-2 mr-2 min-w-0">
           {data.root.props?.enableSearch === "true" && <NavbarSearch />}
           <NavbarCartIcon compact />
           <button
